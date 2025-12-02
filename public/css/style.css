@@ -1,0 +1,3223 @@
+/* Global */
+@font-face {
+  font-family: Vazir-FD;
+    src: url('../fonts/Vazir-FD.eot');
+    src: url('../fonts/Vazir-FD.eot?#iefix') format('FontName-opentype'),
+         url('../fonts/Vazir-FD.woff') format('woff'),
+         url('../fonts/Vazir-FD.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+:root {
+  --bg: #FFFFFF;
+  --black-color: #202020;
+  --white-color: #FFFFFF;
+  
+}
+
+body {
+  background-color: var(--bg);
+  position: relative;
+  margin: 0;
+  font-family: 'Vazir-FD', sans-serif;
+  padding: 0;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  direction: rtl;
+  font-size: 14px;
+}
+
+a {
+  text-decoration: none;
+  color: var(--second-color);
+  transition: all 0.2s ease;
+}
+a:hover {
+  color: var(--Third-color);
+}
+
+button {
+  font-family: 'Vazir-FD', sans-serif;
+}
+
+.max-width {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.button {
+  transition: all 0.2s ease !important;
+}
+.button:hover {
+  background-color: var(--second-color) !important;
+}
+
+/* Login page */
+.login-container,
+.state-container {
+  width: 100%;
+  height: 100vh;
+  background-image: url('../img/bg-pattern.png');
+  background-size: 138px;
+  overflow: hidden;
+  background-position: top;
+  background-repeat: repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-signup-container,
+.state-page-content {
+  background-color: var(--white-color);
+  box-shadow: 0px 0px 45px rgba(0, 0, 0, 0.08);
+  border-radius: 14px;
+  padding: 24px 48px;
+  width: 720px;
+  text-align: center;
+  box-sizing: border-box;
+}
+.login-signup-container form img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+}
+
+.role-tabs input[type="radio"] {
+  display: none;
+}
+.role-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  margin: 0 auto;
+  border-radius: 48px;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.04);
+  margin-bottom: 15px;
+  gap: 12px;
+  padding: 4px 6px;
+}
+.role-tabs label {
+  padding: 6px 32px;
+  cursor: pointer;
+  background-color: transparent;
+  color: var(--black-color);
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+.role-tabs label:hover {
+  color: #787878;
+}
+.role-tabs input[type="radio"]:checked + label {
+  background-color: var(--white-color);
+  color: var(--main-color);
+  border-radius: 24px;
+}
+
+.login-signup-container h1 {
+  margin-block: 0 4px;
+  font-weight: bolder;
+  font-size: 24px;
+}
+.login-signup-container p {
+  font-size: 12px;
+}
+.login-signup-container .agree-policy {
+  font-size: 14px;
+  text-align: right;
+}
+
+.login-signup-container .tel-input {
+  background-color: rgba(0, 0, 0, 0.04);
+  padding: 8px;
+  border-radius: 36px;
+  width: 80%;
+  margin: 24px auto 32px auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  box-sizing: border-box;
+}
+.login-signup-container .tel-input input[type="submit"] {
+  all: unset;
+  background-color: var(--main-color);
+  color: var(--white-color);
+  padding: 10px 42px;
+  border-radius: 36px;
+  cursor: pointer;
+  font-weight: bold;
+  text-wrap: nowrap;
+}
+.login-signup-container .tel-input input[type="tel"] {
+  all: unset;
+  text-align: right;
+  padding: 10px;
+  width: 100%;
+}
+
+/* Admin Login page */
+.admin-login-container {
+   width: 100%;
+  height: 100vh;
+  background-image: url('../img/bg-pattern.png');
+  background-size: 138px;
+  overflow: hidden;
+  background-position: top;
+  background-repeat: repeat;
+  display: grid;
+  grid-template-columns: 1.1fr 2fr;
+  justify-items: center;
+  align-items: center;
+}
+
+.admin-login-container .admin-login {
+  background-color: var(--white-color);
+  box-shadow: 0px 0px 45px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  box-sizing: border-box;
+  height: 100%;
+  padding: 70px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.admin-login-container .admin-login img {
+  width: 170px;
+  height: auto;
+  object-fit: contain;
+  margin-bottom: 20px;
+}
+.admin-login-container .admin-login h1 {
+  margin-bottom: 10px;
+}
+.admin-login-container .admin-login p {
+  font-size: 12px;
+  color: var(--second-color);
+  margin-top: 0;
+  margin-bottom: 40px;
+}
+.admin-login-form input[type="text"],
+.admin-login-form input[type="password"] {
+  all: unset;
+  text-align: right;
+  padding: 16px 32px;
+  border-radius: 24px;
+  background-color: rgba(0, 0, 0, 0.04);
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+}
+.admin-login-form input[type="submit"] {
+  all: unset;
+  text-align: center;
+  padding: 8px 50px;
+  border-radius: 24px;
+  background-color: var(--main-color);
+  color: var(--white-color);
+  width: max-content;
+  cursor: pointer;
+  font-weight: bold;
+}
+.admin-login-container .admin-img-login {
+  width: 50%;
+  margin: 0 auto;
+  display: block;
+}
+
+/* Home Page */
+header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-direction: row-reverse;
+  gap: 12px;
+  padding: 0 10px;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 96%;
+  margin: 0 2%;
+  z-index: 10;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.leaflet-control-container {
+  display: none;
+}
+
+.home-header-left,
+.home-header-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: 18px;
+  padding-top: 10px;
+}
+.home-header-left a,
+.home-header-right a,
+.home-header-left button {
+  all: unset;
+  box-shadow: 0px 0px 20.2px rgba(0, 0, 0, 0.09);
+  background-color: var(--white-color);
+  padding: 20px;
+  border-radius: 50px;
+  line-height: 0;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+  pointer-events: auto;
+}
+.home-header-left a img,
+.home-header-right a img,
+.home-header-left button img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+.home-header-left a:hover,
+.home-header-right a:hover,
+.home-header-left button:hover {
+  scale: 0.95;
+}
+
+.home-header-center {
+  padding: 12px 36px;
+  background-color: var(--white-color);
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0px 0px 20.2px rgba(0, 0, 0, 0.09);
+  position: relative;
+}
+.home-header-center::after {
+  content: "";
+  position: absolute;
+  border-radius: 32px 0 0 0;
+  top: 0px;
+  width: 70px;
+  height: 70px;
+  right: -70px;
+  box-shadow: -10px -10px 0px 6px var(--white-color);
+}
+.home-header-center::before {
+  content: "";
+  position: absolute;
+  border-radius: 0 32px 0 0;
+  top: 0px;
+  width: 70px;
+  height: 70px;
+  left: -70px;
+  box-shadow: 10px -10px 0px 6px var(--white-color);
+}
+.home-header-center a {
+  line-height: 1;
+  pointer-events: auto;
+}
+.home-header-center img {
+  width: 125px;
+  height: auto;
+  object-fit: contain;
+}
+
+#map {
+  height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+#map .leaflet-popup-tip-container {
+  display: none;
+}
+#map .leaflet-popup-content-wrapper,
+#map .leaflet-popup-tip {
+  background: var(--white-color);
+  box-shadow: 0 3px 14px rgb(0 0 0 / 20%);
+  font-family: 'Vazir-FD';
+  color: var(--black-color);
+}
+#map .leaflet-popup-content {
+  margin: 4px 12px;
+}
+#map .leaflet-popup {
+  left: -40px;
+}
+
+#controls {
+  display: flex;
+  justify-content: space-around;
+  padding: 20px 30px;
+  border-radius: 35px 35px 0 0;
+  position: fixed;
+  z-index: 10;
+  bottom: 0;
+  right: 50%;
+  transform: translateX(50%);
+  width: 50%;
+  margin: 0 auto;
+  background-color: var(--white-color);
+  box-shadow: 0px 0px 27.2px rgba(0, 0, 0, 0.14);
+  box-sizing: border-box;
+}
+#controls button {
+  padding: 14px;
+  border: none;
+  background: var(--main-color);
+  color: var(--white-color);
+  border-radius: 14px;
+  font-family: 'Vazir-FD';
+  font-weight: bold;
+  font-size: 14px;
+  width: 100%;
+  margin-inline: 14px;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+#controls button:active {
+  transform: scale(0.95);
+}
+#controls #confirmBtn,
+#controls #calcBtn {
+  background-color: var(--second-color);
+}
+
+#faq {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.21);
+  z-index: 20;
+  display: none;
+}
+#faq .faq-content {
+  background: var(--white-color);
+  width: 90%;
+  max-width: 400px;
+  margin: 30px auto;
+  padding: 24px;
+  border-radius: 35px;
+  max-height: 85%;
+  overflow-y: auto;
+  box-shadow: 0px 0px 22.2px rgba(0, 0, 0, 0.12);
+  box-sizing: border-box;
+}
+#faq .faq-content img {
+  width: 70px;
+  height: auto;
+  object-fit: contain;
+  margin: 0 auto;
+  display: block;
+  margin-bottom: 36px;
+}
+#faq .faq-content ul {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 24px;
+}
+#faq .faq-content ul li {
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid #00000011;
+}
+#faq .faq-content ul li:last-of-type {
+  border-bottom: none;
+}
+#faq .faq-content button {
+  all: unset;
+  display: block;
+  width: max-content;
+  margin: 0 auto;
+  margin-top: 24px;
+  color: var(--white-color);
+  background-color: var(--black-color);
+  padding: 10px 48px;
+  border-radius: 24px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.14);
+  backdrop-filter: blur(4px);
+  z-index: 20;
+  display: none;
+}
+.popup-content {
+  background: var(--white-color);
+  width: 90%;
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 20px;
+  max-height: 85%;
+  overflow-y: auto;
+  filter: drop-shadow(0px 0px 28.3px rgba(0, 0, 0, 0.1));
+  border-radius: 28px;
+}
+#popup h2 {
+  text-align: center;
+  margin-top: 0;
+}
+#popup .radio-option .radio-label {
+  text-align: center;
+  display: grid;
+  grid-template-columns: 1fr;
+  position: relative;
+  cursor: pointer;
+  padding: 12px;
+  box-sizing: border-box;
+  color: var(--black-color);
+  background-color: #F0F0F0;
+  border-radius: 12px;
+  margin-right: 24px;
+  transition: all 0.2s ease;
+}
+#popup .radio-option .radio-label strong {
+  text-align: left;
+  pointer-events: none;
+  user-select: none;
+}
+#popup .radio-option .radio-label img {
+  width: 120px;
+  height: 60px;
+  object-fit: contain;
+  margin-right: -50px;
+  margin-top: -12px;
+  pointer-events: none;
+  user-select: none;
+}
+#popup .radio-option .radio-label span {
+  font-weight: bold;
+  pointer-events: none;
+  font-size: 16px;
+  user-select: none;
+}
+#popup .radio-option .radio-item:checked + .radio-label::after {
+  content: "";
+  width: 16px;
+  height: 16px;
+  background-color: var(--main-color);
+  border-radius: 16px;
+  top: -8px;
+  right: -8px;
+  position: absolute;
+  border: 3px solid var(--white-color);
+}
+#popup .radio-option .radio-item {
+  display: none;
+}
+#popup .radio-option .radio-item:checked + .radio-label{
+  background-color: var(--main-color);
+  color: var(--white-color);
+}
+
+.carChoseSwiper .swiper-wrapper {
+  padding-block: 12px 36px !important;
+  box-sizing: border-box;
+}
+
+.carChoseSwiper .swiper-pagination-bullet.swiper-pagination-bullet-active {
+  background-color: var(--main-color) !important;
+}
+.carChoseSwiper .swiper-pagination-bullets span{
+  background-color: #9e9e9e !important;
+}
+
+.carChoseSwiper .swiper-button-next,
+.carChoseSwiper .swiper-button-prev {
+  width: 26px !important;
+  height: 26px !important;
+  background: #FFFFFF;
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 26px;
+  padding: 6px;
+}
+.carChoseSwiper .swiper-button-next::after,
+.carChoseSwiper .swiper-button-prev::after {
+  color: var(--main-color) !important;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.form-data-time {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  box-sizing: border-box;
+  gap: 24px;
+  margin-top: 12px;
+}
+.form-data-time .form-data-picker {
+  background-color: rgba(0, 0, 0, 0.04);
+  border-radius: 54px;
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 12px;
+}
+.form-data-time .form-data-picker input {
+  all:  unset;
+  width: 100%;
+}
+.form-data-time .form-data-picker img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.form-location-lists {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 16px;
+  align-items: center;
+  margin-block: 16px;
+}
+.form-location-lists ul {
+  list-style: none;
+  padding: 0;
+}
+.form-location-lists ul li {
+  padding-block: 6px;
+}
+.form-location-lists ul li span {
+  font-weight: bold;
+  color:  #01A709;
+}
+
+.form-info-extra {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  box-sizing: border-box;
+  gap: 24px;
+  margin-top: 12px;
+  margin-bottom: 16px;
+}
+.form-info-extra .form-input-item {
+  background-color: rgba(0, 0, 0, 0.04);
+  border-radius: 54px;
+  padding: 18px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 12px;
+}
+.form-info-extra .form-input-item input {
+  all: unset;
+  width: 100%;
+}
+
+.form-have-pet {
+  margin-block: 16px;
+  display: block;
+}
+.form-have-pet label {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  padding-right: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #111111ce;
+}
+.form-have-pet label input {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px !important;
+  border-color: #ddd;
+  cursor: pointer;
+}
+
+.form-input-item #tripType {
+  all: unset;
+  appearance: none;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.select2-container .select2-selection--single {
+  border: none !important;
+  outline: none !important;
+  background-color: transparent !important;
+  text-align: right !important;
+  padding: 0 !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  padding: 0 !important;
+  font-family: 'Vazir-FD' !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  display: none;
+}
+
+.select2-container--default .select2-results__option {
+  padding: 8px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: right;
+}
+.select2-container--default .select2-results__option--highlighted {
+  background-color: var(--main-color);
+  color: var(--white-color);
+}
+
+#results {
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #F9F9F9;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-block: 24px;
+}
+#results p {
+  color: gray;
+  font-size: 16px;
+}
+#results p strong {
+  font-weight: bold;
+  color: #01A709;
+}
+
+.form-buttons-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  padding: 8px 48px;
+}
+
+#finalPrice p {
+  color: var(--second-color);
+  font-size: 18px;
+  font-weight: bold;
+}
+#finalPrice p strong {
+  color: gray;
+}
+
+.marker-scale {
+  transform: scale(0.8);
+  transition: transform 0.15s ease;
+}
+
+.form-buttons-container button[type="button"] {
+  all: unset;
+  background-color: var(--black-color);
+  color: var(--white-color);
+  padding: 12px 36px;
+  border-radius: 14px;
+  cursor: pointer;
+  margin-left: 14px;
+  font-weight: 700;
+}
+.form-buttons-container button[type="submit"] {
+  all: unset;
+  background-color: var(--main-color);
+  color: var(--white-color);
+  padding: 12px 36px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.form-input-user-desc {
+  all: unset;
+  background-color: rgba(0, 0, 0, 0.04);
+  border-radius: 24px;
+  padding: 18px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* State Pages */
+.state-page-content img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  margin-block: 36px 12px;
+}
+.state-page-content p {
+  width: 60%;
+  margin: 0 auto;
+  text-align: center;
+}
+.state-page-content h1 {
+  font-size: 24px;
+}
+.state-page-content .state-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  width: 60%;
+  margin: 0 auto;
+  margin-top: 24px;
+  margin-bottom: 16px;
+}
+.state-page-content .state-buttons a {
+  padding: 12px 36px;
+  color: var(--white-color);
+  align-items: center;
+  text-wrap: nowrap;
+  border-radius: 36px;
+  transition: all 0.2s ease;
+  font-weight: 700;
+}
+.state-page-content .state-buttons a:hover {
+  scale: 0.98;
+}
+.state-page-content .state-buttons .user-state-white-cancel {
+  background-color: var(--second-color);
+}
+.state-page-content .state-buttons .user-state-white-contact {
+  background-color: var(--Third-color);
+}
+
+.state-page-content .user-state-pay-btn {
+  width: 60%;
+  color: var(--white-color);
+  background-color: var(--main-color);
+  padding: 12px 36px;
+  margin: 16px auto;
+  text-align: center;
+  border-radius: 36px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+  display: block;
+  box-sizing: border-box;
+}
+.state-page-content .user-state-pay-btn:hover {
+  scale: 0.98;
+}
+
+/* User Has trip Alert */
+.has-trip-alert {
+  width: 48%;
+  margin-bottom: 16px;
+  position: absolute;
+  right: 50%;
+  transform: translateX(50%);
+  background-color: var(--white-color);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 32px;
+  border-radius: 12px;
+  box-sizing: border-box;
+  box-shadow: 0px 0px 14.6px rgba(0, 0, 0, 0.07);
+}
+.has-trip-alert button {
+  all: unset;
+  color: var(--main-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.has-trip-alert button:hover {
+  filter: brightness(0.8);
+}
+
+/* Passenger current trip */
+#UserCurrentTripPopup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.14);
+  backdrop-filter: blur(4px);
+  z-index: 20;
+  display: none;
+}
+.passenger-current-trip {
+  background: var(--white-color);
+  width: 90%;
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 20px;
+  max-height: 85%;
+  overflow-y: auto;
+  filter: drop-shadow(0px 0px 28.3px rgba(0, 0, 0, 0.1));
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+.passenger-current-trip ul {
+  list-style: none;
+  padding: 0;
+}
+.passenger-current-trip ul li {
+  margin-bottom: 16px;
+}
+.passenger-current-trip ul li:last-of-type {
+  margin-bottom: 0;
+}
+
+.passenger-current-trip h2 {
+  text-align: center;
+  margin-bottom: 36px;
+  font-size: 20px;
+}
+
+.passenger-trip-content {
+  display: none;
+  padding: 10px;
+  border: 0px solid rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+  background-color: rgba(0, 0, 0, 0.04);
+  border-radius: 0 0 16px 16px;
+  box-sizing: border-box;
+}
+
+.passenger-trip-content .trip-total-price {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 36px;
+  margin-bottom: 16px;
+}
+.passenger-trip-content .trip-total-price a {
+  color: var(--white-color);
+  background-color: var(--main-color);
+  padding: 4px 24px;
+  border-radius: 24px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+.passenger-trip-content .trip-total-price a:hover {
+  scale: 0.98;
+}
+.passenger-trip-content .trip-total-price .total-price {
+  color: var(--second-color);
+  font-weight: 700;
+  font-size: 20px;
+}
+.passenger-trip-content .trip-total-price .total-price span {
+  color: gray;
+}
+
+.passenger-trip-content .trip-driver-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  background-color: var(--white-color);
+  border-radius: 12px;
+  padding: 16px;
+  position: relative;
+  margin-right: 40px;
+  margin-bottom: 32px;
+  margin-top: 16px;
+}
+.passenger-trip-content .trip-driver-info img {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 100px;
+  right: -40px;
+  object-fit: cover;
+}
+.passenger-trip-content .trip-driver-info .driver-info {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+  box-sizing: border-box;
+  margin-right: 60px;
+}
+.passenger-trip-content .trip-driver-info .driver-info p span {
+  color: var(--second-color);
+  font-weight: 600;
+}
+.passenger-trip-content .trip-driver-info .call-to-driver {
+  border-radius: 8px;
+  background-color: var(--Third-color);
+  padding: 8px 24px;
+  color: var(--white-color);
+  font-size: 16px;
+  transition: all 0.2s ease;
+}
+.passenger-trip-content .trip-driver-info .call-to-driver:hover {
+  border: 1px solid var(--Third-color);
+  color: var(--Third-color);
+  background-color: var(--white-color);
+}
+
+.passenger-current-trip .trip-locations {
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.passenger-current-trip .trip-locations li {
+  margin: 0;
+}
+.passenger-current-trip .trip-locations li span {
+  color: #01A709;
+  font-weight: 700;
+}
+
+.passenger-current-trip .user-form-desc {
+  opacity: 0.5;
+}
+
+#closeUserCurrentTripPopup {
+  all: unset;
+  background-color: var(--black-color);
+  color: var(--white-color);
+  padding: 8px 48px;
+  font-weight: 700;
+  border-radius: 12px;
+  position: relative;
+  right: 50%;
+  top: 16px;
+  transform: translateX(50%);
+  cursor: pointer;
+}
+
+.passenger-trip-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  padding: 24px;
+  border-radius: 16px;
+}
+
+.passenger-item-title {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+}
+.passenger-item-title .trip-id {
+  color: var(--second-color);
+  font-weight: 700;
+}
+.passenger-item-title .trip-date {
+  color: var(--Third-color);
+  font-weight: 700;
+  padding-right: 6px;
+  border-right: 1px solid #ddd;
+}
+.passenger-item-title .trip-time {
+  color: gray;
+  font-weight: 700;
+  padding-right: 6px;
+  border-right: 1px solid #ddd;
+}
+
+.trip-extra-info-md {
+  display: none;
+}
+.trip-extra-info-md .trip-date {
+  color: var(--Third-color);
+  font-weight: 700;
+}
+.trip-extra-info-md .trip-time {
+  color: gray;
+  font-weight: 700;
+}
+
+
+.passenger-trip-item img {
+  transition: transform 0.3s ease;
+}
+.passenger-trip-item.active img {
+  transform: rotate(180deg);
+}
+.passenger-trip-content.active {
+  display: block;
+}
+.passenger-trip-item.active {
+  background-color: rgba(0, 0, 0, 0.04);
+  border-radius: 16px 16px 0 0;
+  border: 0px solid rgba(0, 0, 0, 0.04); 
+}
+
+/* User profile */
+.u-profile-info {
+  width: 90%;
+  background-image: url(../img/bg-pattern.png);
+  background-size: 120px;
+  background-position: left;
+  background-repeat: repeat;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 28px;
+  border-radius: 32px;
+  box-sizing: border-box;
+  margin: 0 auto;
+  margin-top: 36px;
+  margin-bottom: 48px;
+  position: relative;
+  gap: 24px;
+}
+.u-profile-info .u-profile-back-btn {
+  all: unset;
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  box-shadow: 0px 0px 20.2px rgba(0, 0, 0, 0.09);
+  background-color: var(--white-color);
+  padding: 16px;
+  border-radius: 50px;
+  line-height: 0;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+  pointer-events: auto;
+}
+.u-profile-back-btn .u-profile-back-img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
+.u-profile-info-img {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 180px;
+  border: 3px solid var(--second-color);
+}
+.u-profile-username {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+}
+.u-profile-username h2 {
+  font-weight: 900;
+  font-size: 26px;
+}
+.u-profile-username button {
+  all: unset;
+  color: var(--white-color);
+  background-color: var(--second-color);
+  padding: 6px 48px;
+  font-weight: 700; 
+  border-radius: 32px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.u-profile-username button:hover {
+  background-color: var(--main-color);
+}
+.u-profile-type {
+  font-weight: 700;
+  color: var(--main-color);
+  font-size: 18px;
+}
+
+.u-profile-content {
+  background-color: #F6F6F6;
+  box-sizing: border-box;
+  border-radius: 35px;
+  padding: 24px;
+  width: 90%;
+  margin: 0 auto;
+  margin-block: 24px;
+}
+
+.u-profile-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.04);
+  width: max-content;
+  padding: 4px 5px;
+  border-radius: 36px;
+  margin:  0 auto;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.u-profile-tabs > div {
+  padding: 4px 32px;
+  cursor: pointer;
+  border-radius: 32px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--black-color);
+  transition: all 0.3s ease;
+}
+.u-profile-tabs > div:hover {
+  opacity: 0.7;
+}
+.u-profile-tabs > div.active {
+  background-color: var(--white-color);
+  color: var(--main-color);
+  font-weight: bold;
+}
+
+.u-profile-tab-content > div {
+  display: none;
+}
+.u-profile-tab-content > div.active {
+  display: block;
+}
+.u-profile-tab-content .passenger-current-trip {
+  background-color: transparent;
+  box-shadow: none;
+  max-width: unset;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  filter: unset;
+}
+
+.u-profile-tab-content .passenger-trip-item {
+  background-color: var(--white-color);
+  border: 1px solid rgba(32, 32, 32, 0.1);
+}
+.u-profile-tab-content .passenger-trip-item .trip-state {
+  color: gray;
+  font-weight: 700;
+  padding-right: 6px;
+  border-right: 1px solid #ddd;
+}
+.u-profile-tab-content .trip-extra-info-md {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  flex-wrap: wrap;
+  box-sizing: border-box;
+  margin-bottom: 16px;
+}
+.u-profile-tab-content .passenger-trip-item.active {
+  background-color: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(32, 32, 32, 0.1);
+  border-bottom: 0px solid;
+}
+.u-profile-tab-content .passenger-trip-content {
+  border: 1px solid rgba(32, 32, 32, 0.1);
+  border-top: 0px solid;
+}
+.u-profile-tab-content .trip-extra-info-md span {
+  color: var(--second-color);
+  font-size: 18px;
+  font-weight: 900;
+}
+.u-profile-tab-content .trip-extra-info-md .trip-pay-id {
+  color: gray;
+  font-weight: 700;
+}
+
+.u-profile-tab-item form section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  box-sizing: border-box;
+  margin-block: 24px;
+}
+.u-profile-tab-item form section input {
+  all: unset;
+  background-color: rgba(0, 0, 0, 0.04);
+  padding: 18px 36px;
+  border-radius: 36px;
+  text-align: right;
+}
+.u-profile-tab-item form button {
+  all: unset;
+  width: 50%;
+  display: block;
+  margin: 0 auto;
+  text-align: center;
+  background-color: var(--main-color);
+  color: var(--white-color);
+  font-weight: 700;
+  padding: 18px 36px;
+  border-radius: 36px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Driver Unverfied */
+.u-driver-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  justify-items: stretch;
+  gap: 12px;
+}
+
+.file-upload {
+  position: relative;
+  display: inline-block;
+}
+.file-upload input[type="file"] {
+  display: none;
+}
+
+.full-width {
+  grid-column: 1 / -1 !important;
+}
+
+.u-driver-top {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.u-driver-top h1 {
+  margin-bottom: 0;
+}
+
+.u-driver-personal-info h2,
+.u-driver-car-info h2 {
+  color: var(--Third-color);
+  font-weight: 900;
+  text-align: center;
+  font-size: 24px;
+}
+.u-driver-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.u-driver-car-info {
+  margin-top: 24px;
+  margin-bottom: 36px;
+}
+
+.u-driver-personal-info input[type="text"],
+.u-driver-personal-info input[type="tel"],
+.u-driver-car-info input[type="tel"],
+.u-driver-car-info input[type="text"] {
+  all: unset;
+  text-align: right;
+  padding: 18px 36px;
+  background-color: rgba(0, 0, 0, 0.04);
+  border-radius: 36px;
+}
+
+.u-driver-personal-info .file-button,
+.u-driver-car-info .file-button {
+  all: unset;
+  background-color: var(--main-color);
+  text-align: center;
+  padding: 12px 24px;
+  border-radius: 24px;
+  width: 100%;
+  box-sizing: border-box;
+  display: block;
+  cursor: pointer;
+}
+.file-button:hover {
+  background-color: var(--second-color);
+}
+.file-selected {
+  background-color: #01A709 !important;
+  color: var(--white-color) !important;
+}
+
+.u-driver-form-submit {
+  all: unset;
+  width: 30%;
+  display: block;
+  padding: 16px 36px;
+  border-radius: 36px;
+  background-color: var(--Third-color);
+  color: var(--white-color);
+  border: 1px solid var(--Third-color);
+  font-weight: 700;
+  text-align: center;
+  margin: 0 auto;
+  cursor: pointer;
+  margin-top: 36px;
+  transition: all 0.2s ease;
+}
+.u-driver-form-submit:hover {
+  background-color: var(--white-color);
+  color: var(--Third-color);
+}
+
+.u-driver-form {
+  padding: 12px 36px;
+}
+
+/* Driver State */
+.driver-in-prossese img {
+  margin-block: 0;
+  width: 230px;
+  height: auto;
+  object-fit: contain;
+}
+.driver-in-prossese {
+  padding-block: 60px;
+}
+
+.driver-not-accepted .u-driver-not-accepted {
+  background-color: rgba(255, 161, 0, 0.16);
+  padding: 24px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-block: 24px;
+  border-radius: 16px;
+}
+.driver-not-accepted .u-driver-not-accepted p {
+  width: 100%;
+  text-align: right;
+}
+
+/* Driver Profile */
+#editDriverInfo {
+  background-color: var(--main-color);
+}
+#editDriverInfo:hover {
+  opacity: 0.7;
+}
+
+#driverProfilePopup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.14);
+  backdrop-filter: blur(4px);
+  z-index: 20;
+  display: none;
+}
+.driver-profile-content {
+  background: var(--white-color);
+  width: 90%;
+  max-width: 700px;
+  margin: 30px auto;
+  padding: 20px;
+  max-height: 85%;
+  overflow-y: auto;
+  filter: drop-shadow(0px 0px 28.3px rgba(0, 0, 0, 0.1));
+  border-radius: 28px;
+  text-align: center;
+}
+.driver-profile-content section {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin: 0 auto;
+  margin-top: 36px;
+  width: 50%;
+  box-sizing: border-box;
+}
+.driver-profile-content section a {
+  color: var(--white-color);
+  background-color: var(--Third-color);
+  padding: 6px 24px;
+  border-radius: 24px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+.driver-profile-content section button {
+  all: unset;
+  color: var(--white-color);
+  background-color: var(--second-color);
+  padding: 6px 24px;
+  border-radius: 24px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.driver-profile-content section a:hover,
+.driver-profile-content section button:hover {
+  scale: 0.98;
+}
+
+.driver-profile .u-profile-tab-content .passenger-trip-item {
+  position: relative;
+}
+.driver-profile .passenger-trip-item section {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+.driver-profile #skipTrip {
+  all: unset;
+  color: var(--white-color);
+  background-color: var(--second-color);
+  padding: 6px 24px;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.driver-profile #acceptTrip {
+  all: unset;
+  color: var(--white-color);
+  background-color: var(--Third-color);
+  padding: 6px 24px;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.driver-profile #tripActionEnd {
+  all: unset;
+  color: var(--white-color);
+  background-color: var(--main-color);
+  padding: 6px 24px;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.driver-profile #tripActionWhite {
+  all: unset;
+  color: var(--white-color);
+  background-color: var(--black-color);
+  padding: 6px 24px;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.driver-profile #acceptTrip:hover,
+.driver-profile #skipTrip:hover,
+.driver-profile #tripActionEnd:hover {
+  scale: 0.95;
+}
+
+.driver-profile .trip-extra-info-md {
+  border-bottom: 1px solid gray;
+  padding-bottom: 16px;
+}
+.driver-profile .trip-locations {
+  align-items: flex-start;
+}
+.driver-profile .u-profile-tab-content .trip-extra-info-md {
+  gap: 10px;
+}
+
+.driver-profile .u-profile-tab-content .ud-tab2 .trip-extra-info-md {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+.driver-profile .u-profile-tab-content .ud-tab2 .passenger-trip-content .trip-total-price {
+  margin-bottom: 36px;
+  margin-top: 36px;
+}
+.driver-profile .u-profile-tab-content .ud-tab2 .passenger-trip-content .trip-total-price a {
+  background-color: var(--second-color);
+}
+
+.driver-profile .u-profile-tab-content .ud-tab2 .passenger-trip-content .trip-driver-info {
+  margin-right: 0;
+  justify-content: space-between;
+}
+.driver-profile .u-profile-tab-content .ud-tab2 .passenger-trip-content .no-info {
+  justify-content: center !important;
+}
+.driver-profile .u-profile-tab-content .ud-tab2 .passenger-trip-content .no-info p {
+  font-weight: 700;
+  color: var(--second-color);
+  font-size: 16px;
+  margin: 8px;
+  text-align: center;
+}
+.driver-profile .u-profile-tab-content .ud-tab2 .passenger-current-trip .trip-locations {
+  align-items: center;
+}
+.driver-profile .u-profile-tab-content .ud-tab2 .passenger-trip-content .trip-driver-info .driver-info {
+  margin-right: 0;
+}
+.driver-profile .u-profile-tab-content .ud-tab2 .passenger-trip-content .trip-driver-info {
+  padding-top: 16px;
+}
+
+.driver-profile .u-profile-tab-content .ud-tab3 .trip-extra-info-md {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+.driver-profile .u-profile-tab-content .ud-tab3 .passenger-trip-content .trip-total-price {
+  margin-block: 36px;
+}
+.driver-profile .u-profile-tab-content .ud-tab3 .passenger-trip-content .trip-driver-info .driver-info {
+  margin-right: 0;
+}
+.driver-profile .u-profile-tab-content .ud-tab3 .passenger-trip-content .trip-driver-info {
+    margin-right: 0;
+    justify-content: space-between;
+}
+.driver-profile .u-profile-tab-content .ud-tab3 .passenger-current-trip .trip-locations {
+    align-items: center;
+}
+.driver-profile .u-profile-tab-content .ud-tab3 .passenger-trip-content .trip-driver-info {
+    padding-top: 16px;
+}
+
+/* Admin Profile */
+.admin-sidebar {
+  width: 280px;
+  background: var(--white-color);
+  color: var(--black-color);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  transition: transform 0.3s ease;
+  z-index: 100;
+  box-shadow: 0px 0px 45px rgba(0, 0, 0, 0.08);
+}
+
+.admin-md-header {
+  display: none;
+}
+
+.admin-side-title {
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  padding: 36px 18px;
+  text-align: center;
+}
+.admin-side-title a {
+  background-color: var(--second-color);
+  padding: 7px 36px;
+  border-radius: 36px;
+  color: var(--white-color);
+  line-height: 1;
+  font-weight: bold;
+  margin: 0 auto;
+  margin-top: 6px;
+  display: block;
+  width: 30%;
+}
+.admin-sidebar h2 {
+  text-align: center;
+  margin: 0;
+  font-size: 18px;
+}
+
+.admin-sidebar ul {
+  list-style: none;
+  padding: 16px 0;
+  margin: 0;
+  flex: 1;
+  overflow-y: auto;
+}
+.admin-sidebar ul li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  padding-right: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--black-color);
+  font-size: 15px;
+}
+.admin-sidebar ul li img {
+  width: 20px;
+  height: 20px;
+  transition: all 0.2s ease;
+}
+.admin-sidebar ul li:hover {
+  background: #f3f8fc;
+}
+.admin-sidebar ul li.active {
+  color: var(--second-color);
+}
+.admin-sidebar ul li.active img {
+  filter: brightness(0) saturate(100%) invert(42%) sepia(96%) saturate(2282%) hue-rotate(8deg) brightness(99%) contrast(105%);
+}
+
+.admin-content {
+  flex: 1;
+  margin-right: 280px;
+  padding: 20px;
+  position: relative; 
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+#loadingOverlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #333;
+  z-index: 100;
+}
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #ddd;
+  border-top: 4px solid #FF5E00;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+/* Admin profile -- Dashboard */
+.admin-dashboard-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 36px;
+  padding: 24px;
+}
+
+.admin-dashboard-content div {
+  padding: 16px;
+  border-radius: 35px 0 0 35px;
+}
+.admin-dashboard-content div h3 {
+  text-align: center;
+  margin-top: 0;
+  font-size: 32px;
+}
+
+.admin-dashboard-content .dashboard-item-type1 {
+  background-color: #F2FBFF;
+  border-right: 12px solid var(--Third-color);
+}
+.admin-dashboard-content .dashboard-item-type2 {
+  background-color: #FFF8F2;
+  border-right: 12px solid var(--second-color);
+}
+
+/* Admin Profile -- Travels */
+.status-filter-buttons {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.status-btn {
+  all: unset;
+  padding: 6px 32px;
+  background-color: #D8D8D8;
+  color: black;
+  border-radius: 36px;
+  cursor: pointer;
+}
+.status-btn.active {
+  background-color: var(--Third-color);
+  color: var(--white-color);
+}
+
+.sort-search-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  box-sizing: border-box;
+  padding-inline: 5%;
+}
+.sort-dropdown, .search-box {
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #555;
+  font-family: 'Vazir-FD';
+  appearance: none;
+}
+.sort-dropdown {
+  cursor: pointer;
+}
+
+.no-results {
+  text-align: center;
+  padding: 6px;
+  color: #555;
+  font-size: 18px;
+  list-style: none;
+}
+
+.admin-travels-content .passenger-current-trip {
+  filter: none;
+  padding: 10px;
+  margin: 10px auto;
+  max-width: unset;
+  width: 95%;
+}
+.admin-travels-content .passenger-trip-item .trip-state {
+  color: gray;
+  font-weight: 700;
+  padding-right: 6px;
+  border-right: 1px solid #ddd;
+}
+.admin-travels-content .trip-extra-info-ad {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  flex-wrap: wrap;
+  box-sizing: border-box;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid gray;
+  margin-top: 16px;
+}
+.admin-travels-content .trip-extra-info-ad div,
+.admin-travels-content .trip-extra-info-ad2 div {
+  font-weight: 700;
+  color: gray;
+}
+.admin-travels-content .trip-extra-info-ad div:first-of-type,
+.admin-travels-content .trip-extra-info-ad2 div:first-of-type {
+  color: var(--Third-color);
+}
+.admin-travels-content .trip-extra-info-ad span,
+.admin-travels-content .trip-extra-info-ad2 span {
+  color: var(--second-color);
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.admin-travels-content .trip-extra-info-ad2 {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  flex-wrap: wrap;
+  box-sizing: border-box;
+  margin-bottom: 16px;
+}
+
+.admin-trip-actions-btn {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  box-sizing: border-box;
+  width: 95%;
+  margin: 0 auto;
+}
+.admin-trip-actions-btn button {
+  all: unset;
+  padding: 12px 36px;
+  font-weight: 700;
+  color: var(--white-color);
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+.admin-trip-actions-btn button:hover {
+  scale: 0.97;
+}
+.admin-trip-actions-btn .ad-cancel-trip {
+  background-color: var(--second-color);
+}
+.admin-trip-actions-btn .ad-driver-trip {
+  background-color: var(--Third-color);
+}
+
+.admin-travels-content .trip-passenger-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  background-color: var(--white-color);
+  border-radius: 12px;
+  padding: 16px;
+  position: relative;
+  margin-bottom: 16px;
+  margin-top: 16px;
+}
+.admin-travels-content .trip-passenger-info .call-to-driver {
+    border-radius: 8px;
+    background-color: var(--Third-color);
+    padding: 8px 24px;
+    color: var(--white-color);
+    font-size: 16px;
+    transition: all 0.2s ease;
+}
+.admin-travels-content .trip-passenger-info .call-to-driver:hover {
+  border: 1px solid var(--Third-color);
+  color: var(--Third-color);
+  background-color: var(--white-color);
+}
+.admin-travels-content .trip-passenger-info .driver-info {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+  box-sizing: border-box;
+}
+.admin-travels-content .trip-passenger-info .driver-info p span {
+  color: var(--second-color);
+  font-weight: 600;
+}
+
+.admin-travels-content .passenger-trip-content {
+  padding: 16px;
+  border: 1px solid rgba(32, 32, 32, 0.1);
+  border-top: 0px solid;
+}
+.admin-travels-content .passenger-trip-item {
+  border: 1px solid rgba(32, 32, 32, 0.1);
+}
+.admin-travels-content .passenger-trip-item.active {
+  border-bottom: 0px solid;
+}
+
+.admin-travels-content .trip-locations-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 12px;
+  box-sizing: border-box;
+  padding: 10px;
+}
+.admin-travels-content .trip-locations-info .trip-location-item span {
+  color: #01A709;
+  font-weight: 700;
+}
+
+#AddDriverTripPopup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgb(255 255 255 / 14%);
+  backdrop-filter: blur(4px);
+  z-index: 20;
+  display: none;
+}
+.add-driver-trip-content {
+  background: var(--white-color);
+  width: 90%;
+  max-width: 400px;
+  margin: 30px auto;
+  padding: 20px;
+  max-height: 85%;
+  overflow-y: auto;
+  filter: drop-shadow(0px 0px 28.3px rgba(0, 0, 0, 0.1));
+  border-radius: 28px;
+  text-align: center;
+}
+.add-driver-trip-content input {
+  all: unset;
+  width: 90%;
+  padding: 16px 32px;
+  border-radius: 36px;
+  background-color: #F1F1F1;
+  color: black;
+  text-align: right;
+  margin: 0 auto;
+  box-sizing: border-box;
+  margin-block: 12px;
+}
+
+/* Admin Profile -- Cars */
+#adminAddEditCarPopup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgb(255 255 255 / 14%);
+  backdrop-filter: blur(4px);
+  z-index: 20;
+  display: none;
+}
+.admin-add-edit-car-popup-content {
+  background: var(--white-color);
+  width: 90%;
+  max-width: 600px;
+  margin: 30px auto;
+  padding: 20px;
+  max-height: 85%;
+  overflow-y: auto;
+  filter: drop-shadow(0px 0px 28.3px rgba(0, 0, 0, 0.1));
+  border-radius: 28px;
+  text-align: center;
+}
+
+.admin-car-container ul {
+  list-style: none;
+  padding: 0;
+}
+.admin-car-container ul .admin-car-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  border: 1px solid #ddd;
+  margin-bottom: 16px;
+  border-radius: 16px;
+  font-weight: 700;
+  flex-wrap: wrap;
+}
+.admin-car-container ul .admin-car-item .admin-car-item-btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.admin-car-container ul .admin-car-item .admin-car-item-btn button {
+  all: unset;
+  font-weight: 700;
+  cursor: pointer;
+}
+.admin-car-container ul .admin-car-item .admin-car-item-btn #adminEditCar {
+  color: var(--Third-color);
+}
+.admin-car-container ul .admin-car-item .admin-car-item-btn  #adminDeleteCar {
+  color: var(--second-color);
+}
+
+.admin-car-container #adminAddCar {
+  all: unset;
+  color: var(--main-color);
+  padding: 12px 36px;
+  border-radius: 16px;
+  border: 1px solid var(--main-color);
+  cursor: pointer;
+}
+
+.admin-add-edit-car-popup-content h3 {
+  color: var(--main-color);
+  text-align: right;
+  font-size: 22px;
+}
+.admin-add-edit-car-popup-content input {
+  all: unset;
+  width: 100%;
+  padding: 16px 32px;
+  box-sizing: border-box;
+  border-radius: 36px;
+  background-color: rgba(0, 0, 0, 0.04);
+  text-align: right;
+}
+
+.admin-add-edit-car-popup-content .file-upload .file-button {
+  all: unset;
+  width: 100%;
+  padding: 16px 32px;
+  box-sizing: border-box;
+  border-radius: 36px;
+  background-color: var(--main-color);
+  text-align: center;
+  color: var(--black-color);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.admin-add-edit-car-popup-content button[type="submit"] {
+  all: unset;
+  color: var(--main-color);
+  padding: 12px 36px;
+  border-radius: 16px;
+  border: 1px solid var(--main-color);
+  cursor: pointer;
+  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 16px;
+  margin-bottom: 24px;
+  transition: all 0.2s ease;
+}
+.admin-add-edit-car-popup-content button[type="submit"]:hover {
+  scale: 0.98;
+}
+
+/* Admin Profile -- Users */
+#adminAddEdituserPopup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgb(255 255 255 / 14%);
+  backdrop-filter: blur(4px);
+  z-index: 20;
+  display: none;
+}
+.admin-add-edit-user-popup-content {
+  background: var(--white-color);
+  width: 90%;
+  max-width: 400px;
+  margin: 30px auto;
+  padding: 20px;
+  max-height: 85%;
+  overflow-y: auto;
+  filter: drop-shadow(0px 0px 28.3px rgba(0, 0, 0, 0.1));
+  border-radius: 28px;
+  text-align: center;
+  box-sizing: border-box;
+}
+.admin-add-edit-user-popup-content h3 {
+  font-size: 22px;
+  margin-bottom: 36px;
+}
+.admin-add-edit-user-popup-content form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+.admin-add-edit-user-popup-content form input {
+  all: unset;
+  width: 100%;
+  padding: 16px 32px;
+  box-sizing: border-box;
+  border-radius: 36px;
+  background-color: rgba(0, 0, 0, 0.04);
+  text-align: right;
+  appearance: unset;
+}
+.admin-add-edit-user-popup-content form button {
+  all: unset;
+  width: 100%;
+  padding: 16px 32px;
+  box-sizing: border-box;
+  border-radius: 36px;
+  background-color: var(--main-color);
+  text-align: center;
+  cursor: pointer;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 36px;
+}
+
+.admin-user-container ol {
+  counter-reset: item;
+  padding-right: 0;
+}
+.admin-user-container ol li {
+  counter-increment: item;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 12px 36px 12px 24px;
+  border: 1px solid #ddd;
+  margin-bottom: 16px;
+  border-radius: 16px;
+  font-weight: 700;
+  position: relative;
+}
+.admin-user-container ol li::before {
+  content: counter(item) ".";
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: bold;
+}
+
+.admin-user-container ol li p {
+  color: var(--Third-color);
+}
+
+.admin-user-container ol li button {
+  all: unset;
+  font-weight: 700;
+  cursor: pointer;
+}
+.admin-user-container ol li #adminEdituser {
+  color: var(--Third-color);
+  margin-left: 24px;
+}
+.admin-user-container ol li #adminDeleteuser {
+  color: var(--second-color);
+}
+
+
+/* Admin Profile -- Drivers */
+#adminAddEditdriverPopup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgb(255 255 255 / 14%);
+  backdrop-filter: blur(4px);
+  z-index: 20;
+  display: none;
+}
+.admin-add-edit-driver-popup-content {
+  background: var(--white-color);
+  width: 90%;
+  margin: 30px auto;
+  padding: 20px;
+  max-height: 85%;
+  overflow-y: auto;
+  filter: drop-shadow(0px 0px 28.3px rgba(0, 0, 0, 0.1));
+  border-radius: 28px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.admin-driver-container ol {
+  counter-reset: item;
+  padding-right: 0;
+}
+.admin-driver-container ol li {
+  counter-increment: item;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 12px 36px 12px 24px;
+  border: 1px solid #ddd;
+  margin-bottom: 16px;
+  border-radius: 16px;
+  font-weight: 700;
+  position: relative;
+}
+.admin-driver-container ol li::before {
+  content: counter(item) ".";
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: bold;
+}
+
+.admin-driver-container ol .deactive {
+  filter: grayscale(1);
+  background-color: rgb(230, 230, 230);
+  pointer-events: none;
+}
+
+.admin-driver-container ol li button {
+  all: unset;
+  font-weight: 700;
+  cursor: pointer;
+}
+.admin-driver-container ol li #adminEditdriver {
+  color: var(--Third-color);
+  margin-left: 24px;
+}
+.admin-driver-container ol li #adminDeletedriver {
+  color: var(--second-color);
+  pointer-events: auto !important;
+}
+.admin-add-edit-driver-popup-content .admin-aed-popup-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.admin-add-edit-driver-popup-content .admin-aed-popup-top h3 {
+  font-size: 18px;
+}
+.admin-add-edit-driver-popup-content .admin-aed-popup-top button {
+  all: unset;
+  color: var(--second-color);
+  font-weight: 700;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.admin-add-edit-driver-popup-content .u-profile-content {
+  background-color: transparent;
+  padding: 0;
+}
+
+
+/* Admin Profile -- Driver Doc */
+#adminAddSeedriverdockPopup,
+#adminAddDeletedriverdockPopup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgb(255 255 255 / 14%);
+  backdrop-filter: blur(4px);
+  z-index: 20;
+  display: none;
+}
+.admin-delete-driverdock-popup-content {
+  background: var(--white-color);
+  width: 90%;
+  max-width: 600px;
+  margin: 30px auto;
+  padding: 20px;
+  max-height: 85%;
+  overflow-y: auto;
+  filter: drop-shadow(0px 0px 28.3px rgba(0, 0, 0, 0.1));
+  border-radius: 28px;
+  text-align: center;
+  box-sizing: border-box;
+}
+.admin-see-driverdock-popup-content {
+  background: var(--white-color);
+  width: 90%;
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 20px;
+  max-height: 85%;
+  overflow-y: auto;
+  filter: drop-shadow(0px 0px 28.3px rgba(0, 0, 0, 0.1));
+  border-radius: 28px;
+  text-align: center;
+  box-sizing: border-box;
+}
+.admin-see-driverdock-popup-content h3,
+.admin-delete-driverdock-popup-content h3 {
+  font-size: 22px;
+  margin-bottom: 36px;
+  text-align: center;
+}
+
+.admin-driverdock-container ol {
+  counter-reset: item;
+  padding-right: 0;
+}
+.admin-driverdock-container ol li {
+  counter-increment: item;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 12px 36px 12px 24px;
+  border: 1px solid #ddd;
+  margin-bottom: 16px;
+  border-radius: 16px;
+  font-weight: 700;
+  position: relative;
+}
+.admin-driverdock-container ol li::before {
+  content: counter(item) ".";
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: bold;
+}
+
+.admin-driverdock-container ol li button {
+  all: unset;
+  font-weight: 700;
+  cursor: pointer;
+}
+.admin-driverdock-container ol li #adminSeeDriverDoc {
+  color: var(--Third-color);
+  margin-left: 12px;
+}
+.admin-driverdock-container ol li #adminDeletedriverdockDoc {
+  color: var(--second-color);
+}
+
+.admin-delete-driverdock-popup-content form textarea {
+  all: unset;
+  width: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+  border-radius: 12px;
+  background-color: rgba(0, 0, 0, 0.04);
+  text-align: right;
+  appearance: unset;
+  box-sizing: border-box;
+}
+.admin-delete-driverdock-popup-content form section {
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 60%;
+  gap: 12px;
+  box-sizing: border-box;
+  margin: 12px auto;
+}
+.admin-delete-driverdock-popup-content form button {
+  all: unset;
+  font-weight: 700;
+  color: var(--white-color);
+  width: 100%;
+  padding: 12px;
+  border-radius: 36px;
+  background-color: var(--second-color);
+  cursor: pointer;
+  box-sizing: border-box;
+}
+.admin-delete-driverdock-popup-content form #adminAddDeletedriverdockPopupClose {
+  background-color: var(--black-color);
+}
+
+.admin-see-driverdock-popup-content section {
+  text-align: right;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #ddd;
+}
+.admin-see-driverdock-popup-content .images {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  text-align: center;
+  flex-wrap: wrap;
+}
+.admin-see-driverdock-popup-content .images div img {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.admin-see-driverdock-popup-content .admin-driver-doc-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 60%;
+  gap: 12px;
+  box-sizing: border-box;
+  margin: 12px auto;
+}
+.admin-see-driverdock-popup-content .admin-driver-doc-actions button {
+  all: unset;
+  font-weight: 700;
+  color: var(--white-color);
+  width: 100%;
+  padding: 12px;
+  border-radius: 36px;
+  background-color: var(--Third-color);
+  cursor: pointer;
+  box-sizing: border-box;
+}
+.admin-see-driverdock-popup-content .admin-driver-doc-actions #adminAddSeedriverdockPopupClose {
+  background-color: var(--black-color);
+}
+
+/* Admin profile -- Driver Reports */
+.driver-reports-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+.driver-reports-table th, .driver-reports-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+  cursor: pointer;
+}
+.driver-reports-table th {
+  background-color: var(--white-color);
+}
+.driver-reports-table tr:hover {
+  background-color: var(--white-color);
+}
+.filter-container {
+  margin-bottom: 20px;
+}
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgb(255 255 255 / 14%);
+  backdrop-filter: blur(4px);
+  z-index: 20;
+  display: none;
+}
+.modal-content {
+  background: var(--white-color);
+  width: 90%;
+  /* max-width: 600px; */
+  margin: 30px auto;
+  padding: 20px;
+  max-height: 85%;
+  overflow-y: auto;
+  filter: drop-shadow(0px 0px 28.3px rgba(0, 0, 0, 0.1));
+  border-radius: 28px;
+  text-align: center;
+  box-sizing: border-box;
+}
+.close {
+  color: var(--second-color);
+  float: left;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.close:hover {
+  color: black;
+}
+.modal-content h2 {
+  text-align: right;
+}
+.modal-content .atc-all-trip {
+  opacity: 0.5;
+  text-align: right;
+}
+
+.admin-driverdock-container #sortFilter {
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #555;
+  font-family: 'Vazir-FD';
+  text-align: center;
+  appearance: none;
+}
+
+/* Admin Profile -- Zones */
+.admin-zones-container .zones-admin {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  box-sizing: border-box;
+}
+.admin-zones-container .zones-admin input {
+  all: unset;
+  background-color: rgba(0, 0, 0, 0.04);
+  padding: 18px 36px;
+  border-radius: 36px;
+  text-align: right;
+  box-sizing: border-box;
+}
+.admin-zones-container .zones-admin button {
+  all: unset;
+  color: var(--main-color);
+  padding: 12px 36px;
+  border-radius: 16px;
+  border: 1px solid var(--main-color);
+  cursor: pointer;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.admin-zones-container .zones-list {
+  margin-top: 32px;
+  display: block;
+}
+.admin-zones-container .zones-list li {
+  margin-bottom: 16px;
+}
+.admin-zones-container .zones-list li .list-zone-delete {
+  all: unset;
+  font-weight: 700;
+  color: var(--second-color);
+  cursor: pointer;
+  padding-inline: 12px;
+}
+
+/* Admin Profile -- Admins */
+#adminAddEditadmPopup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgb(255 255 255 / 14%);
+  backdrop-filter: blur(4px);
+  z-index: 20;
+  display: none;
+}
+.admin-add-edit-adm-popup-content {
+  background: var(--white-color);
+  width: 90%;
+  max-width: 400px;
+  margin: 30px auto;
+  padding: 20px;
+  max-height: 85%;
+  overflow-y: auto;
+  filter: drop-shadow(0px 0px 28.3px rgba(0, 0, 0, 0.1));
+  border-radius: 28px;
+  text-align: center;
+  box-sizing: border-box;
+}
+.admin-add-edit-adm-popup-content h3 {
+  font-size: 22px;
+  margin-bottom: 36px;
+}
+.admin-add-edit-adm-popup-content form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+.admin-add-edit-adm-popup-content form input {
+  all: unset;
+  width: 100%;
+  padding: 16px 32px;
+  box-sizing: border-box;
+  border-radius: 36px;
+  background-color: rgba(0, 0, 0, 0.04);
+  text-align: right;
+  appearance: unset;
+}
+.admin-add-edit-adm-popup-content form button {
+  all: unset;
+  width: 100%;
+  padding: 16px 32px;
+  box-sizing: border-box;
+  border-radius: 36px;
+  background-color: var(--main-color);
+  text-align: center;
+  cursor: pointer;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 36px;
+}
+
+.admin-adm-container ol {
+  counter-reset: item;
+  padding-right: 0;
+}
+.admin-adm-container ol li {
+  counter-increment: item;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 12px 36px 12px 24px;
+  border: 1px solid #ddd;
+  margin-bottom: 16px;
+  border-radius: 16px;
+  font-weight: 700;
+  position: relative;
+}
+.admin-adm-container ol li::before {
+  content: counter(item) ".";
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: bold;
+}
+
+.admin-adm-container ol li button {
+  all: unset;
+  font-weight: 700;
+  cursor: pointer;
+}
+.admin-adm-container ol li #adminEditadm {
+  color: var(--Third-color);
+  margin-left: 24px;
+}
+.admin-adm-container ol li #adminDeleteadm {
+  color: var(--second-color);
+}
+
+.admin-adm-container #adminAddADM {
+  all: unset;
+  color: var(--main-color);
+  padding: 12px 36px;
+  border-radius: 16px;
+  border: 1px solid var(--main-color);
+  cursor: pointer;
+}
+
+/* Admin Profile -- Notifications */
+.admin-notifications-container #notificationsAllDelete {
+  all: unset;
+  color: var(--main-color);
+  font-weight: 700;
+  text-align: right;
+  cursor: pointer;
+  margin-bottom: 16px;
+  font-size: 16px;
+}
+
+.admin-notifications-container ul {
+  list-style: none;
+  padding: 0;
+}
+.admin-notifications-container ul li {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  padding: 14px 28px;
+  margin-bottom: 12px;
+}
+.admin-notifications-container ul li img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+.admin-notifications-container ul li p {
+  font-weight: 600;
+}
+
+/* Admin Profile -- Setting */
+.admin-setting-container .admin-settings-base {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  box-sizing: border-box;
+  margin-bottom: 24px;
+}
+.admin-setting-container .admin-settings-base input {
+  all: unset;
+  background-color: rgba(0, 0, 0, 0.04);
+  padding: 18px 36px;
+  border-radius: 36px;
+  text-align: right;
+  box-sizing: border-box;
+}
+
+.admin-setting-container .admin-settings-colors {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  box-sizing: border-box;
+  margin-block: 32px;
+}
+.admin-setting-container .admin-settings-colors .color-pick {
+  background-color: #F6F6F6;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+  padding: 0;
+}
+.admin-setting-container .admin-settings-colors .color-pick input {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  width: 60px;
+  height: 60px;
+}
+.admin-setting-container .admin-settings-colors .color-pick p {
+  opacity: 0.5;
+}
+
+.admin-setting-container .admin-settings button {
+  all: unset;
+  color: var(--black-color);
+  background-color: var(--main-color);
+  padding: 14px 42px;
+  border-radius: 36px;
+  cursor: pointer;
+  box-sizing: border-box;
+  font-weight: 700;
+}
+.admin-errors {
+    background-color: #f8d7da; /* پس زمینه قرمز روشن */
+    color: #842029;
+    border: 1px solid #f5c2c7;
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.admin-success {
+    background-color: #d1e7dd; /* پس زمینه سبز روشن */
+    color: #0f5132;
+    border: 1px solid #badbcc;
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+/* Animations */
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive */
+@media screen and (max-width: 1024px) {
+  /* Admin Login page */
+  .admin-login-container {
+    grid-template-columns: 1fr 1fr;
+  }
+  .admin-login-container .admin-login {
+    padding: 30px;
+  }
+  .admin-login-container .admin-img-login {
+    width: 70%;
+  }
+
+  /* Passenger current trip */
+  .passenger-trip-content .trip-driver-info img {
+    right: 50%;
+    transform: translateX(50%);
+    top: -40px;
+    width: 70px;
+    height: 70px;
+  }
+  .passenger-trip-content .trip-driver-info {
+    margin-top: 50px;
+    justify-content: center;
+    padding-top: 36px;
+    margin-right: 0;
+  }
+  .passenger-trip-content .trip-driver-info .driver-info {
+    margin-right: 0;
+    justify-content: center;
+  }
+  .passenger-trip-content .trip-driver-info .driver-info p {
+    margin: 0;
+  }
+  
+  /* Driver Unverfied */
+  .u-driver-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Admin Profile */
+  .admin-sidebar {
+    transform: translateX(100%);
+    padding-top: 80px;
+  }
+  .admin-sidebar.open {
+    transform: translateX(0);
+  }
+  .admin-side-title {
+    display: none;
+  }
+  .admin-content {
+    margin-right: 0;
+    padding-top: 80px;
+  }
+  .admin-md-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--white-color);
+    z-index: 101;
+    position: fixed;
+    width: 100%;
+    box-shadow: 0px 0px 45px rgba(0, 0, 0, 0.08);
+    padding: 9px 16px;
+    box-sizing: border-box;
+  }
+  .admin-md-header button {
+    all: unset;
+    cursor: pointer;
+  }
+  .admin-md-header button img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+  }
+  .admin-md-header section {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  .admin-md-header h2 {
+    font-size: 18px;
+  }
+  .admin-md-header a {
+    color: var(--white-color);
+    background-color: var(--second-color);
+    padding: 8px 18px;
+    border-radius: 24px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  /* Admin Profile -- Travels */
+  .admin-travels-content .trip-passenger-info {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  /* Login page */
+  .login-signup-container,
+  .state-page-content {
+    width: 90%;
+    padding: 24px;
+    margin: 0 auto;
+  }
+  .login-signup-container .tel-input {
+    flex-direction: column;
+    margin-bottom: 60px;
+    width: 100%;
+  }
+  .login-signup-container .tel-input input[type="submit"] {
+    position: absolute;
+    bottom: -50px;
+  }
+  .login-signup-container .tel-input input[type="tel"] {
+    text-align: center;
+  }
+  .login-signup-container .agree-policy {
+    text-align: center;
+  }
+
+  /* Admin Login page */
+  .admin-login-container {
+    grid-template-columns: 1fr;
+  }
+  .admin-login-container .admin-img-login {
+    display: none;
+  }
+  .admin-login-container .admin-login {
+    width: 90%;
+    padding: 48px 24px;
+    margin: 0 auto;
+    height: auto;
+    border-radius: 16px;
+  }
+
+  /* Home page */
+  .home-header-center img{
+    width: 110px;
+  }
+  .home-header-left a img, .home-header-right a img, .home-header-left button img {
+    width: 22px;
+    height: 22px;
+  }
+  .home-header-left a, .home-header-right a, .home-header-left button {
+    padding: 18px;
+  }
+  #controls {
+    width: 100%;
+    border-radius: 0;
+    padding: 12px;
+  }
+  #controls button {
+    margin-inline: 8px;
+  }
+  .form-data-time {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .form-data-time .form-data-picker img {
+    width: 22px;
+    height: 22px;
+  }
+  .form-location-lists {
+    grid-template-columns: 1fr;
+    margin-block: 10px;
+  }
+  .form-location-lists img {
+    display: none;
+  }
+  .form-info-extra {
+    gap: 12px;
+  }
+  .form-info-extra .form-input-item {
+    padding: 14px 20px;
+  }
+  #results {
+    flex-direction: column;
+  }
+  #results p {
+    margin: 6px;
+  }
+  .form-buttons-container {
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+  .popup-content {
+    box-sizing: border-box;
+    max-height: 90%;
+  }
+  .form-buttons-container section {
+    box-sizing: border-box;
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    flex-direction: column-reverse;
+    width: 100%;
+    gap: 6px;
+    text-align: center;
+  }
+  .form-buttons-container button[type="button"] {
+    margin-left: 0;
+  }
+  
+  /* State Pages */
+  .state-page-content img {
+    margin-block: 16px 8px;
+  }
+  .state-page-content p {
+    width: 100%;
+  }
+  .state-page-content .state-buttons {
+    box-sizing: border-box;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 16px;
+    margin-bottom: 0;
+    width: 70%;
+  }
+  .state-page-content .user-state-pay-btn {
+    width: 100%;
+    margin: 10px auto;
+    margin-top: 16px;
+  }
+  .state-page-content h1 {
+    font-size: 20px;
+  }
+  
+  /* User Has trip Alert */
+  .has-trip-alert {
+    width: 90%;
+    padding: 6px 16px;
+  }
+  
+  /* Passenger current trip */
+  .passenger-item-title .trip-date,
+  .passenger-item-title .trip-time {
+    display: none;
+  }
+  #closeUserCurrentTripPopup {
+    width: 90%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .passenger-trip-content .trip-total-price {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .trip-extra-info-md {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    box-sizing: border-box;
+    margin-bottom: 16px;
+  }
+  
+  /* User profile */
+  .u-profile-info {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .u-profile-username {
+    flex-direction: column;
+  }
+  .u-profile-username h2 {
+    margin: 0;
+  }
+  .u-profile-type {
+    text-align: center;
+    margin-top: 12px;
+  }
+  .u-profile-tab-item form section {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .u-profile-tab-item form button {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .u-profile-tabs > div {
+    padding: 4px 16px;
+  }
+  .u-profile-tabs {
+    gap: 4px;
+  }
+  .u-profile-back-btn .u-profile-back-img {
+    width: 22px;
+    height: 22px;
+  }
+  
+  /* Driver Unverfied */
+  .u-driver-grid-2 {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .u-driver-grid-4 {
+    grid-template-columns: 1fr;
+  }
+  .u-driver-form-submit {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .u-driver-form {
+    padding: 6px;
+  }
+  
+  /* Driver State */
+  .driver-in-prossese img {
+    width: 200px;
+  }
+  .driver-in-prossese {
+    padding-block: 70px;
+  }
+
+  /* Driver Profile */
+  .driver-profile-content {
+    box-sizing: border-box;
+    max-height: 90%;
+  }
+  .driver-profile-content section {
+    width: 60%;
+    gap: 12px;
+    grid-template-columns: 1fr;
+  }
+  
+  .driver-profile .passenger-trip-item img {
+    position: absolute;
+    left: 24px;
+    top: 30%;
+  }
+  .driver-profile .u-profile-tab-content .passenger-trip-item {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .driver-profile .passenger-trip-item section {
+    width: 100%;
+    justify-content: space-around;
+  }
+  .driver-profile .passenger-trip-item section button {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    text-align: center !important;
+    padding: 6px 0 !important;
+  }
+  .driver-profile .passenger-item-title {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .driver-profile .u-profile-tab-content .passenger-trip-item .trip-state {
+    padding-right: 0;
+    margin-right: 0;
+    border-right: 0;
+  }
+  .driver-profile .u-profile-tab-content .ud-tab2 .passenger-trip-item .trip-state {
+    display: none;
+  }
+  .driver-profile .u-profile-tab-content .ud-tab2 .passenger-trip-content .trip-driver-info {
+    flex-direction: column;
+    justify-content: center;
+  }
+  .driver-profile .u-profile-tab-content .ud-tab2 .passenger-trip-item {
+    gap: 20px;
+  }
+
+  .driver-profile .u-profile-tab-content .ud-tab3 .passenger-trip-item .trip-state {
+    padding-right: 6px;
+    margin-right: 6px;
+    border-right: 1px solid #ddd;
+  }
+  .driver-profile .ud-tab3 .passenger-item-title {
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+  }
+  .driver-profile .ud-tab3 .passenger-trip-item img {
+    position: unset;
+    left: unset;
+    top: unset;
+  }
+  .driver-profile .ud-tab3 .passenger-trip-item {
+    align-items: center;
+    flex-direction: row;
+  }
+  .driver-profile .u-profile-tab-content .ud-tab3 .passenger-trip-content .trip-driver-info {
+    justify-content: center;
+  }
+  
+  /* Admin profile -- Dashboard */
+  .admin-dashboard-content {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 0;
+  }
+  .admin-dashboard-content div h3 {
+    margin-bottom: 16px;
+  }
+  .admin-dashboard-content div {
+    padding: 8px 16px;
+  }
+
+  /* Admin Profile -- Travels */
+  .status-filter-buttons {
+    gap: 6px;
+  }
+  .status-filter-buttons button {
+    padding: 6px 12px;
+  }
+  .sort-search-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .admin-trip-actions-btn {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .admin-travels-content .trip-passenger-info {
+    gap: 6px;
+  }
+  .add-driver-trip-content {
+    box-sizing: border-box;
+  }
+
+  
+  /* Admin Profile -- Cars */
+  .admin-add-edit-car-popup-content {
+    box-sizing: border-box;
+  }
+  .admin-add-edit-car-popup-content button[type="submit"] {
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Admin Profile -- Notifications */
+  .admin-notifications-container ul li {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 0;
+  }
+  .admin-notifications-container ul li p {
+    border-top: 1px solid #ddd;
+    width: 100%;
+    padding-top: 12px;
+    padding-bottom: 0;
+  }
+}
