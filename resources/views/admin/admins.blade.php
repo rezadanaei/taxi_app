@@ -43,7 +43,6 @@
           </div>
       @endif
 
-      {{-- نمایش موفقیت --}}
       @if (session('success'))
           <div class="admin-success">
               {{ session('success') }}
@@ -54,7 +53,6 @@
           <h3>ویرایش / افزودن ادمین</h3>
           <form action="{{ route('admin.admins.save') }}" method="POST">
             @csrf
-            <!-- hidden input برای شناسایی ویرایش -->
             <input type="hidden" name="admin_id" id="admin_id" value="">
 
             <input type="text" name="name" id="adminName" placeholder="نام" value="">

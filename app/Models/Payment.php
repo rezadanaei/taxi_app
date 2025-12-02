@@ -21,7 +21,7 @@ class Payment extends Model
     ];
 
     /**
-     * ارتباط با کاربر
+     * Relationship with the user
      */
     public function user()
     {
@@ -29,8 +29,8 @@ class Payment extends Model
     }
 
     /**
-     * ارتباط polymorphic با مدل‌های پرداخت‌شده
-     * مانند Trip، Wallet، Service و غیره
+     * Polymorphic relationship with payable models
+     * such as Trip, Wallet, Service, etc.
      */
     public function payable()
     {
@@ -38,7 +38,7 @@ class Payment extends Model
     }
 
     /**
-     * بررسی موفقیت تراکنش
+     * Check if the transaction was successful
      */
     public function isSuccess(): bool
     {
@@ -46,7 +46,7 @@ class Payment extends Model
     }
 
     /**
-     * بررسی در حال پرداخت بودن تراکنش
+     * Check if the transaction is pending
      */
     public function isPending(): bool
     {
@@ -54,7 +54,7 @@ class Payment extends Model
     }
 
     /**
-     * بررسی تراکنش ناموفق
+     * Check if the transaction failed
      */
     public function isFailed(): bool
     {

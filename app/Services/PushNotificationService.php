@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\UserPushToken;
-use Minishlink\WebPush\WebPush; // اگر از Web Push پکیج استفاده می‌کنیم
+use Minishlink\WebPush\WebPush; 
 use Minishlink\WebPush\Subscription;
 use LaravelFCM\Message\OptionsBuilder;
 use LaravelFCM\Message\PayloadNotificationBuilder;
@@ -14,16 +14,16 @@ use Illuminate\Support\Facades\Http;
 class PushNotificationService
 {
     /**
-     * ارسال نوتیفیکیشن به رانندگان
+     * Send a notification to drivers
      *
      * @param $userId
      * @param string $title
      * @param string $body
      * @param array $data
      */
+
     public function sendToUsers( $userId, string $title, string $body, array $data = [])
     {
-        // همه توکن‌های راننده‌ها را می‌گیریم
         $tokens = UserPushToken::where('user_id', $userId)->get();
         foreach ($tokens as $token) {
             if ($token->type === 'web_push') {
@@ -38,7 +38,7 @@ class PushNotificationService
     }
 
     /**
-     * ارسال Web Push
+     * Send Web Push
      */
     protected function sendWebPush(string $token, string $title, string $body, array $data = [])
     {
@@ -80,7 +80,7 @@ class PushNotificationService
 
 
     /**
-     * ارسال FCM
+     * Send FCM
      */
     protected function sendFCM(string $token, string $title, string $body, array $data)
     {

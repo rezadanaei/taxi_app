@@ -23,13 +23,11 @@ class PaymentController extends Controller
         $result = $zarinpal->verifyPayment($payment->authority, $payment->amount);
 
         if ($result['success']) {
-            // 1. آپدیت وضعیت پرداخت
             $payment->update([
                 'status' => 'success',
                 'ref_id' => $result['ref_id'],
             ]);
 
-            // 2. آپدیت وضعیت مدل مربوطه به paid
             if ($payment->payable) {
                 $payment->payable->update(['status' => 'paid']);
             }

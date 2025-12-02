@@ -250,22 +250,18 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", async () => {
-    // چک کردن پشتیبانی مرورگر
     if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
         console.log("Web Push در این مرورگر پشتیبانی نمی‌شود.");
         return;
     }
 
-    // گرفتن توکن CSRF و API Token از متا تگ‌ها
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
     const tokenMeta = document.querySelector('meta[name="api-token"]');
 
-    // ذخیره API Token یک‌بار برای همیشه
     if (tokenMeta && !localStorage.getItem("auth_token")) {
         localStorage.setItem("auth_token", tokenMeta.getAttribute('content'));
     }
 
-    // ثبت Service Worker
     let swRegistration;
     try {
         swRegistration = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
@@ -275,7 +271,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
-    // تبدیل base64url به Uint8Array
     function urlBase64ToUint8Array(base64String) {
         const padding = "=".repeat((4 - base64String.length % 4) % 4);
         const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
@@ -287,28 +282,23 @@ document.addEventListener("DOMContentLoaded", async () => {
         return outputArray;
     }
 
-    // تابع اصلی ثبت Push Subscription
     async function subscribeUser() {
         try {
-            // درخواست اجازه نوتیفیکیشن
             const permission = await Notification.requestPermission();
             if (permission !== "granted") {
                 console.log("کاربر اجازه نوتیفیکیشن نداد");
                 return false;
             }
 
-            // VAPID Public Key — از .env یا متا تگ بگیر (بهتر از ثابت نوشتن)
             const vapidPublicKey = "{{ env('VAPID_PUBLIC_KEY') ?? 'BKVeFmlrdaKcwXVNSbLtUWqm3vUgFDr4DQVBj104D9MUkwA3itSrbjr7wV3ldP1cMhmCnx8TiOhXrMS3RO0cbZs' }}";
             const applicationServerKey = urlBase64ToUint8Array(vapidPublicKey.trim());
 
-            // حذف اشتراک قدیمی (اگر وجود داشت)
             const existingSub = await swRegistration.pushManager.getSubscription();
             if (existingSub) {
                 console.log("اشتراک قدیمی پیدا شد → در حال حذف...");
                 await existingSub.unsubscribe();
             }
 
-            // ایجاد اشتراک جدید
             const subscription = await swRegistration.pushManager.subscribe({
                 userVisibleOnly: true,
                 applicationServerKey
@@ -316,7 +306,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             console.log("اشتراک جدید با موفقیت ایجاد شد");
 
-            // ارسال به سرور — دقیقاً همون ساختاری که کنترلرت انتظار داره
             const response = await fetch("{{ route('api.user-push-token.store') ?? '/api/user-push-token' }}", {
                 method: "POST",
                 headers: {
@@ -327,7 +316,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 },
                 body: JSON.stringify({
                     type: "web_push",
-                    token: JSON.stringify(subscription) // فقط این مهمه!
+                    token: JSON.stringify(subscription) 
                 })
             });
 
@@ -347,19 +336,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // اجرای خودکار در لود صفحه (فقط اگر اجازه نداده باشه)
     if (Notification.permission === "default") {
         await subscribeUser();
     } else if (Notification.permission === "granted") {
-        // حتی اگر قبلاً اجازه داده باشه، یه بار دیگه چک کنیم (برای مواقعی که کلید عوض شده)
         await subscribeUser();
     }
 
-    // دکمه دستی برای فعال‌سازی دوباره (مثلاً بعد از لاگین دوباره)
     const button = document.getElementById("request-notification-permission");
     if (button) {
         button.addEventListener("click", async () => {
-            // به‌روزرسانی توکن لاگین
             if (tokenMeta) {
                 localStorage.setItem("auth_token", tokenMeta.getAttribute('content'));
             }

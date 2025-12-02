@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('cars', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 100); // نام ماشین
-            $table->string('car_identifier', 50)->unique(); // شناسه یا آیدی ماشین
-            $table->foreignId('car_type_id') // اشاره به نوع ماشین
+            $table->string('name', 100);
+            $table->string('car_identifier', 50)->unique(); 
+            $table->foreignId('car_type_id') 
                   ->constrained('car_types')
                   ->onDelete('cascade')
-                  ->index(); // ایندکس برای سرعت بیشتر
+                  ->index(); 
 
             $table->timestamps();
         });

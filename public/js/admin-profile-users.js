@@ -1,34 +1,27 @@
 // Admin Profile users
 
-// دکمه‌های ویرایش کاربر
 document.querySelectorAll('#adminEdituser').forEach(button => {
   button.addEventListener('click', () => {
-    // گرفتن hidden input
     const hiddenInput = document.getElementById('id');
 
-    // گرفتن مقادیر از data-attributes
     const userId = button.getAttribute('data-id') || "";
     const name = button.getAttribute('data-name') || "";
     const phone = button.getAttribute('data-phone') || "";
     const nationalCode = button.getAttribute('data-national_code') || "";
     const birthDate = button.getAttribute('data-birth_date') || "";
 
-    // قرار دادن مقادیر در input ها
     hiddenInput.value = userId;
     document.getElementById('name').value = name;
     document.getElementById('phone').value = phone;
     document.getElementById('national_code').value = nationalCode;
     document.getElementById('birth_date').value = birthDate;
 
-    // باز کردن پاپ‌آپ
     document.getElementById('adminAddEdituserPopup').style.display = 'block';
   });
 });
 
-// دکمه‌های افزودن کاربر
 document.querySelectorAll('#adminAdduser').forEach(button => {
   button.addEventListener('click', () => {
-    // گرفتن المان‌های فرم
     const popup = document.getElementById('adminAddEdituserPopup');
     const hiddenInput = document.getElementById('id');
     const nameInput = document.getElementById('name');
@@ -36,14 +29,12 @@ document.querySelectorAll('#adminAdduser').forEach(button => {
     const nationalInput = document.getElementById('national_code');
     const birthInput = document.getElementById('birth_date');
 
-    // خالی کردن مقادیر فرم برای افزودن کاربر جدید
     hiddenInput.value = "";
     nameInput.value = "";
     phoneInput.value = "";
     nationalInput.value = "";
     birthInput.value = "";
 
-    // باز کردن پاپ‌آپ
     popup.style.display = 'block';
   });
 });

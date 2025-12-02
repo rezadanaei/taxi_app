@@ -1,5 +1,5 @@
 // ==========================
-// User Current Trip (با Event Delegation)
+// User Current Trip (Width Event Delegation)
 // ==========================
 document.addEventListener('click', function(e) {
     const item = e.target.closest('.passenger-trip-item');

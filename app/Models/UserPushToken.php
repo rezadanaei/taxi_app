@@ -15,7 +15,6 @@ class UserPushToken extends Model
         'token',
     ];
 
-    // رابطه با راننده
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');

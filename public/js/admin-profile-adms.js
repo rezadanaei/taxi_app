@@ -9,27 +9,23 @@ document.querySelectorAll('#adminEditadm').forEach(button => {
     const passwordInput = document.getElementById('adminPassword');
     const typeSelect = document.getElementById('adminType');
 
-    // گرفتن مقادیر از data attributes دکمه
     const adminId = button.getAttribute('data-id') || "";
     const name = button.getAttribute('data-name') || "";
     const username = button.getAttribute('data-username') || "";
     const phone = button.getAttribute('data-phone') || "";
     const type = button.getAttribute('data-type') || "";
 
-    // قرار دادن مقادیر در input ها
     adminIdInput.value = adminId;
     nameInput.value = name;
     usernameInput.value = username;
     phoneInput.value = phone;
-    passwordInput.value = ""; // رمز عبور همیشه خالی است
+    passwordInput.value = ""; 
     typeSelect.value = type;
 
-    // باز کردن پاپ‌آپ
     popup.style.display = 'block';
   });
 });
 
-// اضافه کردن ادمین جدید
 document.querySelectorAll('#adminAddADM').forEach(button => {
   button.addEventListener('click', () => {
     const popup = document.getElementById('adminAddEditadmPopup');
@@ -40,7 +36,6 @@ document.querySelectorAll('#adminAddADM').forEach(button => {
     const passwordInput = document.getElementById('adminPassword');
     const typeSelect = document.getElementById('adminType');
 
-    // خالی کردن همه فیلدها
     adminIdInput.value = "";
     nameInput.value = "";
     usernameInput.value = "";
@@ -48,7 +43,6 @@ document.querySelectorAll('#adminAddADM').forEach(button => {
     passwordInput.value = "";
     typeSelect.value = "";
 
-    // باز کردن پاپ‌آپ
     popup.style.display = 'block';
   });
 })

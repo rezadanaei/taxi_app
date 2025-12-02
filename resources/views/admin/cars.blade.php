@@ -16,7 +16,6 @@
   <link rel="stylesheet" href="{{ asset('css/style.css') }}">
   <!-- Favicon -->
   <style>
-    /* استایل تب‌ها با همان حس و حال قبلی */
     .admin-car-tabs {
       display: flex;
       border-bottom: 1px solid #ddd;
@@ -106,13 +105,11 @@
   <div class="admin-car-container">
     <h1>خودرو ها</h1>
 
-    <!-- تب‌ها -->
     <div class="admin-car-tabs">
       <div class="admin-car-tab active" data-tab="categories">دسته ماشین</div>
       <div class="admin-car-tab" data-tab="cars">ماشین‌ها</div>
     </div>
 
-    <!-- محتوای تب ماشین‌ها -->
     <div id="categories" class="admin-car-tab-content active">
       <div class="admin-car-content">
         @if (session('error'))
@@ -121,7 +118,6 @@
             </div>
         @endif
   
-        {{-- نمایش موفقیت --}}
         @if (session('success'))
             <div class="admin-success">
                 {{ session('success') }}
@@ -161,7 +157,7 @@
               <button id="adminEditCar" data-id="{{ $carType->id }}" data-title="{{ $carType->title }}" data-desc="{{ $carType->description }}" data-price_per_km="{{ $carType->price_per_km }}" data-header_image="{{asset('storage/' . $carType->header_image) }}">ویرایش</button>
               <form action="{{ route('admin.car-types.delete') }}" method="POST" class="delete-car-form">
                   @csrf
-                  <input type="hidden" name="carType_id" value="{{ $carType->id }}"> <!-- مقدار id خودرو را قرار بده -->
+                  <input type="hidden" name="carType_id" value="{{ $carType->id }}">
                   <button type="submit" id="adminDeleteCar2">حذف</button>
               </form>
 
@@ -175,7 +171,6 @@
       </div>
     </div>
 
-    <!-- محتوای تب دسته ماشین -->
     <div id="cars" class="admin-car-tab-content">
       <div class="admin-car-content">
         @if (session('error'))
@@ -184,7 +179,6 @@
           </div>
       @endif
 
-      {{-- نمایش موفقیت --}}
       @if (session('success'))
           <div class="admin-success">
               {{ session('success') }}
@@ -196,14 +190,11 @@
             <h3>ثبت / ویرایش ماشین</h3>
             <form action="{{ route('admin.cars.save') }}" method="POST">
                 @csrf
-                <!-- hidden input برای شناسایی ویرایش -->
                 <input type="hidden" name="car_id" id="car_id" value="">
 
                 <div class="u-driver-grid">
-                    <!-- نام ماشین -->
                     <input name="name" id="carName" type="text" placeholder="نام ماشین (مثل پراید)" value="">
 
-                    <!-- انتخاب دسته ماشین -->
                     <select name="car_type_id" id="carTypeSelect" class="category-select">
                         <option value="">انتخاب دسته خودرو</option>
                         @foreach ($carTypes as $carType)
@@ -243,14 +234,11 @@
 
   <script src="{{ asset('js/admin-profile-cars.js') }}"></script>
   <script>
-    // اسکریپت ساده برای سوئیچ تب‌ها
     document.querySelectorAll('.admin-car-tab').forEach(tab => {
       tab.addEventListener('click', () => {
-        // حذف active از همه
         document.querySelectorAll('.admin-car-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.admin-car-tab-content').forEach(c => c.classList.remove('active'));
 
-        // فعال کردن تب کلیک شده
         tab.classList.add('active');
         const target = tab.getAttribute('data-tab');
         document.getElementById(target).classList.add('active');
@@ -261,22 +249,18 @@
     document.querySelectorAll('#adminEditCar2').forEach(button => {
       button.addEventListener('click', () => {
 
-        // گرفتن hidden input
         const hiddenInput = document.getElementById('car_id');
 
-        // گرفتن data-id دکمه و وارد کردن در hidden input
+  
         const carId = button.getAttribute('data-id') || "";
         hiddenInput.value = carId;
 
-        // گرفتن سایر فیلدها از data attributes
         const name = button.getAttribute('data-title') || "";
         const carTypeId = button.getAttribute('data-car_type_id') || "";
 
-        // قرار دادن مقادیر در input ها
         document.getElementById('carName').value = name;
         document.getElementById('carTypeSelect').value = carTypeId;
 
-        // باز کردن پاپ‌آپ
         document.getElementById('adminAddEditCar2Popup').style.display = 'block';
       });
     });
@@ -284,18 +268,15 @@
 
     document.querySelectorAll('#adminAddCar2').forEach(button => {
       button.addEventListener('click', () => {
-        // گرفتن المان های فرم
         const popup = document.getElementById('adminAddEditCar2Popup');
         const hiddenInput = document.getElementById('car_id');
         const carNameInput = document.getElementById('carName');
         const carTypeSelect = document.getElementById('carTypeSelect');
 
-        // خالی کردن مقادیر فرم
         hiddenInput.value = "";
         carNameInput.value = "";
-        carTypeSelect.value = ""; // انتخاب پیش‌فرض
+        carTypeSelect.value = ""; 
 
-        // باز کردن پاپ‌آپ
         popup.style.display = 'block';
       });
     });

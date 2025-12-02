@@ -13,7 +13,6 @@ document.querySelectorAll('#adminEditdriver').forEach(button => {
 
     const popup = document.getElementById('adminAddEditdriverPopup');
     popup.style.display = 'block';
-    // اطلاعات شخصی
     popup.querySelector('input[name="id"]').value = button.dataset.id || '';
     popup.querySelector('input[name="first_name"]').value = button.dataset.firstname || '';
     popup.querySelector('input[name="last_name"]').value = button.dataset.lastname || '';
@@ -23,7 +22,6 @@ document.querySelectorAll('#adminEditdriver').forEach(button => {
     popup.querySelector('input[name="phone"]').value = button.dataset.phone || '';
     popup.querySelector('input[name="address"]').value = button.dataset.address || '';
 
-    // اطلاعات خودرو
     popup.querySelector('input[name="car_type"]').value = button.dataset.cartype || '';
     popup.querySelector('input[name="car_plate"]').value = button.dataset.carplate || '';
     popup.querySelector('input[name="license_number"]').value = button.dataset.licensenumber || '';
@@ -42,7 +40,6 @@ document.querySelectorAll('#adminEditdriver').forEach(button => {
     popup.querySelector('input[name="car_card_back"]').dataset.current = validImage(button.dataset.carcardback);
     popup.querySelector('input[name="car_insurance"]').dataset.current = validImage(button.dataset.carinsure);
 
-    // فرم تغییر وضعیت
     const toggleinput = document.getElementById('driverid');
     toggleinput.value = button.dataset.id;
 

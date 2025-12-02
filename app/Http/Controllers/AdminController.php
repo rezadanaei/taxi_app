@@ -57,14 +57,13 @@ class AdminController extends Controller
     }
     public function dashboard(Request $request)
     {
-        $tab = $request->query('tab', 'dashboard'); // پیش‌فرض: dashboard
+        $tab = $request->query('tab', 'dashboard'); 
 
         return view('admin-profile', compact('tab'));
     }
 
     public function loadAdminPage($slug)
     {
-        // لیست مجاز صفحات (Whitelisting) برای امنیت
         $allowedPages = [
             'dashboard'       => 'admin.dashboard-content', 
             'travels'         => 'admin.travels',           
@@ -86,7 +85,6 @@ class AdminController extends Controller
 
         $view = $allowedPages[$slug];
 
-        // فقط برای صفحه cars داده ارسال کن
         if ($slug == 'cars') {
             $carTypes = CarType::all();
             $cars = Car::all();
@@ -175,7 +173,6 @@ class AdminController extends Controller
     {
         $carTypeId = $request->input('carType_id');
 
-        // استفاده از Validator به جای $request->validate
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -184,7 +181,6 @@ class AdminController extends Controller
             'carType_id' => 'nullable|exists:car_types,id',
         ]);
 
-        // بررسی ایجاد یا ویرایش
         if (empty($carTypeId)) {
             $carType = new CarType();
         } else {
@@ -194,12 +190,10 @@ class AdminController extends Controller
             }
         }
 
-        // مقداردهی فیلدها
         $carType->title = $request->input('title');
         $carType->description = $request->input('description');
         $carType->price_per_km = $request->input('price_per_km');
 
-        // آپلود تصویر
         if ($request->hasFile('header_image')) {
             $file = $request->file('header_image');
             $path = $file->store('car_types', 'public');
@@ -222,7 +216,6 @@ class AdminController extends Controller
             return back()->with('error', 'دسته خودرو پیدا نشد.');
         }
 
-        // حذف دسته خودرو
         $carType->delete();
 
         return back()->with('success', 'دسته خودرو با موفقیت حذف شد.');
@@ -232,18 +225,16 @@ class AdminController extends Controller
     {
         $carId = $request->input('car_id');
 
-        // ولیدیشن ورودی‌ها
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'car_type_id' => 'required|exists:car_types,id',
-            'car_id' => 'nullable|exists:cars,id', // برای ویرایش
+            'car_id' => 'nullable|exists:cars,id',
         ]);
 
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
 
-        // ایجاد یا ویرایش ماشین
         if (empty($carId)) {
             $car = new Car();
         } else {
@@ -253,17 +244,14 @@ class AdminController extends Controller
             }
         }
 
-        // مقداردهی فیلدها
         $car->name = $request->input('name');
         $car->car_type_id = $request->input('car_type_id');
 
-        // تولید car_identifier یکتا بر اساس نام
-        if (empty($carId)) { // فقط در ایجاد جدید
+        if (empty($carId)) { 
             $baseSlug = Str::slug($request->input('name'));
             $slug = $baseSlug;
             $counter = 1;
 
-            // بررسی وجود slug در دیتابیس
             while (Car::where('car_identifier', $slug)->exists()) {
                 $slug = $baseSlug . '-' . $counter;
                 $counter++;
@@ -282,13 +270,11 @@ class AdminController extends Controller
     {
         $carId = $request->input('car_id');
 
-        // پیدا کردن ماشین
         $car = Car::find($carId);
         if (!$car) {
             return back()->with('error', 'ماشین پیدا نشد.');
         }
 
-        // حذف ماشین
         $car->delete();
 
         return back()->with('success', 'ماشین با موفقیت حذف شد.');
@@ -299,7 +285,6 @@ class AdminController extends Controller
     {
         $currentAdmin = Auth::guard('admin')->user();
 
-        // فقط ادمین owner اجازه ویرایش/افزودن دارد
         if (!$currentAdmin || $currentAdmin->type !== 'owner') {
             return back()->with('error', 'شما اجازه این عملیات را ندارید.');
         }
@@ -318,7 +303,6 @@ class AdminController extends Controller
             return back()->withErrors($validator)->withInput();
         }
 
-        // ایجاد یا ویرایش
         if (empty($adminId)) {
             $admin = new Admin();
         } else {
@@ -358,7 +342,6 @@ class AdminController extends Controller
             return back()->with('error', 'ادمین پیدا نشد.');
         }
 
-        // نمی‌گذاریم owner خودش را حذف کند
         if ($admin->id == $currentAdmin->id) {
             return back()->with('error', 'شما نمی‌توانید خودتان را حذف کنید.');
         }
@@ -476,7 +459,6 @@ class AdminController extends Controller
             return back()->withErrors($validator)->withInput();
         }
 
-        // ایجاد یا ویرایش
         if (empty($userId)) {
             $user = new User();
         } else {
@@ -489,7 +471,6 @@ class AdminController extends Controller
         $user->phone = $request->input('phone');
         $user->save();
 
-        // بررسی و ایجاد یا ویرایش passenger مرتبط
         if ($user->type === 'passenger') {
             $passenger = $user->userable ?? new Passenger();
             $passenger->name = $request->input('name');
@@ -710,37 +691,35 @@ class AdminController extends Controller
         $results = collect();
 
         if (is_numeric($query)) {
-            // اگر ورودی عدد است → جستجو در جدول users
             $users = User::where('userable_type', 'App\Models\Driver')
                 ->where('userable_id', $query)
-                ->with('userable') // رابطه Driver
+                ->with('userable') 
                 ->limit(10)
                 ->get();
 
             foreach ($users as $user) {
                 if ($user->userable) {
                     $results->push([
-                        'driver_id' => $user->userable->id,        // آیدی راننده در جدول drivers
-                        'user_id' => $user->id,                    // آیدی جدول users
+                        'driver_id' => $user->userable->id,        
+                        'user_id' => $user->id,                    
                         'first_name' => $user->userable->first_name,
                         'last_name' => $user->userable->last_name,
                     ]);
                 }
             }
         } else {
-            // اگر ورودی متن است → جستجو در جدول drivers
             $drivers = Driver::where(function($q) use ($query) {
                     $q->where('first_name', 'like', "%{$query}%")
                     ->orWhere('last_name', 'like', "%{$query}%");
                 })
-                ->with(['user']) // برای دریافت user مرتبط
+                ->with(['user']) 
                 ->limit(10)
                 ->get();
 
             foreach ($drivers as $driver) {
                 $results->push([
-                    'driver_id' => $driver->id,                       // آیدی جدول drivers
-                    'user_id' => $driver->user->id ?? null,           // آیدی جدول users اگر موجود باشد
+                    'driver_id' => $driver->id,                       
+                    'user_id' => $driver->user->id ?? null,           
                     'first_name' => $driver->first_name,
                     'last_name' => $driver->last_name,
                 ]);

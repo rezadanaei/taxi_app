@@ -27,7 +27,6 @@ class DriverSubmitted extends Notification
      */
     public function via($notifiable)
     {
-        // نام کانال سفارشی ما که در AppServiceProvider ثبت کردیم
         return [DriverDatabaseChannel::class];
     }
 

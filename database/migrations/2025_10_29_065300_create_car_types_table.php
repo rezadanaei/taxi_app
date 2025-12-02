@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('car_types', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 100); // نام دسته (لوکس، اقتصادی، ...)
-            $table->text('description')->nullable(); // توضیحات
-            $table->decimal('price_per_km', 10, 2)->default(0); // قیمت در هر کیلومتر (مثلاً 2500.00)
-            $table->string('header_image')->nullable(); // تصویر هدر (مسیر فایل)
+            $table->string('title', 100); 
+            $table->text('description')->nullable(); 
+            $table->decimal('price_per_km', 10, 2)->default(0); 
+            $table->string('header_image')->nullable(); 
             $table->timestamps();
         });
     }

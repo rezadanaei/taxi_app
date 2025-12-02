@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('zones', function (Blueprint $table) {
-            $table->id();$table->string('name')->nullable(); // نام اختیاری برای منطقه
-            $table->decimal('latitude', 10, 7);  // عرض جغرافیایی
-            $table->decimal('longitude', 10, 7); // طول جغرافیایی
-            $table->float('radius_km'); // شعاع منطقه به کیلومتر
+            $table->id();$table->string('name')->nullable(); 
+            $table->decimal('latitude', 10, 7);  
+            $table->decimal('longitude', 10, 7); 
+            $table->float('radius_km');
             $table->timestamps();
         });
     }

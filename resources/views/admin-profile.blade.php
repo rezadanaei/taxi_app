@@ -28,7 +28,6 @@
       border: none;
     }
 
-    /* استایل برای اینکه لینک خروج شبیه لینک بماند */
     .logout-link {
       cursor: pointer;
       color: #007bff;
@@ -120,30 +119,23 @@
   <script>
 // Admin Profile - JavaScript Logic
 
-// متغیر کمکی برای ساخت آدرس روت‌های لاراول در جاوا اسکریپت
-// از پارامتر '__SLUG__' به عنوان یک Placeholder برای جایگزینی استفاده می‌کنیم.
+
 const adminPageRoute = '{{ route('admin.page', ['slug' => '__SLUG__'], false) }}';
 const defaultPageSlug = 'dashboard';
 
-// لود صفحه
 function loadPage(pageSlug, el) { 
   let iframe = document.getElementById('admin-contentFrame');
   let loader = document.getElementById('loadingOverlay');
   
-  // نمایش لودینگ
   loader.style.display = "flex";
 
-  // *اصلاح مهم*: استفاده از روت داینامیک لاراول
   iframe.src = adminPageRoute.replace('__SLUG__', pageSlug);
 
-  // حذف active از همه
   let items = document.querySelectorAll('#menuList li');
   items.forEach(item => item.classList.remove('active'));
 
-  // فعال کردن آیتم کلیک شده
   el.classList.add('active');
 
-  // به‌روزرسانی URL با پارامتر تب
   const newUrl = new URL(window.location);
   newUrl.searchParams.set('tab', pageSlug); 
   window.history.pushState({}, '', newUrl);
@@ -153,12 +145,10 @@ function loadPage(pageSlug, el) {
   }
 }
 
-// تغییر عنوان براساس iframe و مخفی کردن لودینگ
 document.getElementById('admin-contentFrame').addEventListener('load', function () {
   let iframe = this;
   let loader = document.getElementById('loadingOverlay');
 
-  // مخفی کردن لودینگ
   loader.style.display = "none";
 
   try {
@@ -169,13 +159,11 @@ document.getElementById('admin-contentFrame').addEventListener('load', function 
       document.title = "پنل ادمین";
     }
   } catch (e) {
-    // این خطا به دلیل سیاست Same-Origin رخ می‌دهد
     console.warn("امکان خواندن تایتل صفحه iframe وجود ندارد (Cross-Origin).");
     document.title = "پنل ادمین";
   }
 });
 
-// وقتی صفحه لود شد، تب را از URL بگیر و صفحه را لود کن
 window.addEventListener('DOMContentLoaded', () => {
   let urlParams = new URLSearchParams(window.location.search);
   let tabFromUrl = urlParams.get('tab') || defaultPageSlug;
@@ -183,16 +171,12 @@ window.addEventListener('DOMContentLoaded', () => {
   let iframe = document.getElementById('admin-contentFrame');
   let loader = document.getElementById('loadingOverlay');
 
-  // نمایش لودینگ هنگام شروع
   loader.style.display = "flex";
 
-  // *اصلاح مهم*: استفاده از روت داینامیک لاراول
   iframe.src = adminPageRoute.replace('__SLUG__', tabFromUrl);
 
-  // پیدا کردن آیتم منو و فعال کردنش
   let items = document.querySelectorAll('#menuList li');
   items.forEach(item => {
-    // از slug برای فعال کردن استفاده می‌کنیم 
     if (item.getAttribute('onclick').includes("'" + tabFromUrl + "'")) {
       item.classList.add('active');
     } else {
@@ -205,7 +189,6 @@ function toggleMenu() {
   document.getElementById('adminSidebar').classList.toggle('open');
 }
 
-// مدیریت تغییر در تاریخچه مرورگر (برای دکمه‌های back/forward)
 window.addEventListener('popstate', () => {
   let urlParams = new URLSearchParams(window.location.search);
   let tabFromUrl = urlParams.get('tab') || defaultPageSlug;
@@ -214,12 +197,10 @@ window.addEventListener('popstate', () => {
   let loader = document.getElementById('loadingOverlay');
 
   loader.style.display = "flex";
-  // *اصلاح مهم*: استفاده از روت داینامیک لاراول
   iframe.src = adminPageRoute.replace('__SLUG__', tabFromUrl);
 
   let items = document.querySelectorAll('#menuList li');
   items.forEach(item => {
-    // از slug برای فعال کردن استفاده می‌کنیم
     if (item.getAttribute('onclick').includes("'" + tabFromUrl + "'")) {
       item.classList.add('active');
     } else {

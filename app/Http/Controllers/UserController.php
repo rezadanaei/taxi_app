@@ -69,7 +69,7 @@ class UserController extends Controller
 
             $trips = Trip::with(['carType', 'passenger', 'driver'])
                 ->where('passenger_id', $user->id)
-                ->orderBy('id', 'desc') // جدیدترین سفرها اول
+                ->orderBy('id', 'desc') 
                 ->paginate(30);
 
             return view('user-profile', compact('user', 'birth_display', 'trips'));
@@ -182,7 +182,7 @@ class UserController extends Controller
             'birth_date' => ['nullable','string','regex:/^\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2}$/'],
         ]);
 
-    $newPhone = isset($data['phone']) ? trim($data['phone']) : '';
+        $newPhone = isset($data['phone']) ? trim($data['phone']) : '';
 
         // If phone changed and not empty -> require verification
         if ($newPhone !== '' && $newPhone !== $user->phone) {
@@ -245,28 +245,23 @@ class UserController extends Controller
         ]);
         $phone = $data['phone'];
         $role  = $data['role'];
-        // ایجاد کد تصادفی 5 رقمی و ذخیره آن در کش با کلید شماره
         try {
             $code = random_int(10000, 99999);
         } catch (\Exception $e) {
-            // در صورتی که random_int در دسترس نباشد، از fallback استفاده کن
             $code = mt_rand(10000, 99999);
         }
 
-        // ذخیره کد در کش با کلید برابر شماره تلفن (انقضا 10 دقیقه)
         Cache::put($phone, $code, now()->addMinutes(10));
        
         $site_name = setting('site_name');
         $message = "Code: {$code}\n\nکد ورود به {$site_name} لطفا آن را در اختیار هیچ کس قرار ندهید\n\n#{$code}";
         $result = SMS::send($phone, $message );
 
-        // پاس دادن شماره و نقش به ویو تایید کد
         return view('verification-code', ['phone' => $phone, 'role' => $role]);
     }
 
     public function loginOrRegister(Request $request)
     {
-        // اعتبارسنجی ساده فرم
         $data = $request->validate([
             'phone' => 'required|string',
             'role'  => 'required|in:passenger,driver',
@@ -275,12 +270,9 @@ class UserController extends Controller
         $phone = $data['phone'];
         $role  = $data['role'];
 
-        // بررسی اینکه کاربر با این شماره قبلا ثبت شده یا نه
         $user = User::where('phone', $phone)->first();
 
         if ($user) {
-            // کاربر موجود است → لاگین
-            // می‌تونی اینجا session یا توکن JWT ایجاد کنی
             return response()->json([
                 'status' => 'login',
                 'message' => 'کاربر با موفقیت وارد شد',
@@ -288,14 +280,12 @@ class UserController extends Controller
             ]);
         }
 
-        // کاربر موجود نیست → ثبت نام جدید
         if ($role === 'passenger') {
-            $userable = Passenger::create([]); // فیلدها اختیاری هستند
+            $userable = Passenger::create([]); 
         } else { // driver
-            $userable = Driver::create([]); // می‌تونی فیلدهای پایه مثل status یا phone بعدا آپدیت کنی
+            $userable = Driver::create([]); 
         }
 
-        // ساخت رکورد در جدول users با رابطه polymorphic
         $user = User::create([
             'phone' => $phone,
             'type' => $role,

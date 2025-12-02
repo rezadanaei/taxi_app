@@ -3,14 +3,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const metaTag = document.querySelector('meta[name="zones"]');
     if (!metaTag) return;
 
-    // دریافت مقدار و تبدیل HTML entities به رشته عادی
     const content = metaTag.getAttribute('content')
-        .replace(/&quot;/g, '"'); // تبدیل &quot; به "
+        .replace(/&quot;/g, '"'); 
 
-    // تبدیل به آبجکت جاوااسکریپتی
     const zonesData = JSON.parse(content);
 
-    // استفاده از داده‌ها
     zonesData.forEach(zone => {
         addSpecialArea(
             parseFloat(zone.latitude),
@@ -21,7 +18,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     console.log("Zoneها از متا تگ خوانده شدند:", zonesData);
 
-    // حذف تگ متا از DOM
     metaTag.remove();
 });
 // Special Locations
@@ -146,9 +142,6 @@ jalaliDatepicker.startWatch({
 
 
 
-// تابع async برای گرفتن داده‌ها
-// script.js با type="module"
-
 async function myGlobalFunction() {
     const baseUrl = window.location.origin; 
     const response = await fetch(`${baseUrl}/neshan`, {
@@ -178,10 +171,8 @@ async function run() {
     return result;
 }
 
-// صبر کردن تا run کامل شود
 const result = await run();
 
-// خطوط بعدی بعد از run اجرا می‌شوند
 console.log("توابع بعدی اینجا اجرا می‌شوند");
 let API_KEY_WEB = result.API_KEY_WEB;
 let API_KEY_SERVICE = result.API_KEY_SERVICE;
@@ -262,11 +253,9 @@ async function updateLocationsList() {
 
   let html = '<ul>';
 
-  // آرایه‌های جدا برای ذخیره JSON
   let originsData = [];
   let destinationsData = [];
 
-  // پردازش مبدا ها
   for (let i = 0; i < origins.length; i++) {
     const coords = origins[i];
     const address = await getAddress(coords.lat, coords.lng);
@@ -280,7 +269,6 @@ async function updateLocationsList() {
     });
   }
 
-  // پردازش مقصد ها
   for (let i = 0; i < destinations.length; i++) {
     const coords = destinations[i];
     const address = await getAddress(coords.lat, coords.lng);
@@ -297,7 +285,6 @@ async function updateLocationsList() {
   html += '</ul>';
   listContainer.innerHTML = html;
 
-  // ذخیره JSON در hidden input ها
   document.getElementById('originsInput').value = JSON.stringify(originsData);
   document.getElementById('destinationsInput').value = JSON.stringify(destinationsData);
 }
@@ -309,7 +296,6 @@ function updateButtonsAndTitle() {
   const confirmBtn = document.getElementById('confirmBtn');
   backBtn.style.display = currentStep !== 'origin' || originCount > 1 ? 'block' : 'none';
   confirmBtn.style.display = currentStep === 'origin' && origins.length > 0 ? 'block' : 'none';
-  // document.getElementById('stepTitle').innerText = currentStep === 'origin' ? `افزودن مبدا ${originCount}` : `افزودن مقصد ${destinationCount}`;
   document.getElementById('addBtn').innerText = currentStep === 'origin' ? 'افزودن مبدا' : 'افزودن مقصد';
   document.getElementById('calcBtn').style.display = currentStep === 'destination' && destinations.length > 0 ? 'block' : 'none';
 }
@@ -409,7 +395,6 @@ async function calculatePrice() {
   let finalPrice = document.getElementById('finalPrice');
   let resultsDiv = document.getElementById('results'); 
 
-  // resultsDiv.innerHTML = '<p>در حال محاسبه...</p>';
   finalPrice.innerHTML = '<p>در حال محاسبه...</p>';
   
   let normalDistance = 0;
@@ -449,12 +434,11 @@ async function calculatePrice() {
           
           let multiplier = isInSpecialArea(midPoint);
           if (multiplier > 1) {
-            specialDistance += dist / 1000;  // کیلومتر
+            specialDistance += dist / 1000;  // Km
           } else {
-            normalDistance += dist / 1000;   // کیلومتر
+            normalDistance += dist / 1000;   // Km
           }
 
-          // آپدیت هیدن اینپوت‌ها در هر مرحله (می‌تونه یک بار در آخر هم باشه)
           document.getElementById("normalDistanceInput").value = normalDistance.toFixed(2);
           document.getElementById("specialDistanceInput").value = specialDistance.toFixed(2);
           document.getElementById("totalDistanceInput").value = (normalDistance + specialDistance).toFixed(2);
@@ -472,7 +456,7 @@ async function calculatePrice() {
   }
   const baseUrl = window.location.origin;
 
-  let areaCoef = 1; // مقدار پیش‌فرض
+  let areaCoef = 1;
 
   fetch(`${baseUrl}/settings/tariffs`)
     .then(res => res.json())

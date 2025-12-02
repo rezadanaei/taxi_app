@@ -43,7 +43,6 @@ class ZarinpalService
         $req->description   = $data['description'];
         $req->callback_url  = $data['callback_url'];
 
-        // فیلدهای اختیاری
         $req->mobile        = $data['mobile'] ?? null;
         $req->email         = $data['email'] ?? null;
         $req->currency      = $data['currency'] ?? 'IRR';

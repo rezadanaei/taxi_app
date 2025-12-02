@@ -12,25 +12,24 @@ use Morilog\Jalali\Jalalian;
 
 if (!function_exists('tariff')) {
     /**
-     * دریافت تنظیمات تعرفه‌ها
+     * Retrieve tariff settings
      *
-     * الگوریتم:
-     * 1) ابتدا cache را چک می‌کند
-     * 2) اگر نبود، دیتابیس را چک می‌کند
-     * 3) اگر دیتابیس خالی بود، مقدار پیش‌فرض از config می‌گیرد
+     * Algorithm:
+     * 1) First, it checks the cache
+     * 2) If not found, it checks the database
+     * 3) If the database is empty, it takes the default value from the config
      *
      * @param string|null $key
      * @return mixed
      */
+
     function tariff($key = null)
     {
-        $ttl = now()->addDays(30); // زمان نگهداری در کش
+        $ttl = now()->addDays(30); 
 
         $settings = Cache::remember('tariff_settings', $ttl, function () {
-            // گرفتن تعرفه از دیتابیس
             $dbSettings = Tariff::first()?->toArray();
 
-            // اگر دیتابیس خالی بود → از فایل کانفیگ پر شود
             if (empty($dbSettings)) {
                 $dbSettings = config('settings.tariffs', []);
             }
@@ -38,15 +37,12 @@ if (!function_exists('tariff')) {
             return $dbSettings;
         });
 
-        // (اختیاری) تمدید مجدد TTL برای اطمینان
         Cache::put('tariff_settings', $settings, $ttl);
 
-        // اگر فقط یک کلید خاص خواسته شده
         if ($key) {
             return $settings[$key] ?? config("settings.tariffs.$key");
         }
 
-        // در غیر این صورت همه تعرفه‌ها را (ترکیب کانفیگ و دیتابیس) برگردان
         return array_merge(config('settings.tariffs', []), $settings);
     }
 
@@ -55,20 +51,19 @@ if (!function_exists('tariff')) {
 }
 if (! function_exists('setting')) {
     /**
-     * دریافت تنظیمات سایت با کش سی روزه
+     * Retrieve site settings with a 30-day cache
      *
-     * @param  string|null  $key
+     * @param string|null $key
      * @return mixed
      */
+
     function setting($key = null)
     {
-        $ttl = now()->addDays(30); // مدت نگهداری کش
+        $ttl = now()->addDays(30);
 
         $settings = Cache::remember('site_settings', $ttl, function () {
-            // تلاش برای گرفتن تنظیمات از دیتابیس
             $dbSettings = Setting::first()?->toArray();
 
-            // اگر دیتابیس خالی بود → مقداردهی با فایل config
             if (empty($dbSettings)) {
                 $dbSettings = config('settings.site', []);
             }
@@ -76,15 +71,12 @@ if (! function_exists('setting')) {
             return $dbSettings;
         });
 
-        // اطمینان از تمدید کش برای دفعات بعد
         Cache::put('site_settings', $settings, $ttl);
 
-        // اگر کلید خاصی خواسته شده
         if ($key) {
             return $settings[$key] ?? config("settings.site.$key");
         }
 
-        // اگر بدون کلید فراخوانی شود، تمام تنظیمات را برگرداند
         return array_merge(config('settings.site'), $settings);
     }
 }

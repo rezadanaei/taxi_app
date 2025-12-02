@@ -23,7 +23,6 @@
           </div>
       @endif
 
-      {{-- نمایش موفقیت --}}
       @if (session('success'))
           <div class="admin-success">
               {{ session('success') }}

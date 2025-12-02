@@ -68,7 +68,6 @@ class Driver extends Model
         });
 
 
-        // 2️⃣ حذف فایل قبلی هنگام آپدیت رکورد
         static::updating(function ($driver) {
 
             $fields = [
@@ -85,7 +84,7 @@ class Driver extends Model
 
             foreach ($fields as $field) {
 
-                if ($driver->isDirty($field)) { // یعنی تغییر کرده
+                if ($driver->isDirty($field)) { 
                     $oldFile = $driver->getOriginal($field);
 
                     if ($oldFile && Storage::disk('public')->exists($oldFile)) {

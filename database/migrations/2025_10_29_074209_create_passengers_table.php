@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('passengers', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 100)->nullable();           // نام کاربر (اختیاری)
-            $table->string('national_code', 20)->nullable();   // شماره ملی (اختیاری)
+            $table->string('name', 100)->nullable();           
+            $table->string('national_code', 20)->nullable();   
             $table->string('birth_date')->nullable();
             $table->timestamps();
         });

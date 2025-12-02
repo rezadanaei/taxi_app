@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('authority')->nullable();
             $table->string('ref_id')->nullable();
             $table->enum('status', ['pending', 'success', 'failed'])->default('pending');
-            $table->string('type')->default('trip'); // نوع پرداخت
+            $table->string('type')->default('trip'); 
             $table->timestamps();
 
         });

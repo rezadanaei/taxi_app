@@ -21,12 +21,10 @@ class DriverTripChannel
             'is_sent'   => false,
         ]);
 
-        // ارسال نوتیفیکیشن با استفاده از PushNotificationService
         $tripModel = Trip::with(['carType', 'passenger', 'driver'])->find($data['trip_id']);
         if ($tripModel) {
             $trip = $tripModel->toArray();
 
-            // اضافه کردن type و url
             $trip['type'] = 'trip'; 
             $trip['url']  = route('user.profile');
             $tripDT = tripDate($trip['start_date']); 

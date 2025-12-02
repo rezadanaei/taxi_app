@@ -15,8 +15,8 @@ class SmsService
         $this->from     = setting('sms_panel_number');
     }
 
-    /**
-     * ارسال پیامک معمولی
+     /**
+     * Send a regular SMS
      * @param string|array $to
      * @param string $message
      * @return array
@@ -42,7 +42,7 @@ class SmsService
     }
 
     /**
-     * ارسال پیامک الگو (SendByBaseNumber)
+     * Send a pattern SMS (SendByBaseNumber)
      * @param string $to
      * @param array $params
      * @param int $bodyId
@@ -84,9 +84,11 @@ class SmsService
     }
 
     /**
-     * دریافت وضعیت پیامک
+     * Get the status of an SMS
+     *
      * @param string $recId
      */
+
     public function delivery(string $recId): array
     {
         $data = [
@@ -121,7 +123,7 @@ class SmsService
     }
 
     /**
-     * هندل نتیجه ارسال پیامک معمولی
+     * Handle the result of sending a regular SMS
      */
     private function handleResponse($response): array
     {
@@ -151,7 +153,7 @@ class SmsService
     }
 
     /**
-     * هندل پاسخ وضعیت پیامک
+     * Handle the response for SMS delivery status
      */
     private function handleDeliveryResponse($response): array
     {
@@ -172,7 +174,7 @@ class SmsService
     }
 
     /**
-     * متن خطاها
+     * Error messages
      */
     private function errorMessage(string $code): string
     {
@@ -203,7 +205,7 @@ class SmsService
     }
 
     /**
-     * وضعیت تحویل پیامک
+     * SMS delivery status
      */
     private function deliveryStatus(string $code): string
     {

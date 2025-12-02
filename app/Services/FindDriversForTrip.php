@@ -10,7 +10,7 @@ use App\Models\Car;
 class FindDriversForTrip
 {
     /**
-     * دریافت رانندگان مناسب برای سفر
+     * Get suitable drivers for a trip
      *
      * @param Trip $trip
      */

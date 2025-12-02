@@ -7,8 +7,7 @@
 // });
 
 document.addEventListener('DOMContentLoaded', () => {
-  const baseUrl = window.location.origin; // مثل: http://127.0.0.1:8000
-
+  const baseUrl = window.location.origin; 
   function validImage(path) {
     if (!path || path === `${baseUrl}/storage` || path.trim() === '') {
       return `${baseUrl}/img/no-photo.png`;
@@ -19,11 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('#adminSeeDriverDoc').forEach(button => {
     button.addEventListener('click', () => {
 
-      // نمایش پاپ‌آپ
       const popup = document.getElementById('adminAddSeedriverdockPopup');
       popup.style.display = 'block';
 
-      // پر کردن فیلدهای متنی
       document.getElementById('popupFirstName').textContent = button.dataset.firstname || '-';
       document.getElementById('popupLastName').textContent = button.dataset.lastname || '-';
       document.getElementById('popupFatherName').textContent = button.dataset.fathername || '-';
@@ -37,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('popupCarModel').textContent = button.dataset.carmodel || '-';
       document.getElementById('note_id').value = button.dataset.noteid || '-';
 
-      // پر کردن تصاویر
       document.getElementById('popupIdCardFront').src = validImage(button.dataset.idcardfront);
       document.getElementById('popupIdCardBack').src = validImage(button.dataset.idcardback);
       document.getElementById('popupIdSelfi').src = validImage(button.dataset.idselfi);
@@ -50,7 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // دکمه بستن پاپ‌آپ
   document.getElementById('adminAddSeedriverdockPopupClose').addEventListener('click', () => {
     document.getElementById('adminAddSeedriverdockPopup').style.display = 'none';
   });
@@ -82,7 +77,6 @@ document.querySelectorAll('#adminDeletedriverdockDoc').forEach(button => {
     const popup = document.getElementById('adminAddDeletedriverdockPopup');
     popup.style.display = 'block';
 
-    // مقداردهی hidden input با note_id
     const hiddenInput = popup.querySelector('input[name="note_id"]');
     hiddenInput.value = button.dataset.noteid || '';
   });
@@ -105,12 +99,10 @@ document.querySelectorAll('#adminAddDeletedriverdockPopupClose').forEach(button 
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-    // همه‌ی عکس‌های داخل .images رو انتخاب می‌کنیم
     const images = document.querySelectorAll(".images img");
 
     images.forEach(img => {
       img.addEventListener("click", function () {
-        // وقتی روی عکس کلیک بشه، توی یه تب جدید باز میشه
         window.open(this.src, "_blank");
       });
     });

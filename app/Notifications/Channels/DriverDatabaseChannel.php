@@ -14,10 +14,8 @@ class DriverDatabaseChannel
      */
     public function send($notifiable, $notification)
     {
-        // دریافت داده از Notification class
         $data = $notification->toDriverDatabase($notifiable);
 
-        // ذخیره در دیتابیس
         DriverNotification::create([
             'driver_id' => $data['driver_id'] ?? null,
             'message'   => $data['message'] ?? null,

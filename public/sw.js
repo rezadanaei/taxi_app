@@ -10,7 +10,6 @@ self.addEventListener("push", function(event) {
         data = {};
     }
 
-    // نمایش نوتیفیکیشن
     const options = {
         body: data.body || "پیام جدید دارید.",
         icon: data.icon || "/icon.png",
@@ -26,10 +25,11 @@ self.addEventListener("push", function(event) {
         self.registration.showNotification(data.title || "اعلان جدید", options)
     );
 
-    /* -----------------------------------------------
-       🔥 اگر صفحه /profile باز است → دیتا را همان لحظه ارسال کن
-       فقط اگر type = "trip" باشد
+   /* -----------------------------------------------
+    If the /profile page is open → send the data immediately
+    Only if type = "trip"
     ----------------------------------------------- */
+
     if (options.data.type === "trip") {
 
         event.waitUntil(
@@ -39,7 +39,6 @@ self.addEventListener("push", function(event) {
                     clients.forEach(client => {
                         const url = new URL(client.url);
 
-                        // فقط صفحه پروفایل
                         if (url.pathname === "/profile") {
                             client.postMessage({
                                 type: "trip",

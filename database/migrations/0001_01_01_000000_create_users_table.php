@@ -11,32 +11,27 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // جدول کاربران
         Schema::create('users', function (Blueprint $table) {
             $table->id(); 
             $table->string('phone', 20)->unique();
             $table->string('type', 20)->index();
             $table->string('status', 20)->default('active')->index(); 
 
-            // رابطه polymorphic
             $table->unsignedBigInteger('userable_id');
             $table->string('userable_type', 100);
             $table->index(['userable_id', 'userable_type']);
 
-            // برای ورود امن (در صورت نیاز به ریممبر توکن)
             $table->rememberToken();
 
             $table->timestamps();
         });
 
-        // جدول بازنشانی رمز عبور (در این سیستم اگر لازم باشد برای ورود با پیامک)
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('phone', 20)->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });
 
-        // جدول نشست‌ها (Sessions)
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->foreignId('user_id')->nullable()->index();
@@ -47,9 +42,7 @@ return new class extends Migration
         });
     }
 
-    /**
-     * بازگردانی مایگریشن
-     */
+    
     public function down(): void
     {
         Schema::dropIfExists('sessions');

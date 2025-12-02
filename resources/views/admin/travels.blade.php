@@ -63,14 +63,11 @@
           <li class="no-results" style="display: none;">موردی یافت نشد</li>
           @foreach ($trips as $trip)
             @php
-                // تبدیل تاریخ به شمسی با تابع اختصاصی پروژه
                 $tripDT = tripDate($trip->start_date);
 
-                // دیکد کردن مبدا و مقصدها
                 $origins = json_decode($trip->origins, true);
                 $destinations = json_decode($trip->destinations, true);
 
-                // تبدیل وضعیت
                 $statusLabels = [
                     'pending' => 'در انتظار',
                     'pending-payment' => 'در انتظار',
@@ -84,7 +81,6 @@
                 ];
                 $statusText = $statusLabels[$trip->status] ?? $trip->status;
 
-                // آیا حیوان خانگی دارد؟
                 $petStatus = $trip->has_pet ? 'دارد' : 'ندارد';
             @endphp
 
@@ -102,7 +98,6 @@
 
                 <div class="passenger-trip-content">
 
-                    {{-- دکمه‌های مدیریت سفر --}}
                     <div class="admin-trip-actions-btn">
                         <form method="POST" action="{{ route('admin.trips.cancel') }}" style="display: inline-block">
                           @csrf
@@ -114,7 +109,6 @@
                         @endif
                     </div>
 
-                    {{-- اطلاعات پایه سفر --}}
                     <div class="trip-extra-info-ad">
                         <div class="trip-date">تاریخ: {{ $tripDT['date'] }}</div><span>-</span>
                         <div class="trip-time">ساعت: {{ $tripDT['time'] }}</div><span>-</span>
@@ -125,7 +119,6 @@
                         <div class="trip-time">حیوان خانگی: {{ $petStatus }}</div>
                     </div>
 
-                    {{-- قیمت و پرداخت --}}
                     <div class="trip-extra-info-ad2">
                         @if(isset($trip->payment_id))
                             <div class="trip-date">شناسه پرداخت: {{ $trip->payment_id }}</div><span>-</span>
@@ -134,7 +127,6 @@
                         <div class="trip-time">وضعیت: {{ $statusText }}</div>
                     </div>
 
-                    {{-- اطلاعات راننده --}}
                     @if ($trip->driver)
                     <div class="trip-driver-info">
                         <img src="{{ optional($trip->driver->userable)->profile_photo ? asset('storage/' . $trip->driver->userable->profile_photo) : asset('img/no-photo.png') }}" alt="تصویر راننده">
@@ -159,7 +151,6 @@
                     </div>
                     @endif
 
-                    {{-- اطلاعات مسافر --}}
                     @if ($trip->passenger)
                     <div class="trip-passenger-info">
                         <div class="driver-info">
@@ -180,7 +171,6 @@
                     </div>
                     @endif
 
-                    {{-- نمایش JSON مبدا و مقصد --}}
                     <section class="trip-locations-info">
                         @foreach ($origins as $index => $origin)
                             <div class="trip-location-item">
@@ -195,7 +185,6 @@
                         @endforeach
                     </section>
 
-                    {{-- توضیح کاربر --}}
                     <div class="user-form-desc">
                         <p>{{ $trip->caption ?? 'توضیحاتی ثبت نشده.' }}</p>
                     </div>
@@ -204,70 +193,8 @@
             </li>
 
             @endforeach
-            {{ $trips->links('pagination::bootstrap-5') }}
-
-
-          <li>
-            <div class="passenger-trip-item">
-              <div class="passenger-item-title"><div class="trip-id">کد سفر: 1245</div> <div class="trip-state">در انتظار</div> </div>
-
-              <section>
-                <img src="{{ asset('img/down.svg') }}" alt="فلش">
-              </section>
-            </div>
-            <div class="passenger-trip-content">
-
-              <div class="admin-trip-actions-btn">
-                <button class="ad-cancel-trip">لغو سفر</button>
-                <button class="ad-driver-trip" id="AddDriverTrip">تخصیص راننده</button>
-              </div>
-
-              <div class="trip-extra-info-ad">
-                <div class="trip-date">تاریخ: 08 مرداد 1401</div><span>-</span>
-                <div class="trip-time">ساعت: 22:16</div><span>-</span>
-                <div class="trip-time">تعداد مسافر: 1</div><span>-</span>
-                <div class="trip-time">تعداد چمدان: 2</div><span>-</span>
-                <div class="trip-time">نوع سفر: یکطرفه</div><span>-</span>
-                <div class="trip-time">ساعات انتظار: 0</div><span>-</span>
-                <div class="trip-time">حیوان خانگی: ندارد</div>
-              </div>
-              
-              <div class="trip-extra-info-ad2">
-                <div class="trip-date">شناسه پرداخت: 12354845</div><span>-</span>
-                <div class="trip-time">هزینه سفر: 330000 تومان</div><span>-</span>
-                <div class="trip-time">وضعیت: در انتظار تایید راننده</div>
-              </div>
-
-              <div class="trip-driver-info">
-                <img src="{{ asset('img/no-photo.png') }}" alt="تصویر راننده">
-                <div class="driver-info">
-                  <p><span>راننده: </span>اسم راننده</p>
-                  <p><span>ماشین: </span> مدل ماشین</p>
-                  <p><span>پلاک: </span>21 ب 341 ایران 99</p>
-                </div>
-                <a href="tel:09123456789" class="call-to-driver">09123456789</a>
-              </div>
-
-              <div class="trip-passenger-info">
-                <div class="driver-info">
-                  <p><span>مسافر: </span>اسم مسافر</p>
-                </div>
-                <a href="tel:09123456789" class="call-to-driver">09123456789</a>
-              </div>
-
-              <section class="trip-locations-info">
-                <div class="trip-location-item"><span>مبدا 1: </span>آدرس مبدا اول</div>
-                <div class="trip-location-item"><span>مبدا 2: </span>آدرس مبدا دوم</div>
-                <div class="trip-location-item"><span>مقصد 1: </span>آدرس مقصد اول</div>
-              </section>
-
-              <div class="user-form-desc">
-                <p>توضیحاتی که کاربر در قسمت ثبت رزرو فرم انجام داده در این قسمت نمایش داده میشود.</p>
-              </div>
-            </div>
-          </li>
-
-        </ul>
+          </ul>
+          {{ $trips->links('pagination::bootstrap-5') }}
       </div>
     </div>
 

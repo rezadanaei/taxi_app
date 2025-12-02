@@ -37,7 +37,7 @@ class CreateDriversTable extends Migration
         $table->foreignId('car_id')
             ->nullable()
             ->constrained('cars')
-            ->onDelete('cascade'); // بدون index() اضافه
+            ->onDelete('cascade'); 
         $table->string('car_type', 100)->nullable();
         $table->string('car_plate', 20)->nullable();
         $table->string('car_model', 100)->nullable();

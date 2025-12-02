@@ -26,12 +26,8 @@ class UserPushTokenController extends Controller
 
         $user = Auth::user();
 
-        // فقط برای web_push این کار رو می‌کنیم
-        if ($request->type === 'web_push') {
-                // اینجا خیلی مهمه: subscription رو به صورت JSON خام ذخیره می‌کنیم
-                
+        if ($request->type === 'web_push') {                
 
-            // دقیقاً مثل قبل ذخیره می‌کنیم — هیچ تغییری در دیتابیس لازم نیست!
             $pushToken = UserPushToken::updateOrCreate(
                 ['user_id' => $user->id, 'type' => $request->type],
                     ['token' => $request->token]

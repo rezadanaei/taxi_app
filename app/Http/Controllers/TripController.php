@@ -22,27 +22,28 @@ use Morilog\Jalali\Jalalian;
 class TripController extends Controller
 {
     /**
-     * ثبت یک سفر جدید در پایگاه داده.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
+    * Store a new trip in the database.
+    *
+    * @param  \Illuminate\Http\Request  $request
+    * @return \Illuminate\Http\RedirectResponse
+    */
+
      public function store(Request $request, FindDriversForTrip $finder)
     {
         $validator = Validator::make($request->all(), [
             'start_date'       => ['required', 'date'],
-            'trip_type'        => ['required', 'in:oneway,round'], // چون تو فرمت one-way نیست
+            'trip_type'        => ['required', 'in:oneway,round'], 
             'waiting_hours'    => ['nullable', 'integer', 'min:0'],
-            'has_pet'          => ['nullable', 'boolean'], // checkbox → 0/1
+            'has_pet'          => ['nullable', 'boolean'], 
             'passenger_count'  => ['nullable', 'integer', 'min:1', 'max:5'],
             'luggage_count'    =>  ['nullable', 'integer', 'min:0'],
-            'origins'          => ['required', 'string'], // از فرم رشته JSON میاد
-            'destinations'     => ['required', 'string'], // از فرم رشته JSON میاد
+            'origins'          => ['required', 'string'], 
+            'destinations'     => ['required', 'string'],
             'car_type_id'      => ['required', 'exists:car_types,id'],
-            'trip_time'        => ['nullable', 'string'],      // از نِشان string میاد
-            'trip_distance'    => ['required', 'string'],      // از نِشان string میاد
-            'special_distance'    => ['required', 'string'],      // از نِشان string میاد
-            'normal_distance'    => ['required', 'string'],      // از نِشان string میاد
+            'trip_time'        => ['nullable', 'string'],      
+            'trip_distance'    => ['required', 'string'],      
+            'special_distance'    => ['required', 'string'],      
+            'normal_distance'    => ['required', 'string'],      
             'cost'             => ['required', 'numeric', 'min:0'],
             'caption'          => ['nullable', 'string', 'max:500'],
         ]);
@@ -68,44 +69,35 @@ class TripController extends Controller
         $specialDistance  = floatval($request->special_distance);   // km
         $normalDistance   = floatval($request->normal_distance);    // km
 
-        // قیمت‌ها
         $car = CarType::find($request->car_type_id);
         $normalPrice   = $car->price_per_km;
         $specialPrice  = $car->price_per_km * tariff('area_coef');
 
-        // محاسبه هزینه
         $totalPrice =
             ($normalDistance * $normalPrice) +
             ($specialDistance * $specialPrice);
 
 
-        // برای ذخیره در دیتابیس
         
-        // ضرب در نوع سفر
         if ($request->trip_type === 'round') {
             $totalPrice *= 2;
         }
         
-        // اضافه کردن هزینه انتظار
         $waitingHours = $request->waiting_hours ?? 0;
         $pricePerHour =  tariff('waiting_fee'); 
         $totalPrice += $waitingHours * $pricePerHour;
 
-        // گرد کردن به هزار تومان
         $totalPrice = ceil($totalPrice / 1000) * 1000;
 
-        // اگر totalPrice محاسبه شده بیشتر از cost ارسالی بود، آن را ثبت کن
         $finalCost = $totalPrice > $request->cost ? $totalPrice : $request->cost;
         $startDateJalali = $request->start_date; // "1404/09/04 10:30:00"
 
-        // تبدیل به میلادی
         $startDateTehran = Jalalian::fromFormat('Y/m/d H:i:s', $startDateJalali)
                                     ->toCarbon()
                                     ->setTimezone('Asia/Tehran');
 
         $startDateServer = $startDateTehran->copy()->setTimezone(config('app.timezone'));
         $startDateForDB = $startDateServer->toDateString();
-        // ثبت سفر
         $trip = Trip::create([
             'start_date'       => $startDateForDB,
             'trip_type'        => $request->trip_type,
@@ -121,7 +113,7 @@ class TripController extends Controller
             'cost'             => $finalCost,
             'caption'          => $request->caption,
             'status'           => 'pending',
-            'driver_id'        => null, // یا هر مقدار مناسب
+            'driver_id'        => null, 
             'passenger_id'     => $user->id,
         ]);
         
@@ -143,23 +135,18 @@ class TripController extends Controller
         $now = now();
         
 
-        // اختلاف به دقیقه بین شروع سفر و الان
         $diffInMinutes = $now->diffInMinutes($tripStart, false);
 
-        // اگر فاصله بیش از 90 دقیقه (۱ ساعت و نیم) است → یک ساعت قبل از شروع سفر اجرا شود
         if ($diffInMinutes > 90) {
             $runAt = $tripStart->copy()->subHour();
 
-            // مطمئن شو runAt بعد از حال است
             if ($runAt->lt($now)) {
                 $runAt = $now->copy()->addMinutes(30);
             }
         } else {
-            // فاصله کمتر یا برابر 90 دقیقه → نیم ساعت بعد از الان اجرا شود
             $runAt = $now->copy()->addMinutes(30);
         }
 
-        // Dispatch Job با زمان مناسب
         
         NotifyTripAdmins::dispatch($trip)->delay(delay: $runAt);
 
@@ -201,7 +188,6 @@ class TripController extends Controller
             ->paginate($perPage, ['*'], 'page', $page);
 
 
-        // تبدیل تاریخ‌ها با tripDate
         $tripsWithoutDriver->getCollection()->transform(function ($trip) {
             $tripDT = tripDate($trip->start_date);
             $trip->formatted_date = $tripDT['date'];
@@ -261,19 +247,16 @@ class TripController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        // 1. اعتبارسنجی ورودی
         $validated = $request->validate([
             'trip_id' => 'required|integer|exists:trips,id',
         ]);
 
         $trip = Trip::findOrFail($validated['trip_id']);
 
-        // 2. محاسبه کمیسیون و تبدیل به ریال
         $commissionPercent = $this->normalizeTariff(tariff('commission'));
         $commissionToman = $trip->cost * ($commissionPercent / 100);
         $amount = round($commissionToman * 10); // ریال
 
-        // 3. ایجاد رکورد پرداخت در حالت pending
         $payment = Payment::create([
             'user_id' => $user->id,
             'payable_id' => $trip->id,
@@ -283,25 +266,21 @@ class TripController extends Controller
             'type' => 'trip',
         ]);
 
-        // 4. ارسال درخواست به زرین‌پال
         $result = $zarinpal->requestPayment([
             'amount' => $amount,
             'description' => 'پرداخت کمیسیون سفر شماره ' . $trip->id,
-            'callback_url' => route('payment.verify'), // مسیر تایید پرداخت
+            'callback_url' => route('payment.verify'), 
             'mobile' => $user->phone ?? null,
             'email' => $user->email ?? null,
         ]);
 
         if (!$result['success']) {
-            // در صورت خطا، وضعیت تراکنش را failed کنیم
             $payment->update(['status' => 'failed']);
             return response()->json(['error' => $result['message']], 500);
         }
 
-        // ذخیره authority برگشتی از زرین‌پال
         $payment->update(['authority' => $result['authority']]);
 
-        // هدایت کاربر به درگاه پرداخت
         return redirect($result['payment_url']);
     }
 
