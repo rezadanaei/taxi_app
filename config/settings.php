@@ -11,6 +11,7 @@ return [
         'default_locale'     => 'fa',
         'timezone'           => 'Asia/Tehran',
         'site_name'          => 'Taxi App',
+        'support_phone'      => null,
         'merchant_id'        => null,
         'sms_panel_number'   => null,
         'sms_panel_username' => null,

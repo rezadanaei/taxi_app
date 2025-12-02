@@ -411,6 +411,7 @@ class AdminController extends Controller
     {
         $request->validate([
             'site_name' => 'nullable|string|max:255',
+            'support_phone' => 'nullable|string|max:20',
             'merchant_id' => 'nullable|string|max:255',
             'sms_panel_number' => 'nullable|string|max:255',
             'sms_panel_username' => 'nullable|string|max:255',
@@ -421,12 +422,14 @@ class AdminController extends Controller
             'colers_secondary' => 'nullable|string|max:7',
             'colers_tertiary' => 'nullable|string|max:7',
 
+
         ]);
         $setting = Setting::first();
         if (!$setting) {
             $setting = new Setting();
         }
         $setting->site_name = $request->input('site_name');
+        $setting->support_phone = $request->input('support_phone');
         $setting->merchant_id = $request->input('merchant_id');
         $setting->sms_panel_number = $request->input('sms_panel_number');
         $setting->sms_panel_username = $request->input('sms_panel_username');

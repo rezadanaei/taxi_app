@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
             $table->string('site_name')->nullable()->default(null)->comment('نام سایت');
+            $table->string('support_phone')->nullable()->default(null)->comment('شماره تماس پشتیبانی سایت');
             $table->string('merchant_id', 255)->nullable()->comment('Merchant ID  یا شناسه پذیرنده بانکی');
             $table->string('sms_panel_number')->nullable()->default(null)->comment('شماره پنل پیامک');
             $table->string('sms_panel_username')->nullable()->default(null)->comment('نام کاربری پنل پیامک');

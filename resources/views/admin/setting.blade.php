@@ -32,6 +32,7 @@
       @csrf
       <div class="admin-settings-base">
         <input type="text" name="site_name" id="site_name" placeholder="اسم سایت" value="{{ setting('site_name') }}">
+        <input type="text" name="support_phone" id="support_phone" placeholder="شماره تماس پشتیبانی سایت" value="{{ setting('support_phone') }}">
         <input type="text" name="merchant_id" id="merchant_id"  placeholder="مرچنت کد درگاه پرداخت" value="{{ setting('merchant_id') }}">
         <input type="text" name="sms_panel_number" id="sms_panel_number" placeholder="شماره پنل پیامکی" value="{{ setting('sms_panel_number') }}">
         <input type="text" name="sms_panel_username" id="sms_panel_username" placeholder="نام کاربری پنل پیامکی" value="{{ setting('sms_panel_username') }}">
