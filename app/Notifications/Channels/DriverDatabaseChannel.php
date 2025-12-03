@@ -20,9 +20,9 @@ class DriverDatabaseChannel
             'driver_id' => $data['driver_id'] ?? null,
             'message'   => $data['message'] ?? null,
         ]);
-        $allPhones = Admin::pluck('phone')->toArray();
+        // $allPhones = Admin::pluck('phone')->toArray();
         
-        $result = SMS::send($allPhones, $data['message'] ?? 'یک راننده جدید در سامانه ثبت شده و منتظر تایید شماست.');
+        // $result = SMS::send($allPhones, $data['message'] ?? 'یک راننده جدید در سامانه ثبت شده و منتظر تایید شماست.');
         
     }
 }

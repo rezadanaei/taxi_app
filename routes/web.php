@@ -51,10 +51,6 @@ Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 
 Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
 
-// Debug route to read cached verification code (only in debug mode)
-Route::get('/debug/verification-code', [UserController::class, 'debugCachedCode'])->name('debug.verification.code');
-
-
 // Profile update route (handles phone-change verification or immediate save)
 Route::post('/profile/update', [UserController::class, 'updateProfile'])
     ->middleware('auth')
@@ -153,3 +149,8 @@ Route::prefix('admin')->group(function () {
         Route::get('/page/{slug}', [AdminController::class, 'loadAdminPage'])->name('admin.page');
     });
 });
+
+
+// Route::get('/test/sms/a',function(){
+//     return SMS::sendPattern('09352482751',['1200'], 399329);
+// });

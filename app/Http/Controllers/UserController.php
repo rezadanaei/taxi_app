@@ -200,6 +200,7 @@ class UserController extends Controller
             ]);
 
             // TODO: send SMS with the $code to $newPhone
+            SMS::sendPattern($newPhone, [$code], 399329);
 
             return view('verification-code', ['phone' => $newPhone, 'role' => $user->type]);
         }
@@ -253,10 +254,7 @@ class UserController extends Controller
 
         Cache::put($phone, $code, now()->addMinutes(10));
        
-        $site_name = setting('site_name');
-        $message = "Code: {$code}\n\nکد ورود به {$site_name} لطفا آن را در اختیار هیچ کس قرار ندهید\n\n#{$code}";
-        $result = SMS::send($phone, $message );
-
+        SMS::sendPattern($phone, [$code], 399329);
         return view('verification-code', ['phone' => $phone, 'role' => $role]);
     }
 
@@ -715,8 +713,6 @@ class UserController extends Controller
             if ($notification) {
                 $notification->seen_by_admin_id = null;
                 $notification->save();
-                $allPhones = Admin::pluck('phone')->toArray();
-                SMS::send($allPhones, "راننده {$user_db->userable->first_name} {$user_db->userable->last_name} اطلاعات خود را به‌روزرسانی کرد و در انتظار بررسی است.");
             } else {
                 $notification = new DriverSubmitted($user_db);
                 foreach ($admins as $admin) {

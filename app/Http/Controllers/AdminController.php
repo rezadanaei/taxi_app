@@ -519,7 +519,8 @@ class AdminController extends Controller
             return back()->with('error', 'اطلاعیه پیدا نشد.');
         }
 
-        $driver = $notification->driver;
+        $driver = User::with('userable')->find($notification->driver_id);
+
         if (!$driver) {
             return back()->with('error', 'راننده پیدا نشد.');
         }
@@ -533,9 +534,6 @@ class AdminController extends Controller
         $driver->status = 'active';
         $driver->save();
         
-        $driver->userable->update([
-            'car_id' => $request->car_id, 
-        ]);
         
         DriverReviewLog::create([
             'driver_id' => $driver->id,
@@ -543,9 +541,19 @@ class AdminController extends Controller
             'status' => 'approved',
             'message' => 'مدارک شما توسط مدیریت تایید شد.',
         ]);
-        $site_name = setting('site_name');
-        $message = "{$site_name}:\nراننده محترم مدارک شما توسط مدیریت تیم {$site_name} تایید شد.";
-        $result = SMS::send($driver->phone ,$message);
+        if ($driver->userable) {
+            $driver->userable->update([
+                'car_id' => $request->car_id,
+            ]);
+
+            // ارسال پیامک با نام و نام خانوادگی راننده
+            $result = SMS::sendPattern(
+                $driver->phone,
+                [$driver->userable->first_name, $driver->userable->last_name],
+                401672
+            );
+        }
+        
         return redirect()->route('admin.page', ['slug' => 'driver-docs'])
             ->with('success', 'درخواست راننده با موفقیت تایید شد.');
     }
@@ -563,7 +571,8 @@ class AdminController extends Controller
             return back()->with('error', 'اطلاعیه پیدا نشد.');
         }
 
-        $driver = $notification->driver;
+        $driver = User::with('userable')->find($notification->driver_id);
+
         if (!$driver) {
             return back()->with('error', 'راننده پیدا نشد.');
         }
@@ -574,9 +583,7 @@ class AdminController extends Controller
             'seen_by_admin_id' => $adminId,
         ]);
 
-        $driver->status = 'rejected';
-        $driver->save();
-
+        
         $message = $request->input('message', 'مدارک شما توسط مدیریت رد شد.');
         
         DriverReviewLog::create([
@@ -586,9 +593,11 @@ class AdminController extends Controller
             'message' => $message,
         ]);
         
-        $site_name = setting('site_name');
-        $message = "{$site_name}:\nراننده محترم مدارک شما توسط مدیریت تیم {$site_name} رد شد. لطفا به سامانه مراجعه و مدارک خود را اصلاح نمایید.";
-        $result = SMS::send($driver->phone ,$message);
+        if ($driver->userable) {
+            $driver->status = 'rejected';
+            $driver->save();
+            $result = SMS::sendPattern($driver->phone ,[$driver->userable->first_name, $driver->userable->last_name], 401675);
+        }
         
         return redirect()->route('admin.page', ['slug' => 'driver-docs'])
             ->with('success', 'درخواست راننده با موفقیت رد شد.');

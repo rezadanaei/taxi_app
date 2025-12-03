@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Services;
-
+use SoapClient;
 class SmsService
 {
     private string $username;
@@ -43,45 +43,65 @@ class SmsService
 
     /**
      * Send a pattern SMS (SendByBaseNumber)
-     * @param string $to
+     * @param $to
      * @param array $params
      * @param int $bodyId
      * @return array
      */
-    public function sendPattern(string $to, array $params, int $bodyId): array
+    public function sendPattern($to, array $params, int $bodyId): array
     {
-        $data = [
-            'username' => $this->username,
-            'password' => $this->password,
-            'to'       => $to,
-            'bodyId'   => $bodyId,
-            'text'     => $params
-        ];
+        // اگر رشته است، تبدیل به آرایه از شماره‌ها کنیم
+        $phones = is_array($to) ? $to : [$to];
 
-        $response = $this->curl('https://rest.payamak-panel.com/api/SendSMS/BaseNumber', $data);
+        $results = [];
 
-        $result = json_decode($response, true);
+        ini_set("soap.wsdl_cache_enabled", "0");
+        $wsdl = "http://api.payamak-panel.com/post/Send.asmx?wsdl";
 
-        if (!isset($result['RetStatus'])) {
+        try {
+            $sms = new SoapClient($wsdl, ["encoding" => "UTF-8"]);
+
+            foreach ($phones as $phone) {
+                $data = [
+                    "username" => $this->username,
+                    "password" => $this->password,
+                    "to"       => $phone, 
+                    "text"     => $params,
+                    "bodyId"   => $bodyId
+                ];
+
+                $send_Result = $sms->SendByBaseNumber($data)->SendByBaseNumberResult;
+
+                if ($send_Result > 0) {
+                    $results[] = [
+                        'phone'  => $phone,
+                        'status' => true,
+                        'recId'  => $send_Result,
+                        'message'=> 'پیامک با موفقیت ارسال شد.'
+                    ];
+                } else {
+                    $results[] = [
+                        'phone'  => $phone,
+                        'status' => false,
+                        'code'   => $send_Result,
+                        'message'=> $this->errorMessage((string)$send_Result)
+                    ];
+                }
+            }
+
+            return $results;
+
+        } catch (SoapFault $e) {
             return [
                 'status' => false,
-                'message' => 'پاسخ معتبر از سرور دریافت نشد.'
+                'message'=> 'خطا در ارسال پیامک: ' . $e->getMessage()
             ];
         }
-
-        if ($result['RetStatus'] == 1) {
-            return [
-                'status' => true,
-                'recId'  => $result['Value'],
-                'message' => 'پیامک الگو با موفقیت ارسال شد.'
-            ];
-        }
-
-        return [
-            'status' => false,
-            'message' => $this->errorMessage((string)$result['RetStatus'])
-        ];
     }
+
+
+
+
 
     /**
      * Get the status of an SMS

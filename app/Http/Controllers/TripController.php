@@ -294,8 +294,8 @@ class TripController extends Controller
         }
 
         return response()->json([
-            'API_KEY_WEB' => setting('nashan_web_key') ?? "web.d58bc4fdb59d4a02970b28c9e335cad9",
-            'API_KEY_SERVICE' => setting('nashan_service_key') ?? "service.ae11287dbaaf493bbb58e464e509a97d",
+            'API_KEY_WEB' => setting('nashan_web_key'),
+            'API_KEY_SERVICE' => setting('nashan_service_key'),
             
         ]);
     }
