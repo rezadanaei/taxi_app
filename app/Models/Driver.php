@@ -17,6 +17,14 @@ class Driver extends Model
         'id_card_front', 'id_card_back', 'id_card_selfie', 'profile_photo',
         'license_number', 'license_front', 'license_back',
         'car_id', 'car_type', 'car_plate', 'car_model', 'car_card_front', 'car_card_back', 'car_insurance',
+
+        // --- NEW: Car extra images ---
+        'car_front_image',
+        'car_back_image',
+        'car_left_image',
+        'car_right_image',
+        'car_front_seats_image',
+        'car_back_seats_image',
     ];
 
     /**
@@ -45,7 +53,6 @@ class Driver extends Model
      */
     protected static function booted()
     {
-        // 1️⃣ حذف فایل‌ها هنگام حذف رکورد
         static::deleting(function ($driver) {
 
             $files = [
@@ -58,6 +65,14 @@ class Driver extends Model
                 'car_card_front',
                 'car_card_back',
                 'car_insurance',
+
+                // --- NEW ---
+                'car_front_image',
+                'car_back_image',
+                'car_left_image',
+                'car_right_image',
+                'car_front_seats_image',
+                'car_back_seats_image',
             ];
 
             foreach ($files as $file) {
@@ -80,6 +95,14 @@ class Driver extends Model
                 'car_card_front',
                 'car_card_back',
                 'car_insurance',
+
+                // --- NEW ---
+                'car_front_image',
+                'car_back_image',
+                'car_left_image',
+                'car_right_image',
+                'car_front_seats_image',
+                'car_back_seats_image',
             ];
 
             foreach ($fields as $field) {

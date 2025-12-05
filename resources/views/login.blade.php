@@ -46,8 +46,18 @@
       </form>
 
       <p class="agree-policy">با ورود یا ثبت نام در سایت شما <a href="#">قوانین و مقررات</a> سایت را قبول می کنید.</p>
+      @if (session('error'))
+          <div class="admin-errors">
+              {{ session('error') }}
+          </div>
+      @endif
+  
+      @if (session('success'))
+          <div class="admin-success">
+              {{ session('success') }}
+          </div>
+      @endif
     </div>
-
    </div>
   <!-- Login page end -->
   

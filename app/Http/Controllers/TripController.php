@@ -97,7 +97,7 @@ class TripController extends Controller
                                     ->setTimezone('Asia/Tehran');
 
         $startDateServer = $startDateTehran->copy()->setTimezone(config('app.timezone'));
-        $startDateForDB = $startDateServer->toDateString();
+        $startDateForDB = $startDateServer->toDateTimeString();
         $trip = Trip::create([
             'start_date'       => $startDateForDB,
             'trip_type'        => $request->trip_type,

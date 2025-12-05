@@ -263,7 +263,8 @@ header {
 }
 .home-header-left a,
 .home-header-right a,
-.home-header-left button {
+.home-header-left button,
+.home-header-right button {
   all: unset;
   box-shadow: 0px 0px 20.2px rgba(0, 0, 0, 0.09);
   background-color: var(--white-color);
@@ -277,14 +278,16 @@ header {
 }
 .home-header-left a img,
 .home-header-right a img,
-.home-header-left button img {
+.home-header-left button img,
+.home-header-right button img {
   width: 26px;
   height: 26px;
   object-fit: contain;
 }
 .home-header-left a:hover,
 .home-header-right a:hover,
-.home-header-left button:hover {
+.home-header-left button:hover,
+.home-header-right button:hover {
   scale: 0.95;
 }
 
@@ -1466,7 +1469,7 @@ header {
   justify-content: flex-end;
   gap: 12px;
 }
-.driver-profile #skipTrip {
+.driver-profile #skipTrip, .driver-profile .skipTrip {
   all: unset;
   color: var(--white-color);
   background-color: var(--second-color);
@@ -1476,7 +1479,7 @@ header {
   cursor: pointer;
   transition: all 0.2s ease;
 }
-.driver-profile #acceptTrip {
+.driver-profile #acceptTrip, .driver-profile .acceptTrip {
   all: unset;
   color: var(--white-color);
   background-color: var(--Third-color);
@@ -1507,6 +1510,8 @@ header {
 }
 .driver-profile #acceptTrip:hover,
 .driver-profile #skipTrip:hover,
+.driver-profile .acceptTrip:hover,
+.driver-profile .skipTrip:hover,
 .driver-profile #tripActionEnd:hover {
   scale: 0.95;
 }
@@ -2737,7 +2742,7 @@ header {
   font-weight: 700;
 }
 .admin-errors {
-    background-color: #f8d7da; /* پس زمینه قرمز روشن */
+    background-color: #f8d7da; 
     color: #842029;
     border: 1px solid #f5c2c7;
     padding: 10px 15px;
@@ -2747,7 +2752,7 @@ header {
 }
 
 .admin-success {
-    background-color: #d1e7dd; /* پس زمینه سبز روشن */
+    background-color: #d1e7dd; 
     color: #0f5132;
     border: 1px solid #badbcc;
     padding: 10px 15px;
@@ -2755,6 +2760,83 @@ header {
     margin-bottom: 15px;
     font-size: 14px;
 }
+
+/* Box container */
+#notification-warning {
+    background: #fff3cd;                
+    color: #856404;
+    border: 1px solid #ffeeba;
+    padding: 15px 20px;
+    border-radius: 10px;
+    font-size: 15px;
+    line-height: 1.6;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    margin: 15px auto;
+    display: none;                      
+    direction: rtl;
+}
+
+/* Text spacing */
+#notification-warning span {
+    margin-bottom: 8px;
+}
+
+/* Button */
+#request-notification-permission {
+    background: #ff9800;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: 0.2s ease;
+}
+
+#request-notification-permission:hover {
+    background: #fb8c00;
+}
+
+#request-notification-permission:active {
+    transform: scale(0.96);
+}
+
+/* ---------- Responsive Design ---------- */
+
+/* Small Devices (Mobile) */
+@media (max-width: 480px) {
+    #notification-warning {
+        font-size: 14px;
+        padding: 12px 16px;
+        border-radius: 8px;
+    }
+
+    #request-notification-permission {
+        width: 100%;
+        padding: 10px;
+        font-size: 15px;
+    }
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+    #notification-warning {
+        font-size: 14.5px;
+    }
+
+    #request-notification-permission {
+        padding: 9px 20px;
+    }
+}
+
+/* Large Desktop */
+@media (min-width: 1024px) {
+    #notification-warning {
+        font-size: 16px;
+        padding: 18px 25px;
+    }
+}
+
 
 /* Animations */
 @keyframes spin {
@@ -2908,11 +2990,11 @@ header {
   .home-header-center img{
     width: 110px;
   }
-  .home-header-left a img, .home-header-right a img, .home-header-left button img {
+  .home-header-left a img, .home-header-right a img, .home-header-left button img, .home-header-right button img{
     width: 22px;
     height: 22px;
   }
-  .home-header-left a, .home-header-right a, .home-header-left button {
+  .home-header-left a, .home-header-right a, .home-header-left button, .home-header-right button  {
     padding: 18px;
   }
   #controls {

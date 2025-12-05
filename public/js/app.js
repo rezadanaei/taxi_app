@@ -16,7 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     });
 
-    console.log("Zoneها از متا تگ خوانده شدند:", zonesData);
 
     metaTag.remove();
 });
@@ -166,14 +165,11 @@ async function run() {
     const result = await myGlobalFunction();
     let API_KEY_WEB = result.API_KEY_WEB;
     let API_KEY_SERVICE = result.API_KEY_SERVICE;
-    console.log(API_KEY_WEB);
-    console.log(API_KEY_SERVICE);
     return result;
 }
 
 const result = await run();
 
-console.log("توابع بعدی اینجا اجرا می‌شوند");
 let API_KEY_WEB = result.API_KEY_WEB;
 let API_KEY_SERVICE = result.API_KEY_SERVICE;
 
@@ -183,14 +179,76 @@ let API_KEY_SERVICE = result.API_KEY_SERVICE;
 
 
 // Add map
-let map = new L.Map('map', {
-  key: API_KEY_WEB,
-  maptype: 'dreamy',
-  poi: true,
-  traffic: false,
-  center: [35.6892, 51.3890], // Default map pint
-  zoom: 14
-});
+let map;
+const defaultCenter = [35.6892, 51.3890];
+
+function isMobileOrTablet() {
+    return /Android|iPhone|iPad|iPod|Tablet/i.test(navigator.userAgent);
+}
+
+let initialCenter = defaultCenter;
+
+function createMap(center) {
+    map = new L.Map('map', {  
+        key: API_KEY_WEB,
+        maptype: 'dreamy',
+        poi: true,
+        traffic: false,
+        center: center,
+        zoom: 14
+    });
+}
+
+function updateMapCenter(center) {
+    if (map) {
+        map.setView(center, 14); 
+    }
+}
+
+createMap(initialCenter);
+
+if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+        position => {
+            const userCenter = [position.coords.latitude, position.coords.longitude];
+            updateMapCenter(userCenter); 
+        },
+        error => {
+            console.warn("Geolocation error:", error.message);
+        }
+    );
+}
+
+
+const locateBtn = document.getElementById("locate-user");
+
+function locateUserPosition() {
+    if (!navigator.geolocation) {
+        alert("مرورگر شما از موقعیت‌یابی پشتیبانی نمی‌کند.");
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            const userCenter = [
+                position.coords.latitude,
+                position.coords.longitude
+            ];
+
+            map.setView(userCenter, 15); 
+        },
+        (error) => {
+            console.warn("Location error:", error.message);
+            alert("دریافت موقعیت امکان‌پذیر نبود.");
+        }
+    );
+}
+
+locateBtn.addEventListener("click", locateUserPosition);
+
+
+
+
 
 // Origin Icon
 const originIcon = L.divIcon({
@@ -402,12 +460,13 @@ async function calculatePrice() {
   let totalDuration = 0;
   let points = [...origins, ...destinations];
 
-  // Calculate for each part
+  // Calculate each route section
   for (let i = 0; i < points.length - 1; i++) {
     let from = points[i]; 
     let to = points[i+1];
     
     let url = `https://api.neshan.org/v4/direction?type=car&origin=${from.lat},${from.lng}&destination=${to.lat},${to.lng}`;
+
     try {
       let res = await fetch(url, {headers: {'Api-Key': API_KEY_SERVICE}});
       let data = await res.json();
@@ -416,88 +475,79 @@ async function calculatePrice() {
         let polyline = data.routes[0].overview_polyline.points;
         let decoded = L.PolylineUtil.decode(polyline);
         
-        // Calculate each part of path
-        let segmentDistance = 0;
         for (let j = 0; j < decoded.length - 1; j++) {
-          let point1 = { lat: decoded[j][0], lng: decoded[j][1] };
-          let point2 = { lat: decoded[j+1][0], lng: decoded[j+1][1] };
+          let p1 = { lat: decoded[j][0], lng: decoded[j][1] };
+          let p2 = { lat: decoded[j+1][0], lng: decoded[j+1][1] };
           
-          let dist = map.distance(
-            [point1.lat, point1.lng],
-            [point2.lat, point2.lng]
-          );
-          
-          let midPoint = {
-            lat: (point1.lat + point2.lat) / 2,
-            lng: (point1.lng + point2.lng) / 2
+          let dist = map.distance([p1.lat, p1.lng], [p2.lat, p2.lng]);
+
+          let mid = {
+            lat: (p1.lat + p2.lat) / 2,
+            lng: (p1.lng + p2.lng) / 2
           };
           
-          let multiplier = isInSpecialArea(midPoint);
-          if (multiplier > 1) {
-            specialDistance += dist / 1000;  // Km
-          } else {
-            normalDistance += dist / 1000;   // Km
-          }
+          let multiplier = isInSpecialArea(mid);
 
-          document.getElementById("normalDistanceInput").value = normalDistance.toFixed(2);
-          document.getElementById("specialDistanceInput").value = specialDistance.toFixed(2);
-          document.getElementById("totalDistanceInput").value = (normalDistance + specialDistance).toFixed(2);
+          if (multiplier > 1) {
+            specialDistance += dist / 1000;
+          } else {
+            normalDistance += dist / 1000;
+          }
         }
 
-        
-        let leg = data.routes[0].legs[0];
-        totalDuration += leg.duration.value / 60; // to Min
-        document.getElementById('tripDuration').value = totalDuration.toFixed(1); // to Min
+        document.getElementById("normalDistanceInput").value = normalDistance.toFixed(2);
+        document.getElementById("specialDistanceInput").value = specialDistance.toFixed(2);
+        document.getElementById("totalDistanceInput").value = (normalDistance + specialDistance).toFixed(2);
 
+        let leg = data.routes[0].legs[0];
+        totalDuration += leg.duration.value / 60;
+        document.getElementById('tripDuration').value = totalDuration.toFixed(1);
       }
     } catch (error) {
       console.error('Error calculating route:', error);
     }
   }
-  const baseUrl = window.location.origin;
 
+
+  const baseUrl = window.location.origin;
   let areaCoef = 1;
 
-  fetch(`${baseUrl}/settings/tariffs`)
-    .then(res => res.json())
-    .then(data => {
-      areaCoef = parseInt(data.area_coef);
-    })
-    .catch(err => console.error(err));
+  try {
+    let res = await fetch(`${baseUrl}/settings/tariffs`);
+    let data = await res.json();
+    areaCoef = Number(data.area_coef) || 1;
+  } catch (err) {
+    console.error("Error fetching area_coef:", err);
+  }
 
-  // Calculate price
+
   let carType = document.querySelector('input[name="car_type_id"]:checked');
   let pricePerKm = parseInt(carType.dataset.price);
-  
+
   let normalPrice = normalDistance * pricePerKm;
   let specialPrice = specialDistance * pricePerKm * areaCoef;
+
   let totalPrice = normalPrice + specialPrice;
-  
-  // else calculations
+
+  // Round trip
   let tripType = document.getElementById('tripType').value;
   if (tripType === 'round') totalPrice *= 2;
-  
+
+  // Waiting time
   let waitingHours = parseInt(document.getElementById('waitingHours').value) || 0;
   let pricePerHour = parseInt(document.getElementById('waitingHours').dataset.price) || 0;
   totalPrice += waitingHours * pricePerHour;
-  totalPrice = Math.ceil(totalPrice / 1000) * 1000; // Round to nearest 1000
+
+  // Round to nearest 1000
+  totalPrice = Math.ceil(totalPrice / 1000) * 1000;
   document.getElementById('hiddenTotalPrice').value = totalPrice;
 
-  // Extra item for show result
-    // <p><strong>مسافت عادی:</strong> ${normalDistance.toFixed(2)} کیلومتر</p>
-    // <p><strong>مسافت ویژه:</strong> ${specialDistance.toFixed(2)} کیلومتر (ضریب 1.7)</p>
-    
-    // <p><strong>هزینه عادی:</strong> ${normalPrice.toLocaleString()} تومان</p>
-    // <p><strong>هزینه ویژه:</strong> ${specialPrice.toLocaleString()} تومان</p>
-    // <hr>
-    // <p><strong>هزینه کل:</strong> ${totalPrice.toLocaleString()} تومان</p>
-
-  // Show result
+  // Show results
   resultsDiv.innerHTML = `
     <p><strong>مسافت کل:</strong> ${(normalDistance + specialDistance).toFixed(2)} کیلومتر</p>
     <p><strong>زمان تخمینی:</strong> ${totalDuration.toFixed(1)} دقیقه</p>
   `;
-  finalPrice.innerHTML = `<p><strong>هزینه کل:</strong> ${totalPrice.toLocaleString()} تومان</p>`
+  finalPrice.innerHTML = `<p><strong>هزینه کل:</strong> ${totalPrice.toLocaleString()} تومان</p>`;
 }
 
 // AJAX update on each change

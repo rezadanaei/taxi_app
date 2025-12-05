@@ -64,3 +64,41 @@ document.getElementById('editDriverInfo').addEventListener('click', async () => 
 document.getElementById('driverProfilePopupClose').addEventListener('click', function() {
     document.getElementById('driverProfilePopup').style.display = 'none'; 
 });
+
+
+// Jalali Datapicker and set max days to 30
+const today = new Date();
+const maxDate = new Date(today);
+maxDate.setDate(today.getDate() + 30);
+
+const [jy, jm, jd] = gregorian_to_jalali(
+    maxDate.getFullYear(),
+    maxDate.getMonth() + 1,
+    maxDate.getDate()
+);
+
+const maxDateString = `${jy}/${jm.toString().padStart(2, '0')}/${jd.toString().padStart(2, '0')}`;
+
+// باید این مقدار درست باشد
+document.getElementById("rideDate").setAttribute("data-jdp-maxDate", maxDateString);
+
+// jalali datepicker
+jalaliDatepicker.startWatch({
+    separatorChars: {
+        date: '/',
+        time: ':',
+        between: ' '
+    },
+    date: true,
+    time: false,
+    autoShow: true,
+    autoHide: true,
+    hasSecond: false,
+    hideAfterChange: true,
+    persianDigits: false,
+    format: 'YYYY/MM/DD',
+    zIndex: 1000,
+    useDropDownYears: false,
+    minDate: "today",
+    maxDate: "attr"
+});

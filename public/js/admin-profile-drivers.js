@@ -4,12 +4,12 @@ document.querySelectorAll('#adminEditdriver').forEach(button => {
   button.addEventListener('click', () => {
     const baseUrl = window.location.origin; 
 
-  function validImage(path) {
-    if (!path || path === `${baseUrl}/storage` || path.trim() === '') {
-      return `${baseUrl}/img/no-photo.png`;
+    function validImage(path) {
+      if (!path || path === `${baseUrl}/storage` || path.trim() === '') {
+        return `${baseUrl}/img/no-photo.png`;
+      }
+      return path.startsWith('http') ? path : `${baseUrl}${path}`;
     }
-    return path.startsWith('http') ? path : `${baseUrl}${path}`;
-  }
 
     const popup = document.getElementById('adminAddEditdriverPopup');
     popup.style.display = 'block';
@@ -27,24 +27,30 @@ document.querySelectorAll('#adminEditdriver').forEach(button => {
     popup.querySelector('input[name="license_number"]').value = button.dataset.licensenumber || '';
     popup.querySelector('input[name="car_model"]').value = button.dataset.carmodel || '';
 
-    
-
+    // Existing images
     popup.querySelector('input[name="id_card_front"]').dataset.current  = validImage(button.dataset.idcardfront);
     popup.querySelector('input[name="id_card_back"]').dataset.current = validImage(button.dataset.idcardback);
     popup.querySelector('input[name="id_card_selfie"]').dataset.current = validImage(button.dataset.idselfi);
     popup.querySelector('input[name="profile_photo"]').dataset.current = validImage(button.dataset.profilephoto);
-
     popup.querySelector('input[name="license_front"]').dataset.current = validImage(button.dataset.licensefront);
     popup.querySelector('input[name="license_back"]').dataset.current = validImage(button.dataset.licenseback);
     popup.querySelector('input[name="car_card_front"]').dataset.current = validImage(button.dataset.carcardfront);
     popup.querySelector('input[name="car_card_back"]').dataset.current = validImage(button.dataset.carcardback);
     popup.querySelector('input[name="car_insurance"]').dataset.current = validImage(button.dataset.carinsure);
 
+    // ------------------ NEW EXTRA CAR IMAGES ------------------
+    popup.querySelector('input[name="car_front_image"]').dataset.current = validImage(button.dataset.carfrontimage);
+    popup.querySelector('input[name="car_back_image"]').dataset.current = validImage(button.dataset.carbackimage);
+    popup.querySelector('input[name="car_left_image"]').dataset.current = validImage(button.dataset.carleftimage);
+    popup.querySelector('input[name="car_right_image"]').dataset.current = validImage(button.dataset.carrightimage);
+    popup.querySelector('input[name="car_front_seats_image"]').dataset.current = validImage(button.dataset.carfrontseatsimage);
+    popup.querySelector('input[name="car_back_seats_image"]').dataset.current = validImage(button.dataset.carbackseatsimage);
+
     const toggleinput = document.getElementById('driverid');
     toggleinput.value = button.dataset.id;
-
   });
 });
+
 
 
 // close popup 

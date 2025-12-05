@@ -114,11 +114,11 @@ class UserController extends Controller
                     return view('driver-unverfied', compact('user','driver','birth_display'));
                 }
                 if($user->status === 'rejected') {
-                    $lastRejected = DriverReviewLog::where('driver_id', $driver->id)
+                    $lastRejected = DriverReviewLog::where('driver_id', $user->id)
                         ->where('status', 'rejected')
                         ->latest() 
                         ->first();
-
+                    
                     $message = $lastRejected ? $lastRejected->message : 'اطلاعات ارسالی شما مورد تایید قرار نگرفت. لطفا با پشتیبانی تماس بگیرید.';
 
                     return view('driver-notacceped', compact('user','driver','birth_display','message'));
@@ -149,7 +149,7 @@ class UserController extends Controller
             }
             if($user->status === 'rejected') {
 
-                $lastRejected = DriverReviewLog::where('driver_id', $driver->id)
+                $lastRejected = DriverReviewLog::where('driver_id', $user->id)
                     ->where('status', 'rejected')
                     ->latest() 
                     ->first();
@@ -239,13 +239,25 @@ class UserController extends Controller
         return back();
     }
 
-    public function loginVerification(Request $request){
+    public function loginVerification(Request $request)
+    {
         $data = $request->validate([
             'phone' => 'required|string',
             'role'  => 'required|in:passenger,driver',
         ]);
+
         $phone = $data['phone'];
         $role  = $data['role'];
+
+        $user = User::withTrashed()->where('phone', $phone)->first();
+
+        if ($user && ($user->trashed() || $user->status === 'deleted')) {
+            return redirect()->back()->with([
+                'error' => 'این شماره مسدود شده است و نمی‌توانید وارد شوید'
+            ]);
+        }
+
+
         try {
             $code = random_int(10000, 99999);
         } catch (\Exception $e) {
@@ -253,10 +265,12 @@ class UserController extends Controller
         }
 
         Cache::put($phone, $code, now()->addMinutes(10));
-       
+
         SMS::sendPattern($phone, [$code], 399329);
+
         return view('verification-code', ['phone' => $phone, 'role' => $role]);
     }
+
 
     public function loginOrRegister(Request $request)
     {
@@ -665,29 +679,66 @@ class UserController extends Controller
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:255',
 
-            'id_card_front' => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
-            'id_card_back' => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
-            'id_card_selfie' => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
-            'profile_photo' => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
+            'id_card_front' => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
+            'id_card_back' => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
+            'id_card_selfie' => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
+            'profile_photo' => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
 
             'license_number' => 'nullable|string|max:50',
-            'license_front' => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
-            'license_back' => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
+            'license_front' => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
+            'license_back' => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
 
             'car_type' => 'nullable|string|max:100',
             'car_plate' => 'nullable|string|max:20',
             'car_model' => 'nullable|string|max:100',
-            'car_card_front' => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
-            'car_card_back' => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
-            'car_insurance' => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
+            'car_card_front' => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
+            'car_card_back' => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
+            'car_insurance' => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
+
+            // ------------------ NEW: Car Extra Images ------------------
+            'car_front_image'        => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
+            'car_back_image'         => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
+            'car_left_image'         => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
+            'car_right_image'        => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
+            'car_front_seats_image'  => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
+            'car_back_seats_image'   => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
+        ],[
+            'id.required' => 'شناسه کاربر الزامی است.',
+            'id.exists'   => 'کاربری با این شناسه پیدا نشد.',
+
+            '*.image' => 'فایل انتخاب شده باید تصویر باشد.',
+            '*.mimes' => 'فرمت تصویر باید JPG یا PNG باشد.',
+
+            'id_card_front.max' => 'حجم تصویر کارت ملی جلو نباید بیشتر از 3 مگابایت باشد.',
+            'id_card_back.max' => 'حجم تصویر کارت ملی پشت نباید بیشتر از 3 مگابایت باشد.',
+            'id_card_selfie.max' => 'حجم تصویر سلفی کارت ملی نباید بیشتر از 3 مگابایت باشد.',
+            'profile_photo.max' => 'حجم عکس پروفایل نباید بیشتر از 3 مگابایت باشد.',
+
+            // ------------------ NEW ERRORS ------------------
+            'car_front_image.max' => 'حجم تصویر نمای جلوی خودرو نباید بیشتر از 3 مگابایت باشد.',
+            'car_back_image.max' => 'حجم تصویر نمای عقب خودرو نباید بیشتر از 3 مگابایت باشد.',
+            'car_left_image.max' => 'حجم تصویر نمای چپ خودرو نباید بیشتر از 3 مگابایت باشد.',
+            'car_right_image.max' => 'حجم تصویر نمای راست خودرو نباید بیشتر از 3 مگابایت باشد.',
+            'car_front_seats_image.max' => 'حجم تصویر صندلی‌های جلو نباید بیشتر از 3 مگابایت باشد.',
+            'car_back_seats_image.max' => 'حجم تصویر صندلی‌های عقب نباید بیشتر از 3 مگابایت باشد.',
+
+            'first_name.max' => 'طول نام نباید بیشتر از 100 کاراکتر باشد.',
+            'last_name.max' => 'طول نام خانوادگی نباید بیشتر از 100 کاراکتر باشد.',
+            'father_name.max' => 'طول نام پدر نباید بیشتر از 100 کاراکتر باشد.',
+            'address.max' => 'طول آدرس نباید بیشتر از 255 کاراکتر باشد.',
+
+            'string' => 'مقدار وارد شده باید متن باشد.',
+            'date'   => 'تاریخ وارد شده معتبر نیست.',
         ]);
+
 
         $uploadPath = 'drivers';
 
         foreach ([
             'id_card_front', 'id_card_back', 'id_card_selfie', 'profile_photo',
             'license_front', 'license_back',
-            'car_card_front', 'car_card_back', 'car_insurance'
+            'car_card_front', 'car_card_back', 'car_insurance',
+            'car_front_image', 'car_back_image', 'car_left_image', 'car_right_image', 'car_front_seats_image', 'car_back_seats_image'
         ] as $fileField) {
             if ($request->hasFile($fileField)) {
                 $validated[$fileField] = $request->file($fileField)->store($uploadPath, 'public');

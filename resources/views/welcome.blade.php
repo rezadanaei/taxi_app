@@ -42,6 +42,9 @@
       </div>
       <div class="home-header-right">
         <a href="{{ route('user.profile') }}"><img src="{{ asset('img/profile.svg') }}" alt="پروفایل"></a>
+        <button id="locate-user" style="display: flex;align-items: center;justify-content: center;">
+          <img src="{{ asset('img/current-location.svg') }}" alt="current location">
+        </button>
       </div>
     </header>
     <!-- Home Header end -->

@@ -655,34 +655,54 @@ class AdminController extends Controller
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:255',
 
-            'id_card_front' => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
-            'id_card_back' => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
-            'id_card_selfie' => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
-            'profile_photo' => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
+            'id_card_front' => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
+            'id_card_back' => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
+            'id_card_selfie' => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
+            'profile_photo' => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
 
             'license_number' => 'nullable|string|max:50',
-            'license_front' => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
-            'license_back' => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
+            'license_front' => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
+            'license_back' => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
 
             'car_type' => 'nullable|string|max:100',
             'car_plate' => 'nullable|string|max:20',
             'car_model' => 'nullable|string|max:100',
-            'car_card_front' => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
-            'car_card_back' => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
-            'car_insurance' => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
+            'car_card_front' => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
+            'car_card_back' => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
+            'car_insurance' => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
+        ],[
+            'id.required' => 'شناسه کاربر الزامی است.',
+            'id.exists'   => 'کاربری با این شناسه پیدا نشد.',
+
+            '*.image' => 'فایل انتخاب شده باید تصویر باشد.',
+            '*.mimes' => 'فرمت تصویر باید JPG یا PNG باشد.',
+            'id_card_front.max' => 'حجم تصویر کارت ملی جلو نباید بیشتر از 3 مگابایت باشد.',
+            'id_card_back.max' => 'حجم تصویر کارت ملی پشت نباید بیشتر از 3 مگابایت باشد.',
+            'id_card_selfie.max' => 'حجم تصویر سلفی کارت ملی نباید بیشتر از 3 مگابایت باشد.',
+            'profile_photo.max' => 'حجم عکس پروفایل نباید بیشتر از 3 مگابایت باشد.',
+
+            'first_name.max' => 'طول نام نباید بیشتر از 100 کاراکتر باشد.',
+            'last_name.max' => 'طول نام خانوادگی نباید بیشتر از 100 کاراکتر باشد.',
+            'father_name.max' => 'طول نام پدر نباید بیشتر از 100 کاراکتر باشد.',
+            'address.max' => 'طول آدرس نباید بیشتر از 255 کاراکتر باشد.',
+
+            'string' => 'مقدار وارد شده باید متن باشد.',
+            'date'   => 'تاریخ وارد شده معتبر نیست.',
         ]);
 
         $uploadPath = 'drivers';
 
-        foreach ([
+       foreach ([
             'id_card_front', 'id_card_back', 'id_card_selfie', 'profile_photo',
             'license_front', 'license_back',
-            'car_card_front', 'car_card_back', 'car_insurance'
+            'car_card_front', 'car_card_back', 'car_insurance',
+            'car_front_image', 'car_back_image', 'car_left_image', 'car_right_image', 'car_front_seats_image', 'car_back_seats_image'
         ] as $fileField) {
             if ($request->hasFile($fileField)) {
                 $validated[$fileField] = $request->file($fileField)->store($uploadPath, 'public');
             }
         }
+
         $user_db = User::where('id', $validated['id'])->first(); 
 
         $driver = $user_db->userable;

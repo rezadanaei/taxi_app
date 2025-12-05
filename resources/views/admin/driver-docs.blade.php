@@ -11,7 +11,7 @@
             --Third-color: {{ setting('colers_tertiary') ?? '#E0E0E0' }};
         }
 
-         select {
+        select {
             padding: 12px;
             border: 1px solid #ddd;
             border-radius: 8px;
@@ -19,13 +19,17 @@
             background: white;
             color: #333;
             font-family: 'Vazir-FD', sans-serif;
-          }
-          select:focus {
+        }
+        select:focus {
             outline: none;
             border-color: #007bff;
             box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
-          }
-    </style>
+        }
+
+        .images { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 15px; }
+        .images div { text-align: center; }
+        .images img { width: 120px; border: 1px solid #ddd; border-radius: 8px; }
+  </style>
   <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>
 <body>
@@ -47,6 +51,7 @@
           </div>
       @endif
 
+      <!-- پاپ‌آپ مشاهده مدارک -->
       <div id="adminAddSeedriverdockPopup" style="display:none;">
         <form class="admin-see-driverdock-popup-content" action="{{ route('admin.drivers.documents.approve') }}" method="POST">
           @csrf
@@ -61,6 +66,7 @@
             <p>شماره تلفن: <span id="popupPhone"></span></p>
             <p>آدرس محل سکونت: <span id="popupAddress"></span></p>
 
+            <!-- مدارک شخصی -->
             <div class="images">
               <div class="id-card-front">
                 <p>عکس روی کارت ملی</p>
@@ -84,16 +90,18 @@
             </div>
 
             <p>نوع ماشین: <span id="popupCarType"></span> 
-                    <select name="car_id" id="carSelect" class="category-select">
-                        <option value="">انتخاب نوع خودرو</option>
-                        @foreach ($cars as $car)
-                            <option value="{{ $car->id }}">{{ $car->name }}</option>
-                        @endforeach
-                    </select></p> 
+                <select name="car_id" id="carSelect" class="category-select">
+                    <option value="">انتخاب نوع خودرو</option>
+                    @foreach ($cars as $car)
+                        <option value="{{ $car->id }}">{{ $car->name }}</option>
+                    @endforeach
+                </select>
+            </p> 
             <p>پلاک ماشین: <span id="popupCarPlate"></span></p>
             <p>شماره گواهینامه: <span id="popupLicenseNumber"></span></p>
             <p>مدل ماشین: <span id="popupCarModel"></span></p>
 
+            <!-- مدارک خودرو -->
             <div class="images">
               <div class="car-id-card-front">
                 <p>عکس روی گواهینامه</p>
@@ -119,24 +127,54 @@
                 <p>تصویر بیمه ماشین</p>
                 <img id="popupCarInsure" src="{{ asset('img/no-photo.png') }}">
               </div>
+
+              <!-- 6 تصویر جدید خودرو -->
+              <div class="car-front-image">
+                <p>نمای جلوی خودرو</p>
+                <img id="popupCarFrontImage" src="{{ asset('img/no-photo.png') }}">
+              </div>
+
+              <div class="car-back-image">
+                <p>نمای عقب خودرو</p>
+                <img id="popupCarBackImage" src="{{ asset('img/no-photo.png') }}">
+              </div>
+
+              <div class="car-left-image">
+                <p>نمای چپ خودرو</p>
+                <img id="popupCarLeftImage" src="{{ asset('img/no-photo.png') }}">
+              </div>
+
+              <div class="car-right-image">
+                <p>نمای راست خودرو</p>
+                <img id="popupCarRightImage" src="{{ asset('img/no-photo.png') }}">
+              </div>
+
+              <div class="car-front-seats-image">
+                <p>صندلی جلو و داشبورد</p>
+                <img id="popupCarFrontSeatsImage" src="{{ asset('img/no-photo.png') }}">
+              </div>
+
+              <div class="car-back-seats-image">
+                <p>صندلی‌های عقب</p>
+                <img id="popupCarBackSeatsImage" src="{{ asset('img/no-photo.png') }}">
+              </div>
+
             </div>
           </section>
+
           <input type="hidden" name="note_id" id="note_id">
           <div class="admin-driver-doc-actions">
             <button type="submit">تایید اطلاعات</button>
             <button type="button" id="adminAddSeedriverdockPopupClose">بستن</button>
           </div>
-
         </form>
       </div>
 
-
+      <!-- پاپ‌آپ رد درخواست -->
       <div id="adminAddDeletedriverdockPopup">
         <div class="admin-delete-driverdock-popup-content">
-
           <h3>رد درخواست</h3>
-
-          <form action="{{ route('admin.drivers.documents.reject') }}" method="POST" >
+          <form action="{{ route('admin.drivers.documents.reject') }}" method="POST">
             @csrf
             <input type="hidden" name="note_id" value="">
             <textarea name="message" id="message" placeholder="دلیل رد درخواست" rows="4"></textarea>
@@ -145,18 +183,18 @@
               <button type="button" id="adminAddDeletedriverdockPopupClose">بستن</button>
             </section>
           </form>
-
         </div>
       </div>
 
+      <!-- لیست نوتیفیکیشن‌ها -->
       <ol>
         @foreach($notifications as $note)
             <li>
               <div class="admin-driverdock-item-title"><p>{{ $note->message }}</p></div>
               <div class="admin-driverdock-item-btn">
-                <button id="adminSeeDriverDoc" 
+                <button id="adminSeeDriverDoc"
                   data-noteid="{{ $note->id }}"
-                  data-id="{{ $note->driver->id }}" 
+                  data-id="{{ $note->driver->id }}"
                   data-phone="{{ $note->driver->phone }}"
                   data-firstname="{{ $note->driver->userable->first_name }}"
                   data-lastname="{{ $note->driver->userable->last_name }}"
@@ -178,26 +216,26 @@
                   data-licensefront="{{ asset('storage/'.$note->driver->userable->license_front) }}"
                   data-licenseback="{{ asset('storage/'.$note->driver->userable->license_back) }}"
 
-                >مشاهده</button>
-                <button id="adminDeletedriverdockDoc" data-noteId="{{ $note->id }}" >رد درخواست</button>
-              </div>                
+                  data-carfrontimage="{{ asset('storage/'.$note->driver->userable->car_front_image) }}"
+                  data-carbackimage="{{ asset('storage/'.$note->driver->userable->car_back_image) }}"
+                  data-carleftimage="{{ asset('storage/'.$note->driver->userable->car_left_image) }}"
+                  data-carrightimage="{{ asset('storage/'.$note->driver->userable->car_right_image) }}"
+                  data-carfrontseatsimage="{{ asset('storage/'.$note->driver->userable->car_front_seats_image) }}"
+                  data-carbackseatsimage="{{ asset('storage/'.$note->driver->userable->car_back_seats_image) }}"
+                >
+                  مشاهده
+                </button>
+                <button id="adminDeletedriverdockDoc" data-noteId="{{ $note->id }}">رد درخواست</button>
+              </div>
             </li>
         @endforeach
-
-        {{-- <li class="admin-driverdock-item">
-          <div class="admin-driverdock-item-title"><p>نام و نام خانوادگی راننده</p></div>
-          <div class="admin-driverdock-item-btn">
-            <button id="adminSeeDriverDoc">مشاهده</button>
-            <button id="adminDeletedriverdockDoc">رد درخواست</button>
-          </div>
-        </li> --}}
       </ol>
 
     </div>
-
-   </div>
+  </div>
 
   <script src="{{ asset('js/admin-profile-driverdocks.js') }}"></script>
   
+ 
 </body>
 </html>

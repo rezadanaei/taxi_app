@@ -36,6 +36,17 @@
           
           <div class="u-profile-content">
 
+            @if (session('error'))
+                <div class="admin-errors">
+                    {{ session('error') }}
+                </div>
+            @endif
+      
+            @if (session('success'))
+                <div class="admin-success">
+                    {{ session('success') }}
+                </div>
+            @endif
             <form class="u-driver-form" enctype="multipart/form-data" method="POST" action="{{ route('admin.drivers.save', $driver->id ?? '') }}">
               @csrf
               <section class="u-driver-personal-info">
@@ -104,6 +115,37 @@
                 </div>
               </section>
 
+              <!-- --------------- NEW EXTRA CAR IMAGES ---------------- -->
+              <section class="u-driver-car-extra-images">
+                <h2>تصاویر اضافی خودرو</h2>
+                <div class="u-driver-grid-6">
+                  <div class="file-upload">
+                    <input type="file" name="car_front_image">
+                    <button type="button" class="file-button">نمای جلو خودرو</button>
+                  </div>
+                  <div class="file-upload">
+                    <input type="file" name="car_back_image">
+                    <button type="button" class="file-button">نمای عقب خودرو</button>
+                  </div>
+                  <div class="file-upload">
+                    <input type="file" name="car_left_image">
+                    <button type="button" class="file-button">نمای چپ خودرو</button>
+                  </div>
+                  <div class="file-upload">
+                    <input type="file" name="car_right_image">
+                    <button type="button" class="file-button">نمای راست خودرو</button>
+                  </div>
+                  <div class="file-upload">
+                    <input type="file" name="car_front_seats_image">
+                    <button type="button" class="file-button">صندلی جلو و داشبورد</button>
+                  </div>
+                  <div class="file-upload">
+                    <input type="file" name="car_back_seats_image">
+                    <button type="button" class="file-button">صندلی عقب</button>
+                  </div>
+                </div>
+              </section>
+
               <button class="u-driver-form-submit" type="submit">ثبت و تایید اطلاعات</button>
             </form>
 
@@ -140,7 +182,6 @@
               data-carinsure="{{ asset('storage/'.$driver->userable->car_insurance) }}"
               data-licensefront="{{ asset('storage/'.$driver->userable->license_front) }}"
               data-licenseback="{{ asset('storage/'.$driver->userable->license_back) }}"
-
             >ویرایش</button>
             <form action="{{ route('admin.drivers.delete') }}" method="POST" style="display: inline-block">
               @csrf

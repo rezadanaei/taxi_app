@@ -80,6 +80,13 @@
       <div class="u-profile-tab-content">
         <!-- Tab 1 -->
         <div class="u-profile-tab-item active ud-tab1">
+          <div id="notification-warning" style="display: none;">
+              <span>مرورگر شما اجازه ارسال نوتیفیکیشن نمی‌دهد.</span>
+              <span>
+                  برای دریافت نوتیفیکیشن‌ها <button id="request-notification-permission">اینجا</button> کلیک کنید.
+              </span>
+          </div>
+          
           <div class="passenger-current-trip">
             <ul id="tripsList">
               <!-- Current Trip item -->
@@ -119,7 +126,8 @@
               <!-- Current Trip item end -->
 
             </ul>
-            <button id="loadMoreTrips">بارگذاری بیشتر</button>
+            <div id="infiniteScrollTrigger"></div>
+
           </div>
         </div>
         <!-- Tab 1 end -->
@@ -288,308 +296,378 @@
 
    </div>
   <!-- User Profile page end -->
-  <button id="request-notification-permission">دریافت اجازه نوتیفیکیشن</button>
   
   <script src="{{ asset('/js/profile.js') }}"></script>
 
-  <script>
-document.addEventListener("DOMContentLoaded", async () => {
-    if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
-        console.log("Web Push در این مرورگر پشتیبانی نمی‌شود.");
-        return;
-    }
+ <script>
+    document.addEventListener("DOMContentLoaded", async () => {
 
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-    const tokenMeta = document.querySelector('meta[name="api-token"]');
-
-    if (tokenMeta && !localStorage.getItem("auth_token")) {
-        localStorage.setItem("auth_token", tokenMeta.getAttribute('content'));
-    }
-
-    let swRegistration;
-    try {
-        swRegistration = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
-        console.log("Service Worker با موفقیت ثبت شد");
-    } catch (err) {
-        console.error("خطا در ثبت Service Worker:", err);
-        return;
-    }
-
-    function urlBase64ToUint8Array(base64String) {
-        const padding = "=".repeat((4 - base64String.length % 4) % 4);
-        const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
-        const rawData = window.atob(base64);
-        const outputArray = new Uint8Array(rawData.length);
-        for (let i = 0; i < rawData.length; ++i) {
-            outputArray[i] = rawData.charCodeAt(i);
-        }
-        return outputArray;
-    }
-
-    async function subscribeUser() {
-        try {
-            const permission = await Notification.requestPermission();
-            if (permission !== "granted") {
-                console.log("کاربر اجازه نوتیفیکیشن نداد");
-                return false;
-            }
-
-            const vapidPublicKey = "{{ env('VAPID_PUBLIC_KEY') ?? 'BKVeFmlrdaKcwXVNSbLtUWqm3vUgFDr4DQVBj104D9MUkwA3itSrbjr7wV3ldP1cMhmCnx8TiOhXrMS3RO0cbZs' }}";
-            const applicationServerKey = urlBase64ToUint8Array(vapidPublicKey.trim());
-
-            const existingSub = await swRegistration.pushManager.getSubscription();
-            if (existingSub) {
-                console.log("اشتراک قدیمی پیدا شد → در حال حذف...");
-                await existingSub.unsubscribe();
-            }
-
-            const subscription = await swRegistration.pushManager.subscribe({
-                userVisibleOnly: true,
-                applicationServerKey
-            });
-
-            console.log("اشتراک جدید با موفقیت ایجاد شد");
-
-            const response = await fetch("{{ route('api.user-push-token.store') ?? '/api/user-push-token' }}", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                    "Authorization": `Bearer ${localStorage.getItem("auth_token")}`,
-                    "X-CSRF-TOKEN": csrfToken || ""
-                },
-                body: JSON.stringify({
-                    type: "web_push",
-                    token: JSON.stringify(subscription) 
-                })
-            });
-
-            if (response.ok) {
-                const result = await response.json();
-                console.log("توکن Push با موفقیت در سرور ذخیره شد", result);
-                return true;
-            } else {
-                const error = await response.json();
-                console.error("خطا در ذخیره توکن:", error);
-                return false;
-            }
-
-        } catch (err) {
-            console.error("خطا در فرآیند Push:", err);
-            return false;
-        }
-    }
-
-    if (Notification.permission === "default") {
-        await subscribeUser();
-    } else if (Notification.permission === "granted") {
-        await subscribeUser();
-    }
-
-    const button = document.getElementById("request-notification-permission");
-    if (button) {
-        button.addEventListener("click", async () => {
-            if (tokenMeta) {
-                localStorage.setItem("auth_token", tokenMeta.getAttribute('content'));
-            }
-
-            const success = await subscribeUser();
-            if (success) {
-                alert("نوتیفیکیشن وب با موفقیت فعال شد");
-            }
-        });
-    }
-});
-</script>
-
-  <script>
-
-let currentPage = 1;
-const tripsList = document.getElementById('tripsList');
-const loadMoreBtn = document.getElementById('loadMoreTrips');
-
-
-function translateTripType(type) {
-    if (!type) return '';
-    return type === 'oneway' ? 'یکطرفه' :
-           type === 'round'  ? 'رفت و برگشت' :
-           type;
-}
-
-
-function openMap(lat, lng) {
-    const url = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
-
-    if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
-        window.location.href = `geo:${lat},${lng}?q=${lat},${lng}`;
-    } else {
-        window.open(url, "_blank");
-    }
-}
-
-
-function attachTripClickEvents() {
-    document.querySelectorAll('.passenger-trip-item section img').forEach(btn => {
-        btn.onclick = function () {
-            const parent = this.closest("li");
-            parent.classList.toggle("open");
-        };
-    });
-}
-
-function renderTrip(trip) {
-    const origins = trip.origins ? JSON.parse(trip.origins) : [];
-    const destinations = trip.destinations ? JSON.parse(trip.destinations) : [];
-
-    const originsHtml = origins.map((o, i) => `
-        <li>
-            <span>مبدا ${i+1}: </span>${o.address || 'آدرس موجود نیست'}
-            <button onclick="openMap(${o.lat}, ${o.lng})">مسیر یاب</button>
-        </li>
-    `).join('');
-
-    const destinationsHtml = destinations.map((d, i) => `
-        <li>
-            <span>مقصد ${i+1}: </span>${d.address || 'آدرس موجود نیست'}
-            <button onclick="openMap(${d.lat}, ${d.lng})">مسیر یاب</button>
-        </li>
-    `).join('');
-
-    const date = trip.formatted_date ?? trip.start_date;
-    const time = trip.formatted_time ?? trip.trip_time;
-
-    return `
-    <li>
-        <div class="passenger-trip-item">
-            <div class="passenger-item-title">
-                <div class="trip-id">کد سفر: ${trip.id}</div>
-                <div class="trip-state">هزینه سفر: ${Number(trip.cost).toLocaleString()} تومان</div>
-            </div>
-            <section>
-                <button id="skipTrip">رد سفر</button>
-                <button id="acceptTrip">قبول سفر</button>
-                <img src="/img/down.svg" alt="فلش">
-            </section>
-        </div>
-
-        <div class="passenger-trip-content">
-
-            <div class="trip-extra-info-md">
-                <div>تاریخ: ${date}</div>
-                <span>-</span>
-                <div>ساعت: ${time}</div>
-                <span>-</span>
-                <div>تعداد مسافر: ${trip.passenger_count}</div>
-                <span>-</span>
-                <div>تعداد چمدان: ${trip.luggage_count}</div>
-                <span>-</span>
-                <div>نوع سفر: ${translateTripType(trip.trip_type)}</div>
-                <span>-</span>
-                <div>ساعات انتظار: ${trip.waiting_hours}</div>
-                <span>-</span>
-                <div>حیوان خانگی: ${trip.has_pet ? 'دارد' : 'ندارد'}</div>
-            </div>
-
-            <ul class="trip-locations">
-                ${originsHtml + destinationsHtml}
-            </ul>
-
-            ${trip.driver ? `
-            <div class="trip-driver-info">
-                <img src="${trip.driver.userable?.profile_photo ? '/storage/' + trip.driver.userable.profile_photo : '/img/no-photo.png'}">
-                <div class="driver-info">
-                    <p><span>راننده: </span>${trip.driver.userable?.first_name ?? ''} ${trip.driver.userable?.last_name ?? ''}</p>
-                    <p><span>ماشین: </span>${trip.driver.userable?.car?.name ?? 'نامشخص'}</p>
-                    <p><span>پلاک: </span>${trip.driver.userable?.car_plate ?? 'نامشخص'}</p>
-                </div>
-                <a href="tel:${trip.driver?.phone ?? ''}" class="call-to-driver">${trip.driver?.phone ?? ''}</a>
-            </div>` : ''}
-
-            <div class="user-form-desc">
-                <p>${trip.caption ?? ''}</p>
-            </div>
-        </div>
-    </li>`;
-}
-
-
-function loadTrips(page = 1) {
-    fetch(`/driver/trips?page=${page}`)
-        .then(res => res.json())
-        .then(data => {
-            if (!data.status) return;
-
-            const trips = [
-                ...data.tripsWithoutDriver.data
-            ];
-
-            trips.forEach(trip => {
-                tripsList.insertAdjacentHTML("beforeend", renderTrip(trip));
-            });
-
-            if (page >= data.tripsWithoutDriver.last_page) {
-                loadMoreBtn.style.display = "none";
-            }
-
-            attachTripClickEvents();
-        });
-}
-
-
-loadTrips(currentPage);
-
-loadMoreBtn.addEventListener("click", () => {
-    currentPage++;
-    loadTrips(currentPage);
-});
-
-if (typeof messaging !== "undefined") {
-    messaging.onMessage(payload => {
-
-        console.log("📥 پیام جدید FCM:", payload);
-
-        let data = payload.data;
-
-        if (typeof data === "string") {
-            try { data = JSON.parse(data); } catch { return; }
-        }
-
-        if (!data || data.type !== "trip") {
-            console.warn("⛔ پیام تایپ trip نبود، نادیده گرفته شد.");
+        /* ──────────────────────────────────────────────
+        * 1) Check browser support
+        * ────────────────────────────────────────────── */
+        if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+            console.log("Web Push is not supported in this browser.");
             return;
         }
 
-        let trip = data.trip;
+        /* ──────────────────────────────────────────────
+        * 2) Read CSRF and API Token
+        * ────────────────────────────────────────────── */
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute("content");
+        const tokenMeta = document.querySelector('meta[name="api-token"]');
 
-        if (typeof trip === "string") {
-            try { trip = JSON.parse(trip); } catch { return; }
+        if (tokenMeta && !localStorage.getItem("auth_token")) {
+            localStorage.setItem("auth_token", tokenMeta.getAttribute("content"));
         }
 
-        if (!trip) return;
+        const authToken = localStorage.getItem("auth_token");
 
-        tripsList.insertAdjacentHTML("afterbegin", renderTrip(trip));
+        /* ──────────────────────────────────────────────
+        * 3) Register Service Worker
+        * ────────────────────────────────────────────── */
+        let swRegistration;
 
-        attachTripClickEvents();
-    });
-}
-if (navigator.serviceWorker) {
-    navigator.serviceWorker.addEventListener("message", function(event) {
-        const data = event.data;
-
-        if (!data || data.type !== "trip") return;
-
-        let trip = data.trip;
-
-        if (typeof trip === "string") {
-            try { trip = JSON.parse(trip); } catch {}
+        try {
+            swRegistration = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+            console.log("Service Worker registered successfully");
+        } catch (e) {
+            console.error("Service Worker registration failed:", e);
+            return;
         }
 
-        tripsList.insertAdjacentHTML("afterbegin", renderTrip(trip));
-        attachTripClickEvents();
-    });
-}
+        /* ──────────────────────────────────────────────
+        * 4) Convert VAPID Key
+        * ────────────────────────────────────────────── */
+        function urlBase64ToUint8Array(base64) {
+            const padding = "=".repeat((4 - (base64.length % 4)) % 4);
+            const base64String = (base64 + padding).replace(/-/g, "+").replace(/_/g, "/");
+            const rawData = atob(base64String);
+            return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
+        }
 
-</script>
+        const vapidPublicKey = "{{ env('VAPID_PUBLIC_KEY') }}";
+        const applicationServerKey = urlBase64ToUint8Array(vapidPublicKey);
+
+        /* ──────────────────────────────────────────────
+        * 5) Subscribe user only when needed
+        * ────────────────────────────────────────────── */
+        async function subscribeUserIfNeeded() {
+            try {
+                // Ask for notification permission only if not yet granted
+                if (Notification.permission === "default") {
+                    const permission = await Notification.requestPermission();
+                    if (permission !== "granted") {
+                        console.warn("User denied notification permission.");
+                        return false;
+                    }
+                }
+
+                // Check for existing subscription
+                const existingSubscription = await swRegistration.pushManager.getSubscription();
+
+                if (existingSubscription) {
+                    console.log("User already has an active Push subscription — no need to create a new one.");
+                    return existingSubscription;
+                }
+
+                // Create new subscription
+                const newSubscription = await swRegistration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey
+                });
+
+                console.log("New Push subscription created");
+
+                // Send subscription to backend only if API token exists
+                if (!authToken) {
+                    console.warn("API token not found. Cannot send subscription to server.");
+                    return newSubscription;
+                }
+
+                const response = await fetch("{{ route('api.user-push-token.store') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json",
+                        "Authorization": `Bearer ${authToken}`,
+                        "X-CSRF-TOKEN": csrfToken ?? ""
+                    },
+                    body: JSON.stringify({
+                        type: "web_push",
+                        token: JSON.stringify(newSubscription)
+                    })
+                });
+
+                if (response.ok) {
+                    console.log("Push subscription stored successfully on server");
+                } else {
+                    console.error("Failed to store Push subscription:", await response.json());
+                }
+
+                return newSubscription;
+
+            } catch (e) {
+                console.error("Push subscription error:", e);
+                return false;
+            }
+        }
+
+        /* ──────────────────────────────────────────────
+        * 6) Auto-run subscription if permission already granted
+        * ────────────────────────────────────────────── */
+        if (Notification.permission === "granted") {
+            await subscribeUserIfNeeded();
+        }
+
+        /* ──────────────────────────────────────────────
+        * 7) Manual activation button + warning box
+        * ────────────────────────────────────────────── */
+
+        const warnBox = document.getElementById("notification-warning");
+        const btn = document.getElementById("request-notification-permission");
+
+        /**
+         * Update UI (warning box + button)
+         * granted → hide warning + hide button
+         * default/denied → show warning + show button
+         */
+        function updateNotificationUI() {
+            if (Notification.permission === "granted") {
+                warnBox.style.display = "none";
+                btn.style.display = "none";
+            } else {
+                warnBox.style.display = "block";
+                btn.style.display = "inline-block";
+            }
+        }
+
+        // Initial UI check
+        updateNotificationUI();
+
+        if (btn) {
+            btn.addEventListener("click", async () => {
+
+                if (tokenMeta) {
+                    localStorage.setItem("auth_token", tokenMeta.getAttribute("content"));
+                }
+
+                const subscribed = await subscribeUserIfNeeded();
+
+                if (subscribed) {
+                    alert("Web Push Notifications successfully enabled ✓");
+                }
+
+                // Update UI again after click
+                updateNotificationUI();
+            });
+        }
+
+
+
+    });
+  </script>
+
+
+
+  <script>
+    let currentPage = 1;
+    let isLoading = false;
+    let lastPage = false;
+
+    const tripsList = document.getElementById("tripsList");
+    const trigger = document.getElementById("infiniteScrollTrigger");
+
+    /* ======= Helper Functions ======= */
+
+    function translateTripType(type) {
+        if (!type) return '';
+        return type === 'oneway' ? 'یکطرفه' :
+              type === 'round'  ? 'رفت و برگشت' :
+              type;
+    }
+
+    function safeJSON(val) {
+        try { return JSON.parse(val); }
+        catch { return []; }
+    }
+
+    function openMap(lat, lng) {
+        const url = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+        if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
+            window.location.href = `geo:${lat},${lng}?q=${lat},${lng}`;
+        } else {
+            window.open(url, "_blank");
+        }
+    }
+
+    /* ======= Render Trip HTML ======= */
+    function renderTrip(trip) {
+        const origins = trip.origins ? safeJSON(trip.origins) : [];
+        const destinations = trip.destinations ? safeJSON(trip.destinations) : [];
+
+        const originsHtml = origins.map((o, i) => `
+            <li>
+                <span>مبدا ${i+1}: </span>${o.address || 'آدرس موجود نیست'}
+                <button onclick="openMap(${o.lat}, ${o.lng})">مسیر یاب</button>
+            </li>
+        `).join('');
+
+        const destinationsHtml = destinations.map((d, i) => `
+            <li>
+                <span>مقصد ${i+1}: </span>${d.address || 'آدرس موجود نیست'}
+                <button onclick="openMap(${d.lat}, ${d.lng})">مسیر یاب</button>
+            </li>
+        `).join('');
+
+        const date = trip.formatted_date ?? trip.start_date;
+        const time = trip.formatted_time ?? trip.trip_time;
+
+        return `
+        <li>
+            <div class="passenger-trip-item">
+                <div class="passenger-item-title">
+                    <div class="trip-id">کد سفر: ${trip.id}</div>
+                    <div class="trip-state">هزینه سفر: ${Number(trip.cost).toLocaleString()} تومان</div>
+                </div>
+                <section>
+                    <button class="skipTrip">رد سفر</button>
+                    <button class="acceptTrip">قبول سفر</button>
+                    <img src="/img/down.svg" class="toggle-trip" alt="فلش">
+                </section>
+            </div>
+
+            <div class="passenger-trip-content">
+                <div class="trip-extra-info-md">
+                    <div>تاریخ: ${date}</div>
+                    <span>-</span>
+                    <div>ساعت: ${time}</div>
+                    <span>-</span>
+                    <div>تعداد مسافر: ${trip.passenger_count}</div>
+                    <span>-</span>
+                    <div>تعداد چمدان: ${trip.luggage_count}</div>
+                    <span>-</span>
+                    <div>نوع سفر: ${translateTripType(trip.trip_type)}</div>
+                    <span>-</span>
+                    <div>ساعات انتظار: ${trip.waiting_hours}</div>
+                    <span>-</span>
+                    <div>حیوان خانگی: ${trip.has_pet ? 'دارد' : 'ندارد'}</div>
+                </div>
+
+                <ul class="trip-locations">
+                    ${originsHtml + destinationsHtml}
+                </ul>
+
+                ${trip.driver ? `
+                <div class="trip-driver-info">
+                    <img src="${trip.driver.userable?.profile_photo ? '/storage/' + trip.driver.userable.profile_photo : '/img/no-photo.png'}">
+                    <div class="driver-info">
+                        <p><span>راننده: </span>${trip.driver.userable?.first_name ?? ''} ${trip.driver.userable?.last_name ?? ''}</p>
+                        <p><span>ماشین: </span>${trip.driver.userable?.car?.name ?? 'نامشخص'}</p>
+                        <p><span>پلاک: </span>${trip.driver.userable?.car_plate ?? 'نامشخص'}</p>
+                    </div>
+                    <a href="tel:${trip.driver?.phone ?? ''}" class="call-to-driver">${trip.driver?.phone ?? ''}</a>
+                </div>` : ''}
+
+                <div class="user-form-desc">
+                    <p>${trip.caption ?? ''}</p>
+                </div>
+            </div>
+        </li>`;
+    }
+
+    /* ======= Load Trips from API ======= */
+    function loadTrips(page = 1) {
+        if (isLoading || lastPage) return;
+        isLoading = true;
+
+        fetch(`/driver/trips?page=${page}`)
+            .then(res => res.json())
+            .then(data => {
+                isLoading = false;
+
+                if (!data.status) return;
+
+                const trips = data.tripsWithoutDriver.data;
+
+                if (trips.length === 0) {
+                    lastPage = true;
+                    return;
+                }
+
+                trips.forEach(trip => {
+                    tripsList.insertAdjacentHTML("beforeend", renderTrip(trip));
+                });
+
+                if (page >= data.tripsWithoutDriver.last_page) {
+                    lastPage = true;
+                }
+            });
+    }
+
+    /* ======= Event Delegation for Toggle ======= */
+    document.addEventListener("click", function(e) {
+        if (e.target.matches(".toggle-trip")) {
+            const li = e.target.closest("li");
+            li.classList.toggle("open");
+        }
+    });
+
+    /* ======= Intersection Observer for Infinite Scroll ======= */
+    const observer = new IntersectionObserver((entries) => {
+        const entry = entries[0];
+
+        if (entry.isIntersecting && !isLoading && !lastPage) {
+            currentPage++;
+            loadTrips(currentPage);
+        }
+    }, {
+        root: null,
+        rootMargin: "200px",
+        threshold: 0
+    });
+
+    observer.observe(trigger);
+
+    /* ======= Initial Load ======= */
+    loadTrips(currentPage);
+
+    /* ======= Optional: FCM & Service Worker ======= */
+    if (typeof messaging !== "undefined") {
+        messaging.onMessage(payload => {
+            let data = payload.data;
+
+            if (typeof data === "string") {
+                try { data = JSON.parse(data); } catch { return; }
+            }
+
+            if (!data || data.type !== "trip") return;
+
+            let trip = data.trip;
+            if (typeof trip === "string") {
+                try { trip = JSON.parse(trip); } catch { return; }
+            }
+
+            if (!trip) return;
+
+            tripsList.insertAdjacentHTML("afterbegin", renderTrip(trip));
+        });
+    }
+
+    if (navigator.serviceWorker) {
+        navigator.serviceWorker.addEventListener("message", function(event) {
+            const data = event.data;
+            if (!data || data.type !== "trip") return;
+
+            let trip = data.trip;
+            if (typeof trip === "string") {
+                try { trip = JSON.parse(trip); } catch {}
+            }
+
+            tripsList.insertAdjacentHTML("afterbegin", renderTrip(trip));
+        });
+    }
+  </script>
+
 
 
 </body>

@@ -85,6 +85,14 @@
       <div class="u-profile-tab-content">
         <!-- Tab 1 -->
         <div class="u-profile-tab-item active">
+          <div id="notification-warning" style="display: none;">
+              <span>مرورگر شما اجازه ارسال نوتیفیکیشن نمی‌دهد.</span>
+              <span>
+                  برای دریافت نوتیفیکیشن‌ها <button id="request-notification-permission">اینجا</button> کلیک کنید.
+              </span>
+          </div>
+
+          
           <div class="passenger-current-trip">
             <ul>
               <!-- Current Trip item -->
@@ -244,119 +252,176 @@
 
    </div>
   <!-- User Profile page end -->
-    <button id="request-notification-permission">دریافت اجازه نوتیفیکیشن</button>
   <script src="{{ asset('/js/profile.js') }}"></script>
   <script src="{{ asset('/js/jalalidatepicker.min.js') }}"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-document.addEventListener("DOMContentLoaded", async () => {
-    if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
-        console.log("Web Push در این مرورگر پشتیبانی نمی‌شود.");
-        return;
-    }
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
 
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-    const tokenMeta = document.querySelector('meta[name="api-token"]');
-
-    if (tokenMeta && !localStorage.getItem("auth_token")) {
-        localStorage.setItem("auth_token", tokenMeta.getAttribute('content'));
-    }
-
-    let swRegistration;
-    try {
-        swRegistration = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
-        console.log("Service Worker با موفقیت ثبت شد");
-    } catch (err) {
-        console.error("خطا در ثبت Service Worker:", err);
-        return;
-    }
-
-    function urlBase64ToUint8Array(base64String) {
-        const padding = "=".repeat((4 - base64String.length % 4) % 4);
-        const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
-        const rawData = window.atob(base64);
-        const outputArray = new Uint8Array(rawData.length);
-        for (let i = 0; i < rawData.length; ++i) {
-            outputArray[i] = rawData.charCodeAt(i);
+        /* ──────────────────────────────────────────────
+        * 1) Check browser support
+        * ────────────────────────────────────────────── */
+        if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+            console.log("Web Push is not supported in this browser.");
+            return;
         }
-        return outputArray;
-    }
 
-    async function subscribeUser() {
+        /* ──────────────────────────────────────────────
+        * 2) Read CSRF and API Token
+        * ────────────────────────────────────────────── */
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute("content");
+        const tokenMeta = document.querySelector('meta[name="api-token"]');
+
+        if (tokenMeta && !localStorage.getItem("auth_token")) {
+            localStorage.setItem("auth_token", tokenMeta.getAttribute("content"));
+        }
+
+        const authToken = localStorage.getItem("auth_token");
+
+        /* ──────────────────────────────────────────────
+        * 3) Register Service Worker
+        * ────────────────────────────────────────────── */
+        let swRegistration;
+
         try {
-            const permission = await Notification.requestPermission();
-            if (permission !== "granted") {
-                console.log("کاربر اجازه نوتیفیکیشن نداد");
-                return false;
-            }
-
-            const vapidPublicKey = "{{ env('VAPID_PUBLIC_KEY') ?? 'BKVeFmlrdaKcwXVNSbLtUWqm3vUgFDr4DQVBj104D9MUkwA3itSrbjr7wV3ldP1cMhmCnx8TiOhXrMS3RO0cbZs' }}";
-            const applicationServerKey = urlBase64ToUint8Array(vapidPublicKey.trim());
-
-            const existingSub = await swRegistration.pushManager.getSubscription();
-            if (existingSub) {
-                console.log("اشتراک قدیمی پیدا شد → در حال حذف...");
-                await existingSub.unsubscribe();
-            }
-
-            const subscription = await swRegistration.pushManager.subscribe({
-                userVisibleOnly: true,
-                applicationServerKey
-            });
-
-            console.log("اشتراک جدید با موفقیت ایجاد شد");
-
-            const response = await fetch("{{ route('api.user-push-token.store') ?? '/api/user-push-token' }}", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                    "Authorization": `Bearer ${localStorage.getItem("auth_token")}`,
-                    "X-CSRF-TOKEN": csrfToken || ""
-                },
-                body: JSON.stringify({
-                    type: "web_push",
-                    token: JSON.stringify(subscription) 
-                })
-            });
-
-            if (response.ok) {
-                const result = await response.json();
-                console.log("توکن Push با موفقیت در سرور ذخیره شد", result);
-                return true;
-            } else {
-                const error = await response.json();
-                console.error("خطا در ذخیره توکن:", error);
-                return false;
-            }
-
-        } catch (err) {
-            console.error("خطا در فرآیند Push:", err);
-            return false;
+            swRegistration = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+            console.log("Service Worker registered successfully");
+        } catch (e) {
+            console.error("Service Worker registration failed:", e);
+            return;
         }
-    }
 
-    if (Notification.permission === "default") {
-        await subscribeUser();
-    } else if (Notification.permission === "granted") {
-        await subscribeUser();
-    }
+        /* ──────────────────────────────────────────────
+        * 4) Convert VAPID Key
+        * ────────────────────────────────────────────── */
+        function urlBase64ToUint8Array(base64) {
+            const padding = "=".repeat((4 - (base64.length % 4)) % 4);
+            const base64String = (base64 + padding).replace(/-/g, "+").replace(/_/g, "/");
+            const rawData = atob(base64String);
+            return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
+        }
 
-    const button = document.getElementById("request-notification-permission");
-    if (button) {
-        button.addEventListener("click", async () => {
-            if (tokenMeta) {
-                localStorage.setItem("auth_token", tokenMeta.getAttribute('content'));
+        const vapidPublicKey = "{{ env('VAPID_PUBLIC_KEY') }}";
+        const applicationServerKey = urlBase64ToUint8Array(vapidPublicKey);
+
+        /* ──────────────────────────────────────────────
+        * 5) Subscribe user only when needed
+        * ────────────────────────────────────────────── */
+        async function subscribeUserIfNeeded() {
+            try {
+                // Ask for notification permission only if not yet granted
+                if (Notification.permission === "default") {
+                    const permission = await Notification.requestPermission();
+                    if (permission !== "granted") {
+                        console.warn("User denied notification permission.");
+                        return false;
+                    }
+                }
+
+                // Check for existing subscription
+                const existingSubscription = await swRegistration.pushManager.getSubscription();
+
+                if (existingSubscription) {
+                    console.log("User already has an active Push subscription — no need to create a new one.");
+                    return existingSubscription;
+                }
+
+                // Create new subscription
+                const newSubscription = await swRegistration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey
+                });
+
+                console.log("New Push subscription created");
+
+                // Send subscription to backend only if API token exists
+                if (!authToken) {
+                    console.warn("API token not found. Cannot send subscription to server.");
+                    return newSubscription;
+                }
+
+                const response = await fetch("{{ route('api.user-push-token.store') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json",
+                        "Authorization": `Bearer ${authToken}`,
+                        "X-CSRF-TOKEN": csrfToken ?? ""
+                    },
+                    body: JSON.stringify({
+                        type: "web_push",
+                        token: JSON.stringify(newSubscription)
+                    })
+                });
+
+                if (response.ok) {
+                    console.log("Push subscription stored successfully on server");
+                } else {
+                    console.error("Failed to store Push subscription:", await response.json());
+                }
+
+                return newSubscription;
+
+            } catch (e) {
+                console.error("Push subscription error:", e);
+                return false;
             }
+        }
 
-            const success = await subscribeUser();
-            if (success) {
-                alert("نوتیفیکیشن وب با موفقیت فعال شد");
+        /* ──────────────────────────────────────────────
+        * 6) Auto-run subscription if permission already granted
+        * ────────────────────────────────────────────── */
+        if (Notification.permission === "granted") {
+            await subscribeUserIfNeeded();
+        }
+
+        /* ──────────────────────────────────────────────
+        * 7) Manual activation button + warning box
+        * ────────────────────────────────────────────── */
+
+        const warnBox = document.getElementById("notification-warning");
+        const btn = document.getElementById("request-notification-permission");
+
+        /**
+         * Update UI (warning box + button)
+         * granted → hide warning + hide button
+         * default/denied → show warning + show button
+         */
+        function updateNotificationUI() {
+            if (Notification.permission === "granted") {
+                warnBox.style.display = "none";
+                btn.style.display = "none";
+            } else {
+                warnBox.style.display = "block";
+                btn.style.display = "inline-block";
             }
-        });
-    }
-});
-</script>
+        }
+
+        // Initial UI check
+        updateNotificationUI();
+
+        if (btn) {
+            btn.addEventListener("click", async () => {
+
+                if (tokenMeta) {
+                    localStorage.setItem("auth_token", tokenMeta.getAttribute("content"));
+                }
+
+                const subscribed = await subscribeUserIfNeeded();
+
+                if (subscribed) {
+                    alert("Web Push Notifications successfully enabled ✓");
+                }
+
+                // Update UI again after click
+                updateNotificationUI();
+            });
+        }
+
+
+
+    });
+  </script>
 </script>
 
   

@@ -43,6 +43,14 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('popupCarCardFront').src = validImage(button.dataset.carcardfront);
       document.getElementById('popupCarCardBack').src = validImage(button.dataset.carcardback);
       document.getElementById('popupCarInsure').src = validImage(button.dataset.carinsure);
+
+      // تصاویر جدید خودرو
+      document.getElementById('popupCarFrontImage').src = validImage(button.dataset.carfrontimage);
+      document.getElementById('popupCarBackImage').src = validImage(button.dataset.carbackimage);
+      document.getElementById('popupCarLeftImage').src = validImage(button.dataset.carleftimage);
+      document.getElementById('popupCarRightImage').src = validImage(button.dataset.carrightimage);
+      document.getElementById('popupCarFrontSeatsImage').src = validImage(button.dataset.carfrontseatsimage);
+      document.getElementById('popupCarBackSeatsImage').src = validImage(button.dataset.carbackseatsimage);
     });
   });
 

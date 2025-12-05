@@ -71,7 +71,10 @@ class User extends Authenticatable
             if ($user->userable) {
                 $user->userable->delete();
             }
+            $user->status = 'deleted';
+            $user->save();
         });
     }
+
 
 }
