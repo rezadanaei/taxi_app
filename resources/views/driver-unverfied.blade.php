@@ -72,40 +72,36 @@
 
         <div class="u-driver-grid-4">
 
-          <!-- Id card front -->
           <div class="file-upload">
             @if($driver->id_card_front)
               <img src="{{ asset('storage/'.$driver->id_card_front) }}" width="120" style="margin-bottom:10px; border-radius:8px;">
             @endif
             <input type="file" name="id_card_front" accept="image/*" id="cam_id_card_front" style="display:none;">
-            <label for="cam_id_card_front" class="file-button camera-opener">عکس روی کارت ملی</label>
+            <span class="file-button camera-opener" data-input="cam_id_card_front">عکس روی کارت ملی</span>
           </div>
 
-          <!-- Id card back -->
           <div class="file-upload">
             @if($driver->id_card_back)
               <img src="{{ asset('storage/'.$driver->id_card_back) }}" width="120" style="margin-bottom:10px; border-radius:8px;">
             @endif
             <input type="file" name="id_card_back" accept="image/*" id="cam_id_card_back" style="display:none;">
-            <label for="cam_id_card_back" class="file-button camera-opener">عکس پشت کارت ملی</label>
+            <span class="file-button camera-opener" data-input="cam_id_card_back">عکس پشت کارت ملی</span>
           </div>
 
-          <!-- Id card selfie -->
           <div class="file-upload">
             @if($driver->id_card_selfie)
               <img src="{{ asset('storage/'.$driver->id_card_selfie) }}" width="120" style="margin-bottom:10px; border-radius:8px;">
             @endif
             <input type="file" name="id_card_selfie" accept="image/*" id="cam_id_card_selfie" style="display:none;">
-            <label for="cam_id_card_selfie" class="file-button camera-opener">سلفی با کارت ملی</label>
+            <span class="file-button camera-opener" data-input="cam_id_card_selfie">سلفی با کارت ملی</span>
           </div>
 
-          <!-- Profile photo -->
           <div class="file-upload">
             @if($driver->profile_photo)
               <img src="{{ asset('storage/'.$driver->profile_photo) }}" width="120" style="margin-bottom:10px; border-radius:8px;">
             @endif
             <input type="file" name="profile_photo" accept="image/*" id="cam_profile_photo" style="display:none;">
-            <label for="cam_profile_photo" class="file-button camera-opener">تصویر پرسنلی</label>
+            <span class="file-button camera-opener" data-input="cam_profile_photo">تصویر پرسنلی</span>
           </div>
 
         </div>
@@ -126,67 +122,67 @@
           <div class="file-upload">
             @if($driver->license_front)<img src="{{ asset('storage/'.$driver->license_front) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif
             <input type="file" name="license_front" accept="image/*" id="cam_license_front" style="display:none;">
-            <label for="cam_license_front" class="file-button camera-opener">عکس روی گواهینامه</label>
+            <span class="file-button camera-opener" data-input="cam_license_front">عکس روی گواهینامه</span>
           </div>
 
           <div class="file-upload">
             @if($driver->license_back)<img src="{{ asset('storage/'.$driver->license_back) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif
             <input type="file" name="license_back" accept="image/*" id="cam_license_back" style="display:none;">
-            <label for="cam_license_back" class="file-button camera-opener">عکس پشت گواهینامه</label>
+            <span class="file-button camera-opener" data-input="cam_license_back">عکس پشت گواهینامه</span>
           </div>
 
           <div class="file-upload">
             @if($driver->car_card_front)<img src="{{ asset('storage/'.$driver->car_card_front) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif
             <input type="file" name="car_card_front" accept="image/*" id="cam_car_card_front" style="display:none;">
-            <label for="cam_car_card_front" class="file-button camera-opener">عکس روی کارت خودرو</label>
+            <span class="file-button camera-opener" data-input="cam_car_card_front">عکس روی کارت خودرو</span>
           </div>
 
           <div class="file-upload">
             @if($driver->car_card_back)<img src="{{ asset('storage/'.$driver->car_card_back) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif
             <input type="file" name="car_card_back" accept="image/*" id="cam_car_card_back" style="display:none;">
-            <label for="cam_car_card_back" class="file-button camera-opener">عکس پشت کارت خودرو</label>
+            <span class="file-button camera-opener" data-input="cam_car_card_back">عکس پشت کارت خودرو</span>
           </div>
 
           <div class="file-upload">
             @if($driver->car_insurance)<img src="{{ asset('storage/'.$driver->car_insurance) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif
             <input type="file" name="car_insurance" accept="image/*" id="cam_car_insurance" style="display:none;">
-            <label for="cam_car_insurance" class="file-button camera-opener">تصویر بیمه ماشین</label>
+            <span class="file-button camera-opener" data-input="cam_car_insurance">تصویر بیمه ماشین</span>
           </div>
 
           <div class="file-upload">
             @if($driver->car_front_image)<img src="{{ asset('storage/'.$driver->car_front_image) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif
             <input type="file" name="car_front_image" accept="image/*" id="cam_car_front" style="display:none;">
-            <label for="cam_car_front" class="file-button camera-opener">عکس نمای جلوی خودرو</label>
+            <span class="file-button camera-opener" data-input="cam_car_front">عکس نمای جلوی خودرو</span>
           </div>
 
           <div class="file-upload">
             @if($driver->car_back_image)<img src="{{ asset('storage/'.$driver->car_back_image) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif
             <input type="file" name="car_back_image" accept="image/*" id="cam_car_back" style="display:none;">
-            <label for="cam_car_back" class="file-button camera-opener">عکس نمای عقب خودرو</label>
+            <span class="file-button camera-opener" data-input="cam_car_back">عکس نمای عقب خودرو</span>
           </div>
 
           <div class="file-upload">
             @if($driver->car_left_image)<img src="{{ asset('storage/'.$driver->car_left_image) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif
             <input type="file" name="car_left_image" accept="image/*" id="cam_car_left" style="display:none;">
-            <label for="cam_car_left" class="file-button camera-opener">عکس نمای چپ خودرو</label>
+            <span class="file-button camera-opener" data-input="cam_car_left">عکس نمای چپ خودرو</span>
           </div>
 
           <div class="file-upload">
             @if($driver->car_right_image)<img src="{{ asset('storage/'.$driver->car_right_image) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif
             <input type="file" name="car_right_image" accept="image/*" id="cam_car_right" style="display:none;">
-            <label for="cam_car_right" class="file-button camera-opener">عکس نمای راست خودرو</label>
+            <span class="file-button camera-opener" data-input="cam_car_right">عکس نمای راست خودرو</span>
           </div>
 
           <div class="file-upload">
             @if($driver->car_front_seats_image)<img src="{{ asset('storage/'.$driver->car_front_seats_image) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif
             <input type="file" name="car_front_seats_image" accept="image/*" id="cam_car_front_seats" style="display:none;">
-            <label for="cam_car_front_seats" class="file-button camera-opener">صندلی جلو و داشبورد</label>
+            <span class="file-button camera-opener" data-input="cam_car_front_seats">صندلی جلو و داشبورد</span>
           </div>
 
           <div class="file-upload">
             @if($driver->car_back_seats_image)<img src="{{ asset('storage/'.$driver->car_back_seats_image) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif
             <input type="file" name="car_back_seats_image" accept="image/*" id="cam_car_back_seats" style="display:none;">
-            <label for="cam_car_back_seats" class="file-button camera-opener">صندلی‌های عقب</label>
+            <span class="file-button camera-opener" data-input="cam_car_back_seats">صندلی‌های عقب</span>
           </div>
 
         </div>
@@ -203,25 +199,26 @@
 <script src="{{ asset('js/converter.js') }}"></script>
 <script type="module" src="{{ asset('/js/profile.js') }}"></script>
 
-<!-- In-browser camera (single modal, no reload) -->
-<!-- In-browser camera with front/back switch - NO gallery access -->
+<!-- In-browser camera only - NO gallery at all, front/back switch, default back camera -->
 <script>
 let stream = null;
-let currentFacingMode = 'environment'; // default: back camera
+let currentFacingMode = 'environment';
 
-document.querySelectorAll('.camera-opener').forEach(label => {
-  const input = document.getElementById(label.getAttribute('for'));
-  const originalText = label.textContent.trim();
+document.querySelectorAll('.camera-opener').forEach(opener => {
+  const inputId = opener.dataset.input;
+  const input = document.getElementById(inputId);
+  const originalText = opener.textContent.trim();
 
-  label.addEventListener('click', async e => {
+  opener.addEventListener('click', async e => {
     e.preventDefault();
+    e.stopPropagation();
 
     if (input.files.length > 0) {
       if (!confirm('عکس قبلاً گرفته شده. دوباره بگیرید؟')) return;
       input.value = '';
-      label.textContent = originalText;
-      label.classList.remove('file-selected');
-      const prevImg = label.parentElement.querySelector('img');
+      opener.textContent = originalText;
+      opener.classList.remove('file-selected');
+      const prevImg = opener.parentElement.querySelector('img');
       if (prevImg && !prevImg.src.includes('storage')) prevImg.remove();
     }
 
@@ -231,7 +228,7 @@ document.querySelectorAll('.camera-opener').forEach(label => {
       <video id="camVideo" autoplay playsinline style="width:90%;max-width:500px;border-radius:16px;"></video>
       <div style="margin:20px 0;display:flex;gap:20px;align-items:center;">
         <button id="takePhoto" style="padding:15px 35px;background:#28a745;color:#fff;border:none;border-radius:50px;font-size:18px;">عکس بگیر</button>
-        <button id="switchCam" style="padding:12px 18px;background:#444;color:#fff;border:none;border-radius:50%;font-size:20px;">Switch Camera</button>
+        <button id="switchCam" style="padding:12px 18px;background:#444;color:#fff;border:none;border-radius:50%;font-size:20px;">Switch</button>
         <button id="closeCam" style="padding:15px 35px;background:#dc3545;color:#fff;border:none;border-radius:50px;font-size:18px;">بستن</button>
       </div>
     `;
@@ -240,16 +237,16 @@ document.querySelectorAll('.camera-opener').forEach(label => {
     const video = modal.querySelector('#camVideo');
     const switchBtn = modal.querySelector('#switchCam');
 
-    const startCamera = async (facingMode) => {
+    const startCamera = async (mode) => {
       if (stream) stream.getTracks().forEach(t => t.stop());
       try {
         stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: facingMode },
+          video: { facingMode: mode },
           audio: false
         });
         video.srcObject = stream;
-        currentFacingMode = facingMode;
-        switchBtn.textContent = facingMode === 'environment' ? 'Selfie' : 'Back';
+        currentFacingMode = mode;
+        switchBtn.textContent = mode === 'environment' ? 'Selfie' : 'Back';
       } catch (err) {
         alert('دوربین در دسترس نیست');
         modal.remove();
@@ -259,8 +256,7 @@ document.querySelectorAll('.camera-opener').forEach(label => {
     await startCamera('environment');
 
     switchBtn.onclick = () => {
-      const newMode = currentFacingMode === 'environment' ? 'user' : 'environment';
-      startCamera(newMode);
+      startCamera(currentFacingMode === 'environment' ? 'user' : 'environment');
     };
 
     modal.querySelector('#closeCam').onclick = () => {
@@ -280,18 +276,18 @@ document.querySelectorAll('.camera-opener').forEach(label => {
         dt.items.add(file);
         input.files = dt.files;
 
-        let img = label.parentElement.querySelector('img');
+        let img = opener.parentElement.querySelector('img');
         if (!img) {
           img = document.createElement('img');
           img.width = 120;
           img.style.marginBottom = '10px';
           img.style.borderRadius = '8px';
-          label.parentElement.insertBefore(img, label);
+          opener.parentElement.insertBefore(img, opener);
         }
         img.src = URL.createObjectURL(blob);
 
-        label.textContent = 'عکس گرفته شد';
-        label.classList.add('file-selected');
+        opener.textContent = 'عکس گرفته شد';
+        opener.classList.add('file-selected');
 
         if (stream) stream.getTracks().forEach(t => t.stop());
         modal.remove();
