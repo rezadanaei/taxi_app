@@ -222,50 +222,31 @@ if (navigator.geolocation) {
 
 const locateBtn = document.getElementById("locate-user");
 
-let userDotLayer = null;
-
 function locateUserPosition() {
-    locateBtn.disabled = true;
-
-    map.locate({
-        setView: true,
-        maxZoom: 16,
-        watch: false,
-        enableHighAccuracy: true,
-        maximumAge: 0,        
-        timeout: 10000
-    });
-}
-
-map.on('locationfound', (e) => {
-    const latlng = e.latlng;
-
-    if (userDotLayer) {
-        map.removeLayer(userDotLayer);
+    if (!navigator.geolocation) {
+        alert("مرورگر شما از موقعیت‌یابی پشتیبانی نمی‌کند.");
+        return;
     }
 
-    userDotLayer = L.circleMarker(latlng, {
-        radius: 6,
-        weight: 2,
-        color: '#2563eb',      
-        opacity: 1,
-        fillColor: '#3b82f6',
-        fillOpacity: 0.9
-    }).addTo(map);
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            const userCenter = [
+                position.coords.latitude,
+                position.coords.longitude
+            ];
 
-    map.flyTo(latlng, 16, {
-        duration: 1.4
-    });
-
-    locateBtn.disabled = false;
-});
-
-map.on('locationerror', () => {
-    alert("موقعیت‌یابی ناموفق بود. لطفاً دسترسی به مکان رو فعال کنید.");
-    locateBtn.disabled = false;
-});
+            map.setView(userCenter, 15); 
+        },
+        (error) => {
+            console.warn("Location error:", error.message);
+            alert("دریافت موقعیت امکان‌پذیر نبود.");
+        }
+    );
+}
 
 locateBtn.addEventListener("click", locateUserPosition);
+
+
 
 
 
