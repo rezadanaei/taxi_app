@@ -222,27 +222,52 @@ if (navigator.geolocation) {
 
 const locateBtn = document.getElementById("locate-user");
 
+locateBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
+locateBtn.disabled = false;
+
 function locateUserPosition() {
-    if (!navigator.geolocation) {
-        alert("مرورگر شما از موقعیت‌یابی پشتیبانی نمی‌کند.");
-        return;
+    locateBtn.disabled = true;
+    locateBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+    map.locate({ 
+        setView: true,       
+        maxZoom: 16,         
+        watch: false,        
+        enableHighAccuracy: true,  
+        timeout: 10000,      
+        maximumAge: 0        
+    });
+}
+
+map.on('locationfound', function(e) {
+    const radius = e.accuracy / 2;
+
+    if (window.userLocationCircle) {
+        map.removeLayer(window.userLocationCircle);
+        map.removeLayer(window.userLocationMarker);
     }
 
-    navigator.geolocation.getCurrentPosition(
-        (position) => {
-            const userCenter = [
-                position.coords.latitude,
-                position.coords.longitude
-            ];
+    window.userLocationMarker = L.marker(e.latlng).addTo(map)
+        .bindPopup("شما اینجا هستید")
+        .openPopup();
 
-            map.setView(userCenter, 15); 
-        },
-        (error) => {
-            console.warn("Location error:", error.message);
-            alert("دریافت موقعیت امکان‌پذیر نبود.");
-        }
-    );
-}
+    window.userLocationCircle = L.circle(e.latlng, radius).addTo(map);
+
+    map.flyTo(e.latlng, 16, {
+        animate: true,
+        duration: 1.5   
+    });
+
+    locateBtn.disabled = false;
+    locateBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+});
+
+map.on('locationerror', function(e) {
+    alert("نمی‌تونم موقعیت شما رو پیدا کنم :(\n" + e.message);
+    
+    locateBtn.disabled = false;
+    locateBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+});
 
 locateBtn.addEventListener("click", locateUserPosition);
 

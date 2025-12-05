@@ -37,21 +37,124 @@ tabs.forEach((tab, index) => {
 // ==========================
 // Driver unverified - Upload Handler
 // ==========================
-document.querySelectorAll(".u-driver-grid-4 .file-upload").forEach(uploadBox => {
-    const realFile = uploadBox.querySelector("input[type=file]");
-    const customBtn = uploadBox.querySelector(".file-button");
+// document.querySelectorAll(".u-driver-grid-4 .file-upload").forEach(uploadBox => {
+//     const realFile = uploadBox.querySelector("input[type=file]");
+//     const customBtn = uploadBox.querySelector(".file-button");
 
-    customBtn.addEventListener("click", () => {
-        realFile.click();
-    });
+//     customBtn.addEventListener("click", () => {
+//         realFile.click();
+//     });
 
-    realFile.addEventListener("change", () => {
-        if (realFile.files.length > 0) {
-            customBtn.classList.add("file-selected");
-        } else {
-            customBtn.classList.remove("file-selected");
+//     realFile.addEventListener("change", () => {
+//         if (realFile.files.length > 0) {
+//             customBtn.classList.add("file-selected");
+//         } else {
+//             customBtn.classList.remove("file-selected");
+//         }
+//     });
+// });
+
+let stream = null;
+let currentFacingMode = 'environment';
+
+document.querySelectorAll('.camera-opener').forEach(opener => {
+  const fieldName = opener.dataset.field;
+  const originalText = opener.textContent.trim();
+
+  opener.addEventListener('click', async e => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Check if already has photo
+    if (opener.classList.contains('file-selected')) {
+      if (!confirm('عکس قبلاً گرفته شده. دوباره بگیرید؟')) return;
+      opener.classList.remove('file-selected');
+      opener.textContent = originalText;
+      const prevImg = opener.parentElement.querySelector('img:not([src*="storage"])');
+      if (prevImg) prevImg.remove();
+      // Remove previous hidden input
+      const oldInput = document.querySelector(`input[name="${fieldName}"][type="file"]`);
+      if (oldInput) oldInput.remove();
+    }
+
+    const modal = document.createElement('div');
+    modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;';
+    modal.innerHTML = `
+      <video id="camVideo" autoplay playsinline style="width:90%;max-width:500px;border-radius:16px;"></video>
+      <div style="margin:20px 0;display:flex;gap:20px;align-items:center;">
+        <button id="takePhoto" style="padding:15px 35px;background:#28a745;color:#fff;border:none;border-radius:50px;font-size:18px;">عکس بگیر</button>
+        <button id="switchCam" style="padding:12px 18px;background:#444;color:#fff;border:none;border-radius:50%;font-size:20px;">Switch</button>
+        <button id="closeCam" style="padding:15px 35px;background:#dc3545;color:#fff;border:none;border-radius:50px;font-size:18px;">بستن</button>
+      </div>
+    `;
+    document.body.appendChild(modal);
+
+    const video = modal.querySelector('#camVideo');
+    const switchBtn = modal.querySelector('#switchCam');
+
+    const startCamera = async (mode) => {
+      if (stream) stream.getTracks().forEach(t => t.stop());
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: mode }, audio: false });
+        video.srcObject = stream;
+        currentFacingMode = mode;
+        switchBtn.textContent = mode === 'environment' ? 'دوربین جلو' : 'دوربین عقب';
+      } catch (err) {
+        alert('دوربین در دسترس نیست');
+        modal.remove();
+      }
+    };
+
+    await startCamera('environment');
+
+    switchBtn.onclick = () => startCamera(currentFacingMode === 'environment' ? 'user' : 'environment');
+
+    modal.querySelector('#closeCam').onclick = () => {
+      if (stream) stream.getTracks().forEach(t => t.stop());
+      modal.remove();
+    };
+
+    modal.querySelector('#takePhoto').onclick = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext('2d').drawImage(video, 0, 0);
+
+      canvas.toBlob(blob => {
+        // Create hidden file input only now
+        let input = document.querySelector(`input[name="${fieldName}"]`);
+        if (!input) {
+          input = document.createElement('input');
+          input.type = 'file';
+          input.name = fieldName;
+          input.style.display = 'none';
+          document.querySelector('.u-driver-form').appendChild(input);
         }
-    });
+
+        const file = new File([blob], `${fieldName}.jpg`, { type: 'image/jpeg' });
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        input.files = dt.files;
+
+        // Preview
+        let img = opener.parentElement.querySelector('img:not([src*="storage"])');
+        if (!img) {
+          img = document.createElement('img');
+          img.width = 120;
+          img.style.marginBottom = '10px';
+          img.style.borderRadius = '8px';
+          opener.parentElement.insertBefore(img, opener);
+        }
+        img.src = URL.createObjectURL(blob);
+
+        opener.textContent = 'عکس گرفته شد';
+        opener.classList.add('file-selected');
+
+        if (stream) stream.getTracks().forEach(t => t.stop());
+        modal.remove();
+      }, 'image/jpeg', 0.95);
+    };
+  });
 });
 
 // ==========================
