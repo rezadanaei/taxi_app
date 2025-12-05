@@ -228,24 +228,35 @@ function locateUserPosition() {
         return;
     }
 
+    locateBtn.disabled = true;
+    const originalText = locateBtn.innerHTML;
+    locateBtn.innerHTML = "در حال دریافت...";
+
     navigator.geolocation.getCurrentPosition(
         (position) => {
-            const userCenter = [
-                position.coords.latitude,
-                position.coords.longitude
-            ];
+            const userCenter = [position.coords.latitude, position.coords.longitude];
 
-            map.setView(userCenter, 15); 
+            map.flyTo(userCenter, 16, {
+                duration: 1.2   
+            });
+
+            locateBtn.disabled = false;
+            locateBtn.innerHTML = originalText;
         },
         (error) => {
-            console.warn("Location error:", error.message);
             alert("دریافت موقعیت امکان‌پذیر نبود.");
+            locateBtn.disabled = false;
+            locateBtn.innerHTML = originalText;
+        },
+        {
+            enableHighAccuracy: true,   
+            maximumAge: 0,              
+            timeout: 8000             
         }
     );
 }
 
 locateBtn.addEventListener("click", locateUserPosition);
-
 
 
 
