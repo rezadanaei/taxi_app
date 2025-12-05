@@ -204,8 +204,10 @@
 <script type="module" src="{{ asset('/js/profile.js') }}"></script>
 
 <!-- In-browser camera (single modal, no reload) -->
+<!-- In-browser camera with front/back switch - NO gallery access -->
 <script>
 let stream = null;
+let currentFacingMode = 'environment'; // default: back camera
 
 document.querySelectorAll('.camera-opener').forEach(label => {
   const input = document.getElementById(label.getAttribute('for'));
@@ -227,21 +229,39 @@ document.querySelectorAll('.camera-opener').forEach(label => {
     modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;';
     modal.innerHTML = `
       <video id="camVideo" autoplay playsinline style="width:90%;max-width:500px;border-radius:16px;"></video>
-      <div style="margin:20px 0;display:flex;gap:20px;">
+      <div style="margin:20px 0;display:flex;gap:20px;align-items:center;">
         <button id="takePhoto" style="padding:15px 35px;background:#28a745;color:#fff;border:none;border-radius:50px;font-size:18px;">عکس بگیر</button>
+        <button id="switchCam" style="padding:12px 18px;background:#444;color:#fff;border:none;border-radius:50%;font-size:20px;">Switch Camera</button>
         <button id="closeCam" style="padding:15px 35px;background:#dc3545;color:#fff;border:none;border-radius:50px;font-size:18px;">بستن</button>
       </div>
     `;
     document.body.appendChild(modal);
 
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
-      modal.querySelector('#camVideo').srcObject = stream;
-    } catch (err) {
-      alert('دسترسی به دوربین ممکن نیست');
-      modal.remove();
-      return;
-    }
+    const video = modal.querySelector('#camVideo');
+    const switchBtn = modal.querySelector('#switchCam');
+
+    const startCamera = async (facingMode) => {
+      if (stream) stream.getTracks().forEach(t => t.stop());
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: facingMode },
+          audio: false
+        });
+        video.srcObject = stream;
+        currentFacingMode = facingMode;
+        switchBtn.textContent = facingMode === 'environment' ? 'Selfie' : 'Back';
+      } catch (err) {
+        alert('دوربین در دسترس نیست');
+        modal.remove();
+      }
+    };
+
+    await startCamera('environment');
+
+    switchBtn.onclick = () => {
+      const newMode = currentFacingMode === 'environment' ? 'user' : 'environment';
+      startCamera(newMode);
+    };
 
     modal.querySelector('#closeCam').onclick = () => {
       if (stream) stream.getTracks().forEach(t => t.stop());
@@ -249,7 +269,6 @@ document.querySelectorAll('.camera-opener').forEach(label => {
     };
 
     modal.querySelector('#takePhoto').onclick = () => {
-      const video = modal.querySelector('#camVideo');
       const canvas = document.createElement('canvas');
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
