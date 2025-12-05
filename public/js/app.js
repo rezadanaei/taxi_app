@@ -188,6 +188,15 @@ function isMobileOrTablet() {
 
 let initialCenter = defaultCenter;
 
+function getCachedLocation() {
+    const cache = localStorage.getItem("user_location");
+    return cache ? JSON.parse(cache) : null;
+}
+function setCachedLocation(lat, lng) {
+    localStorage.setItem("user_location", JSON.stringify([lat, lng]));
+}
+// ------------------
+
 function createMap(center) {
     map = new L.Map('map', {  
         key: API_KEY_WEB,
@@ -205,13 +214,21 @@ function updateMapCenter(center) {
     }
 }
 
+const cached = getCachedLocation();
+if (cached) {
+    initialCenter = cached;
+}
+
 createMap(initialCenter);
 
 if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
         position => {
             const userCenter = [position.coords.latitude, position.coords.longitude];
-            updateMapCenter(userCenter); 
+
+            updateMapCenter(userCenter);
+
+            setCachedLocation(userCenter[0], userCenter[1]);
         },
         error => {
             console.warn("Geolocation error:", error.message);
@@ -219,25 +236,28 @@ if (navigator.geolocation) {
     );
 }
 
-
 const locateBtn = document.getElementById("locate-user");
 
 locateBtn.addEventListener("click", () => {
+    const cached = getCachedLocation();
+    if (cached) {
+        map.flyTo(cached, 16, { duration: 0.6 });
+    }
+
     navigator.geolocation.getCurrentPosition(
         (pos) => {
             const lat = pos.coords.latitude;
             const lng = pos.coords.longitude;
 
-            map.flyTo([lat, lng], 16, {
-                duration: 0.9   
-            });
+            map.flyTo([lat, lng], 16, { duration: 0.9 });
+
+            setCachedLocation(lat, lng);
         },
-        () => {
-        },
+        () => {},
         {
-            enableHighAccuracy: true,   
-            maximumAge: 0,             
-            timeout: 6000              
+            enableHighAccuracy: true,
+            maximumAge: 0,
+            timeout: 6000
         }
     );
 });
