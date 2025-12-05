@@ -222,56 +222,50 @@ if (navigator.geolocation) {
 
 const locateBtn = document.getElementById("locate-user");
 
-locateBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
-locateBtn.disabled = false;
+let userDotLayer = null;
 
 function locateUserPosition() {
     locateBtn.disabled = true;
-    locateBtn.classList.add('opacity-50', 'cursor-not-allowed');
 
-    map.locate({ 
-        setView: true,       
-        maxZoom: 16,         
-        watch: false,        
-        enableHighAccuracy: true,  
-        timeout: 10000,      
-        maximumAge: 0        
+    map.locate({
+        setView: true,
+        maxZoom: 16,
+        watch: false,
+        enableHighAccuracy: true,
+        maximumAge: 0,        
+        timeout: 10000
     });
 }
 
-map.on('locationfound', function(e) {
-    const radius = e.accuracy / 2;
+map.on('locationfound', (e) => {
+    const latlng = e.latlng;
 
-    if (window.userLocationCircle) {
-        map.removeLayer(window.userLocationCircle);
-        map.removeLayer(window.userLocationMarker);
+    if (userDotLayer) {
+        map.removeLayer(userDotLayer);
     }
 
-    window.userLocationMarker = L.marker(e.latlng).addTo(map)
-        .bindPopup("شما اینجا هستید")
-        .openPopup();
+    userDotLayer = L.circleMarker(latlng, {
+        radius: 6,
+        weight: 2,
+        color: '#2563eb',      
+        opacity: 1,
+        fillColor: '#3b82f6',
+        fillOpacity: 0.9
+    }).addTo(map);
 
-    window.userLocationCircle = L.circle(e.latlng, radius).addTo(map);
-
-    map.flyTo(e.latlng, 16, {
-        animate: true,
-        duration: 1.5   
+    map.flyTo(latlng, 16, {
+        duration: 1.4
     });
 
     locateBtn.disabled = false;
-    locateBtn.classList.remove('opacity-50', 'cursor-not-allowed');
 });
 
-map.on('locationerror', function(e) {
-    alert("نمی‌تونم موقعیت شما رو پیدا کنم :(\n" + e.message);
-    
+map.on('locationerror', () => {
+    alert("موقعیت‌یابی ناموفق بود. لطفاً دسترسی به مکان رو فعال کنید.");
     locateBtn.disabled = false;
-    locateBtn.classList.remove('opacity-50', 'cursor-not-allowed');
 });
 
 locateBtn.addEventListener("click", locateUserPosition);
-
-
 
 
 
