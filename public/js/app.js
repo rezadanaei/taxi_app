@@ -222,42 +222,25 @@ if (navigator.geolocation) {
 
 const locateBtn = document.getElementById("locate-user");
 
-function locateUserPosition() {
-    if (!navigator.geolocation) {
-        alert("مرورگر شما از موقعیت‌یابی پشتیبانی نمی‌کند.");
-        return;
-    }
-
-    locateBtn.disabled = true;
-    const originalText = locateBtn.innerHTML;
-    locateBtn.innerHTML = "در حال دریافت...";
-
+locateBtn.addEventListener("click", () => {
     navigator.geolocation.getCurrentPosition(
-        (position) => {
-            const userCenter = [position.coords.latitude, position.coords.longitude];
+        (pos) => {
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
 
-            map.flyTo(userCenter, 16, {
-                duration: 1.2   
+            map.flyTo([lat, lng], 16, {
+                duration: 0.9   
             });
-
-            locateBtn.disabled = false;
-            locateBtn.innerHTML = originalText;
         },
-        (error) => {
-            alert("دریافت موقعیت امکان‌پذیر نبود.");
-            locateBtn.disabled = false;
-            locateBtn.innerHTML = originalText;
+        () => {
         },
         {
             enableHighAccuracy: true,   
-            maximumAge: 0,              
-            timeout: 8000             
+            maximumAge: 0,             
+            timeout: 6000              
         }
     );
-}
-
-locateBtn.addEventListener("click", locateUserPosition);
-
+});
 
 
 
