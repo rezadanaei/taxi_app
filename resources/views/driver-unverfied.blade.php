@@ -169,7 +169,7 @@ document.querySelectorAll('.camera-opener').forEach(opener => {
         stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: mode }, audio: false });
         video.srcObject = stream;
         currentFacingMode = mode;
-        switchBtn.textContent = mode === 'environment' ? 'Selfie' : 'Back';
+        switchBtn.textContent = mode === 'environment' ? 'دوربین جلو' : 'دوربین عقب';
       } catch (err) {
         alert('دوربین در دسترس نیست');
         modal.remove();
