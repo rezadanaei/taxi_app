@@ -316,7 +316,7 @@
             fileInput.click();
         });
 
-        fileInput.addEventListener('change', function(e){
+        fileInput.addEventListener('change', function(){
             const file = this.files[0];
             if(!file) return;
 
@@ -331,8 +331,13 @@
             }
 
         });
+
+        fileInput.form?.addEventListener('submit', function(e){
+            
+        });
     });
-  </script>
+</script>
+
 
 
 
