@@ -26,7 +26,6 @@
 <body>
 
 <div class="user-profile-container max-width">
-
   <div class="u-profile-info">
     <img class="u-profile-info-img" src="{{ asset('/img/no-photo.png') }}" alt="تصویر کاربری">
     <section>
@@ -42,7 +41,6 @@
   </div>
 
   <div class="u-profile-content">
-
     <div class="u-driver-top">
       <h1>تکمیل اطلاعات</h1>
       <p>راننده گرامی جهت دسترسی به سفر ها باید ابتدا اطلاعات خود را ثبت کنید.</p>
@@ -58,7 +56,6 @@
 
       <section class="u-driver-personal-info">
         <h2>اطلاعات هویتی</h2>
-
         <div class="u-driver-grid-2">
           <input type="text" name="first_name" placeholder="نام" value="{{ $driver->first_name ?? '' }}">
           <input type="text" name="last_name" placeholder="نام خانوادگی" value="{{ $driver->last_name ?? '' }}">
@@ -71,45 +68,28 @@
         </div>
 
         <div class="u-driver-grid-4">
-
+          <!-- همه input file ها حذف شدن - فقط span هست -->
           <div class="file-upload">
-            @if($driver->id_card_front)
-              <img src="{{ asset('storage/'.$driver->id_card_front) }}" width="120" style="margin-bottom:10px; border-radius:8px;">
-            @endif
-            <input type="file" name="id_card_front" accept="image/*" id="cam_id_card_front" style="display:none;">
-            <span class="file-button camera-opener" data-input="cam_id_card_front">عکس روی کارت ملی</span>
+            @if($driver->id_card_front)<img src="{{ asset('storage/'.$driver->id_card_front) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif
+            <span class="file-button camera-opener" data-field="id_card_front">عکس روی کارت ملی</span>
           </div>
-
           <div class="file-upload">
-            @if($driver->id_card_back)
-              <img src="{{ asset('storage/'.$driver->id_card_back) }}" width="120" style="margin-bottom:10px; border-radius:8px;">
-            @endif
-            <input type="file" name="id_card_back" accept="image/*" id="cam_id_card_back" style="display:none;">
-            <span class="file-button camera-opener" data-input="cam_id_card_back">عکس پشت کارت ملی</span>
+            @if($driver->id_card_back)<img src="{{ asset('storage/'.$driver->id_card_back) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif
+            <span class="file-button camera-opener" data-field="id_card_back">عکس پشت کارت ملی</span>
           </div>
-
           <div class="file-upload">
-            @if($driver->id_card_selfie)
-              <img src="{{ asset('storage/'.$driver->id_card_selfie) }}" width="120" style="margin-bottom:10px; border-radius:8px;">
-            @endif
-            <input type="file" name="id_card_selfie" accept="image/*" id="cam_id_card_selfie" style="display:none;">
-            <span class="file-button camera-opener" data-input="cam_id_card_selfie">سلفی با کارت ملی</span>
+            @if($driver->id_card_selfie)<img src="{{ asset('storage/'.$driver->id_card_selfie) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif
+            <span class="file-button camera-opener" data-field="id_card_selfie">سلفی با کارت ملی</span>
           </div>
-
           <div class="file-upload">
-            @if($driver->profile_photo)
-              <img src="{{ asset('storage/'.$driver->profile_photo) }}" width="120" style="margin-bottom:10px; border-radius:8px;">
-            @endif
-            <input type="file" name="profile_photo" accept="image/*" id="cam_profile_photo" style="display:none;">
-            <span class="file-button camera-opener" data-input="cam_profile_photo">تصویر پرسنلی</span>
+            @if($driver->profile_photo)<img src="{{ asset('storage/'.$driver->profile_photo) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif
+            <span class="file-button camera-opener" data-field="profile_photo">تصویر پرسنلی</span>
           </div>
-
         </div>
       </section>
 
       <section class="u-driver-car-info">
         <h2>اطلاعات رانندگی</h2>
-
         <div class="u-driver-grid-2">
           <input type="text" name="car_type" placeholder="نوع ماشین" value="{{ $driver->car_type ?? '' }}">
           <input type="text" name="car_plate" placeholder="پلاک ماشین" value="{{ $driver->car_plate ?? '' }}">
@@ -118,73 +98,17 @@
         </div>
 
         <div class="u-driver-grid-4">
-
-          <div class="file-upload">
-            @if($driver->license_front)<img src="{{ asset('storage/'.$driver->license_front) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif
-            <input type="file" name="license_front" accept="image/*" id="cam_license_front" style="display:none;">
-            <span class="file-button camera-opener" data-input="cam_license_front">عکس روی گواهینامه</span>
-          </div>
-
-          <div class="file-upload">
-            @if($driver->license_back)<img src="{{ asset('storage/'.$driver->license_back) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif
-            <input type="file" name="license_back" accept="image/*" id="cam_license_back" style="display:none;">
-            <span class="file-button camera-opener" data-input="cam_license_back">عکس پشت گواهینامه</span>
-          </div>
-
-          <div class="file-upload">
-            @if($driver->car_card_front)<img src="{{ asset('storage/'.$driver->car_card_front) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif
-            <input type="file" name="car_card_front" accept="image/*" id="cam_car_card_front" style="display:none;">
-            <span class="file-button camera-opener" data-input="cam_car_card_front">عکس روی کارت خودرو</span>
-          </div>
-
-          <div class="file-upload">
-            @if($driver->car_card_back)<img src="{{ asset('storage/'.$driver->car_card_back) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif
-            <input type="file" name="car_card_back" accept="image/*" id="cam_car_card_back" style="display:none;">
-            <span class="file-button camera-opener" data-input="cam_car_card_back">عکس پشت کارت خودرو</span>
-          </div>
-
-          <div class="file-upload">
-            @if($driver->car_insurance)<img src="{{ asset('storage/'.$driver->car_insurance) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif
-            <input type="file" name="car_insurance" accept="image/*" id="cam_car_insurance" style="display:none;">
-            <span class="file-button camera-opener" data-input="cam_car_insurance">تصویر بیمه ماشین</span>
-          </div>
-
-          <div class="file-upload">
-            @if($driver->car_front_image)<img src="{{ asset('storage/'.$driver->car_front_image) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif
-            <input type="file" name="car_front_image" accept="image/*" id="cam_car_front" style="display:none;">
-            <span class="file-button camera-opener" data-input="cam_car_front">عکس نمای جلوی خودرو</span>
-          </div>
-
-          <div class="file-upload">
-            @if($driver->car_back_image)<img src="{{ asset('storage/'.$driver->car_back_image) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif
-            <input type="file" name="car_back_image" accept="image/*" id="cam_car_back" style="display:none;">
-            <span class="file-button camera-opener" data-input="cam_car_back">عکس نمای عقب خودرو</span>
-          </div>
-
-          <div class="file-upload">
-            @if($driver->car_left_image)<img src="{{ asset('storage/'.$driver->car_left_image) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif
-            <input type="file" name="car_left_image" accept="image/*" id="cam_car_left" style="display:none;">
-            <span class="file-button camera-opener" data-input="cam_car_left">عکس نمای چپ خودرو</span>
-          </div>
-
-          <div class="file-upload">
-            @if($driver->car_right_image)<img src="{{ asset('storage/'.$driver->car_right_image) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif
-            <input type="file" name="car_right_image" accept="image/*" id="cam_car_right" style="display:none;">
-            <span class="file-button camera-opener" data-input="cam_car_right">عکس نمای راست خودرو</span>
-          </div>
-
-          <div class="file-upload">
-            @if($driver->car_front_seats_image)<img src="{{ asset('storage/'.$driver->car_front_seats_image) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif
-            <input type="file" name="car_front_seats_image" accept="image/*" id="cam_car_front_seats" style="display:none;">
-            <span class="file-button camera-opener" data-input="cam_car_front_seats">صندلی جلو و داشبورد</span>
-          </div>
-
-          <div class="file-upload">
-            @if($driver->car_back_seats_image)<img src="{{ asset('storage/'.$driver->car_back_seats_image) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif
-            <input type="file" name="car_back_seats_image" accept="image/*" id="cam_car_back_seats" style="display:none;">
-            <span class="file-button camera-opener" data-input="cam_car_back_seats">صندلی‌های عقب</span>
-          </div>
-
+          <div class="file-upload">@if($driver->license_front)<img src="{{ asset('storage/'.$driver->license_front) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif<span class="file-button camera-opener" data-field="license_front">عکس روی گواهینامه</span></div>
+          <div class="file-upload">@if($driver->license_back)<img src="{{ asset('storage/'.$driver->license_back) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif<span class="file-button camera-opener" data-field="license_back">عکس پشت گواهینامه</span></div>
+          <div class="file-upload">@if($driver->car_card_front)<img src="{{ asset('storage/'.$driver->car_card_front) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif<span class="file-button camera-opener" data-field="car_card_front">عکس روی کارت خودرو</span></div>
+          <div class="file-upload">@if($driver->car_card_back)<img src="{{ asset('storage/'.$driver->car_card_back) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif<span class="file-button camera-opener" data-field="car_card_back">عکس پشت کارت خودرو</span></div>
+          <div class="file-upload">@if($driver->car_insurance)<img src="{{ asset('storage/'.$driver->car_insurance) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif<span class="file-button camera-opener" data-field="car_insurance">تصویر بیمه ماشین</span></div>
+          <div class="file-upload">@if($driver->car_front_image)<img src="{{ asset('storage/'.$driver->car_front_image) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif<span class="file-button camera-opener" data-field="car_front_image">عکس نمای جلوی خودرو</span></div>
+          <div class="file-upload">@if($driver->car_back_image)<img src="{{ asset('storage/'.$driver->car_back_image) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif<span class="file-button camera-opener" data-field="car_back_image">عکس نمای عقب خودرو</span></div>
+          <div class="file-upload">@if($driver->car_left_image)<img src="{{ asset('storage/'.$driver->car_left_image) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif<span class="file-button camera-opener" data-field="car_left_image">عکس نمای چپ خودرو</span></div>
+          <div class="file-upload">@if($driver->car_right_image)<img src="{{ asset('storage/'.$driver->car_right_image) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif<span class="file-button camera-opener" data-field="car_right_image">عکس نمای راست خودرو</span></div>
+          <div class="file-upload">@if($driver->car_front_seats_image)<img src="{{ asset('storage/'.$driver->car_front_seats_image) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif<span class="file-button camera-opener" data-field="car_front_seats_image">صندلی جلو و داشبورد</span></div>
+          <div class="file-upload">@if($driver->car_back_seats_image)<img src="{{ asset('storage/'.$driver->car_back_seats_image) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif<span class="file-button camera-opener" data-field="car_back_seats_image">صندلی‌های عقب</span></div>
         </div>
       </section>
 
@@ -199,27 +123,29 @@
 <script src="{{ asset('js/converter.js') }}"></script>
 <script type="module" src="{{ asset('/js/profile.js') }}"></script>
 
-<!-- In-browser camera only - NO gallery at all, front/back switch, default back camera -->
+<!-- Pure in-browser camera - NO file input until photo is taken -->
 <script>
 let stream = null;
 let currentFacingMode = 'environment';
 
 document.querySelectorAll('.camera-opener').forEach(opener => {
-  const inputId = opener.dataset.input;
-  const input = document.getElementById(inputId);
+  const fieldName = opener.dataset.field;
   const originalText = opener.textContent.trim();
 
   opener.addEventListener('click', async e => {
     e.preventDefault();
     e.stopPropagation();
 
-    if (input.files.length > 0) {
+    // Check if already has photo
+    if (opener.classList.contains('file-selected')) {
       if (!confirm('عکس قبلاً گرفته شده. دوباره بگیرید؟')) return;
-      input.value = '';
-      opener.textContent = originalText;
       opener.classList.remove('file-selected');
-      const prevImg = opener.parentElement.querySelector('img');
-      if (prevImg && !prevImg.src.includes('storage')) prevImg.remove();
+      opener.textContent = originalText;
+      const prevImg = opener.parentElement.querySelector('img:not([src*="storage"])');
+      if (prevImg) prevImg.remove();
+      // Remove previous hidden input
+      const oldInput = document.querySelector(`input[name="${fieldName}"][type="file"]`);
+      if (oldInput) oldInput.remove();
     }
 
     const modal = document.createElement('div');
@@ -240,10 +166,7 @@ document.querySelectorAll('.camera-opener').forEach(opener => {
     const startCamera = async (mode) => {
       if (stream) stream.getTracks().forEach(t => t.stop());
       try {
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: mode },
-          audio: false
-        });
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: mode }, audio: false });
         video.srcObject = stream;
         currentFacingMode = mode;
         switchBtn.textContent = mode === 'environment' ? 'Selfie' : 'Back';
@@ -255,9 +178,7 @@ document.querySelectorAll('.camera-opener').forEach(opener => {
 
     await startCamera('environment');
 
-    switchBtn.onclick = () => {
-      startCamera(currentFacingMode === 'environment' ? 'user' : 'environment');
-    };
+    switchBtn.onclick = () => startCamera(currentFacingMode === 'environment' ? 'user' : 'environment');
 
     modal.querySelector('#closeCam').onclick = () => {
       if (stream) stream.getTracks().forEach(t => t.stop());
@@ -271,12 +192,23 @@ document.querySelectorAll('.camera-opener').forEach(opener => {
       canvas.getContext('2d').drawImage(video, 0, 0);
 
       canvas.toBlob(blob => {
-        const file = new File([blob], `${input.name}.jpg`, { type: 'image/jpeg' });
+        // Create hidden file input only now
+        let input = document.querySelector(`input[name="${fieldName}"]`);
+        if (!input) {
+          input = document.createElement('input');
+          input.type = 'file';
+          input.name = fieldName;
+          input.style.display = 'none';
+          document.querySelector('.u-driver-form').appendChild(input);
+        }
+
+        const file = new File([blob], `${fieldName}.jpg`, { type: 'image/jpeg' });
         const dt = new DataTransfer();
         dt.items.add(file);
         input.files = dt.files;
 
-        let img = opener.parentElement.querySelector('img');
+        // Preview
+        let img = opener.parentElement.querySelector('img:not([src*="storage"])');
         if (!img) {
           img = document.createElement('img');
           img.width = 120;
