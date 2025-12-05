@@ -305,6 +305,36 @@
   <script src="{{ asset('js/swiper-bundle.min.js') }}"></script>
   <script src="{{ asset('js/converter.js') }}"></script>
   <script type="module" src="{{ asset('/js/profile.js') }}"></script>
+  <script>
+    document.querySelectorAll('.file-upload').forEach(wrapper => {
+        const fileInput = wrapper.querySelector('input[type="file"]');
+        const fileButton = wrapper.querySelector('.file-button');
+        let previewImg = wrapper.querySelector('img');
+
+        fileButton.addEventListener('click', function(e){
+            e.preventDefault();
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', function(e){
+            const file = this.files[0];
+            if(!file) return;
+
+            if(previewImg){
+                previewImg.src = URL.createObjectURL(file);
+            } else {
+                previewImg = document.createElement('img');
+                previewImg.src = URL.createObjectURL(file);
+                previewImg.width = 120;
+                previewImg.style.marginBottom = '10px';
+                wrapper.prepend(previewImg);
+            }
+
+        });
+    });
+  </script>
+
+
 
 </body>
 </html>
