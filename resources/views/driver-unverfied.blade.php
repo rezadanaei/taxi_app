@@ -241,6 +241,67 @@ document.querySelectorAll(".file-upload").forEach(box => {
 <script src="{{ asset('js/swiper-bundle.min.js') }}"></script>
 <script src="{{ asset('js/converter.js') }}"></script>
 <script type="module" src="{{ asset('/js/profile.js') }}"></script>
+<script>
+    document.querySelectorAll(".file-upload").forEach(box => {
+    const input = box.querySelector("input[type=file]");
+    const label = box.querySelector("label.file-button");
 
+    if (!label.dataset.originalText) {
+        label.dataset.originalText = label.textContent.trim();
+    }
+
+    const markAsSelected = () => {
+        label.classList.add("file-selected");
+        label.textContent = "عکس انتخاب شد ✓";
+    };
+
+    const markAsNotSelected = () => {
+        label.classList.remove("file-selected");
+        label.textContent = label.dataset.originalText;
+    };
+
+    input.addEventListener("change", () => {
+        if (input.files && input.files.length > 0) {
+        markAsSelected();
+        const reader = new FileReader();
+        reader.onload = e => {
+            let img = box.querySelector("img.preview");
+            if (!img) {
+            img = document.createElement("img");
+            img.className = "preview";
+            img.width = 120;
+            img.style.borderRadius = "8px";
+            img.style.marginBottom = "10px";
+            box.insertBefore(img, input);
+            }
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+        } else {
+        markAsNotSelected();
+        }
+    });
+
+    label.addEventListener("click", () => {
+        const hadCapture = input.hasAttribute("capture");
+        const originalAccept = input.getAttribute("accept");
+
+        if (hadCapture) {
+        setTimeout(() => {
+            if (!input.files || input.files.length === 0) {
+            input.removeAttribute("capture");
+            input.click();
+
+            input.addEventListener("change", function restoreCapture() {
+                input.setAttribute("capture", "camera");
+                input.accept = originalAccept;
+                input.removeEventListener("change", restoreCapture);
+            }, { once: true });
+            }
+        }, 800);
+        }
+    });
+    });
+</script>
 </body>
 </html>
