@@ -135,7 +135,9 @@ class AdminController extends Controller
 
          
         if ($slug == 'dashboard' || is_null($slug) || $slug === '' || empty($slug)) {
-            $driversCount = User::where('type', 'driver')->count();
+            $driversCount = User::where('type', 'driver')
+            ->where('status', 'active')
+            ->count();
             $passengersCount = User::where('type', 'passenger')->count();
             $tripsCount = Trip::count();
             $tripsOngoingCount = Trip::whereIn('status', ['ongoing','paid', ])->count();
