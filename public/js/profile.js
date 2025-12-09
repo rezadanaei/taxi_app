@@ -65,6 +65,54 @@ document.querySelectorAll('.camera-opener').forEach(opener => {
     e.preventDefault();
     e.stopPropagation();
 
+    if (fieldName === 'car_insurance') {
+
+        // اگر فایل قبلاً انتخاب شده بود، ریست کن
+        if (opener.classList.contains('file-selected')) {
+            if (!confirm('عکس قبلاً بارگذاری شده است. دوباره انتخاب شود؟')) return;
+
+            opener.classList.remove('file-selected');
+            const prevImg = opener.parentElement.querySelector('img:not([src*="storage"])');
+            if (prevImg) prevImg.remove();
+
+            const oldInput = document.querySelector(`input[name="${fieldName}"][type="file"]`);
+            if (oldInput) oldInput.remove();
+        }
+
+        // ایجاد input فایل
+        let input = document.createElement('input');
+        input.type = 'file';
+        input.name = fieldName;
+        input.accept = 'image/*';
+        input.style.display = 'none';
+
+        document.querySelector('.u-driver-form').appendChild(input);
+
+        input.click();
+
+        input.onchange = () => {
+            if (!input.files.length) return;
+
+            const file = input.files[0];
+
+            // ساخت پیش‌نمایش
+            let img = opener.parentElement.querySelector('img:not([src*="storage"])');
+            if (!img) {
+                img = document.createElement('img');
+                img.width = 120;
+                img.style.marginBottom = '10px';
+                img.style.borderRadius = '8px';
+                opener.parentElement.insertBefore(img, opener);
+            }
+
+            img.src = URL.createObjectURL(file);
+
+            opener.textContent = 'فایل انتخاب شد';
+            opener.classList.add('file-selected');
+        };
+
+        return; // ❗ از ادامه‌ی کد (باز شدن دوربین) جلوگیری می‌کنیم
+    }
     // Check if already has photo
     if (opener.classList.contains('file-selected')) {
       if (!confirm('عکس قبلاً گرفته شده. دوباره بگیرید؟')) return;

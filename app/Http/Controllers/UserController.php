@@ -238,6 +238,39 @@ class UserController extends Controller
 
         return back();
     }
+    public function resendVerificationCode(Request $request)
+    {
+        $request->validate([
+            'phone' => 'required|string'
+        ]);
+
+        $phone = $request->phone;
+
+        $stored = null;
+        $keys = ["verification_code:{$phone}", $phone];
+
+        foreach ($keys as $k) {
+            if (Cache::has($k)) {
+                $stored = Cache::get($k);
+                break;
+            }
+        }
+
+        if (!$stored) {
+            return response()->json([
+                'message' => 'کدی برای این شماره وجود ندارد یا منقضی شده است.'
+            ], 404);
+        }
+
+        SMS::sendPattern($phone, [$stored], 399329);
+
+        return response()->json([
+            'message' => 'کد دوباره ارسال شد.'
+        ], 200);
+    }
+
+
+
 
     public function loginVerification(Request $request)
     {
@@ -444,7 +477,7 @@ class UserController extends Controller
 
         // log the user in for this session so profile route can use Auth::user()
         try {
-            Auth::login($user);
+            Auth::login($user, true);
         } catch (\Throwable $e) {
             // ignore login failures for now
         }
@@ -671,37 +704,36 @@ class UserController extends Controller
         }
 
         $validated = $request->validate([
-            'first_name' => 'nullable|string|max:100',
-            'last_name' => 'nullable|string|max:100',
-            'father_name' => 'nullable|string|max:100',
-            'birth_date' => 'nullable|date',
-            'national_code' => 'nullable|string|max:20',
-            'phone' => 'nullable|string|max:20',
-            'address' => 'nullable|string|max:255',
+            'first_name' => 'required|string|max:100',
+            'last_name' => 'required|string|max:100',
+            'father_name' => 'required|string|max:100',
+            'birth_date' => 'required|date',
+            'national_code' => 'required|string|max:20',
+            'phone' => 'required|string|max:20',
+            'address' => 'required|string|max:255',
 
-            'id_card_front' => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
-            'id_card_back' => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
-            'id_card_selfie' => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
-            'profile_photo' => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
+            'id_card_front' => 'required|image|mimes:jpg,jpeg,png|max:3072',
+            'id_card_back' => 'required|image|mimes:jpg,jpeg,png|max:3072',
+            'id_card_selfie' => 'required|image|mimes:jpg,jpeg,png|max:3072',
+            'profile_photo' => 'required|image|mimes:jpg,jpeg,png|max:3072',
 
-            'license_number' => 'nullable|string|max:50',
-            'license_front' => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
-            'license_back' => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
+            'license_number' => 'required|string|max:50',
+            'license_front' => 'required|image|mimes:jpg,jpeg,png|max:3072',
+            'license_back' => 'required|image|mimes:jpg,jpeg,png|max:3072',
 
-            'car_type' => 'nullable|string|max:100',
-            'car_plate' => 'nullable|string|max:20',
-            'car_model' => 'nullable|string|max:100',
-            'car_card_front' => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
-            'car_card_back' => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
-            'car_insurance' => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
+            'car_type' => 'required|string|max:100',
+            'car_plate' => 'required|string|max:20',
+            'car_model' => 'required|string|max:100',
+            'car_card_front' => 'required|image|mimes:jpg,jpeg,png|max:3072',
+            'car_card_back' => 'required|image|mimes:jpg,jpeg,png|max:3072',
+            'car_insurance' => 'required|image|mimes:jpg,jpeg,png|max:3072',
 
-            // ------------------ NEW: Car Extra Images ------------------
-            'car_front_image'        => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
-            'car_back_image'         => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
-            'car_left_image'         => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
-            'car_right_image'        => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
-            'car_front_seats_image'  => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
-            'car_back_seats_image'   => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
+            'car_front_image'        => 'required|image|mimes:jpg,jpeg,png|max:3072',
+            'car_back_image'         => 'required|image|mimes:jpg,jpeg,png|max:3072',
+            'car_left_image'         => 'required|image|mimes:jpg,jpeg,png|max:3072',
+            'car_right_image'        => 'required|image|mimes:jpg,jpeg,png|max:3072',
+            'car_front_seats_image'  => 'required|image|mimes:jpg,jpeg,png|max:3072',
+            'car_back_seats_image'   => 'required|image|mimes:jpg,jpeg,png|max:3072',
         ],[
             'id.required' => 'شناسه کاربر الزامی است.',
             'id.exists'   => 'کاربری با این شناسه پیدا نشد.',
@@ -713,6 +745,38 @@ class UserController extends Controller
             'id_card_back.max' => 'حجم تصویر کارت ملی پشت نباید بیشتر از 3 مگابایت باشد.',
             'id_card_selfie.max' => 'حجم تصویر سلفی کارت ملی نباید بیشتر از 3 مگابایت باشد.',
             'profile_photo.max' => 'حجم عکس پروفایل نباید بیشتر از 3 مگابایت باشد.',
+            'first_name.required' => 'وارد کردن نام الزامی است.',
+            
+            'last_name.required' => 'وارد کردن نام خانوادگی الزامی است.',
+            'father_name.required' => 'وارد کردن نام پدر الزامی است.',
+            'birth_date.required' => 'وارد کردن تاریخ تولد الزامی است.',
+            'national_code.required' => 'وارد کردن کد ملی الزامی است.',
+            'phone.required' => 'وارد کردن شماره تلفن الزامی است.',
+            'address.required' => 'وارد کردن آدرس الزامی است.',
+
+            'id_card_front.required' => 'بارگذاری کارت ملی جلو الزامی است.',
+            'id_card_back.required' => 'بارگذاری کارت ملی پشت الزامی است.',
+            'id_card_selfie.required' => 'بارگذاری سلفی کارت ملی الزامی است.',
+            'profile_photo.required' => 'بارگذاری عکس پروفایل الزامی است.',
+
+            'license_number.required' => 'وارد کردن شماره گواهینامه الزامی است.',
+            'license_front.required' => 'بارگذاری گواهینامه جلو الزامی است.',
+            'license_back.required' => 'بارگذاری گواهینامه پشت الزامی است.',
+
+            'car_type.required' => 'وارد کردن نوع خودرو الزامی است.',
+            'car_plate.required' => 'وارد کردن پلاک خودرو الزامی است.',
+            'car_model.required' => 'وارد کردن مدل خودرو الزامی است.',
+            'car_card_front.required' => 'بارگذاری کارت خودرو جلو الزامی است.',
+            'car_card_back.required' => 'بارگذاری کارت خودرو پشت الزامی است.',
+            'car_insurance.required' => 'بارگذاری بیمه خودرو الزامی است.',
+
+            'car_front_image.required' => 'بارگذاری تصویر نمای جلوی خودرو الزامی است.',
+            'car_back_image.required' => 'بارگذاری تصویر نمای عقب خودرو الزامی است.',
+            'car_left_image.required' => 'بارگذاری تصویر نمای چپ خودرو الزامی است.',
+            'car_right_image.required' => 'بارگذاری تصویر نمای راست خودرو الزامی است.',
+            'car_front_seats_image.required' => 'بارگذاری تصویر صندلی‌های جلو الزامی است.',
+            'car_back_seats_image.required' => 'بارگذاری تصویر صندلی‌های عقب الزامی است.',
+
 
             // ------------------ NEW ERRORS ------------------
             'car_front_image.max' => 'حجم تصویر نمای جلوی خودرو نباید بیشتر از 3 مگابایت باشد.',
@@ -725,7 +789,8 @@ class UserController extends Controller
             'first_name.max' => 'طول نام نباید بیشتر از 100 کاراکتر باشد.',
             'last_name.max' => 'طول نام خانوادگی نباید بیشتر از 100 کاراکتر باشد.',
             'father_name.max' => 'طول نام پدر نباید بیشتر از 100 کاراکتر باشد.',
-            'address.max' => 'طول آدرس نباید بیشتر از 255 کاراکتر باشد.',
+            'address.max' => 'طول آدرس نبا
+            ید بیشتر از 255 کاراکتر باشد.',
 
             'string' => 'مقدار وارد شده باید متن باشد.',
             'date'   => 'تاریخ وارد شده معتبر نیست.',

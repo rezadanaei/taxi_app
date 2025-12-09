@@ -52,9 +52,6 @@
           <input type="hidden" name="role" value="{{ old('role', $role ?? '') }}">
 
           <input class="button" type="submit" value="ادامه">
-
-          
-
         </div>
       </form>
         @if($codeError)
@@ -63,7 +60,49 @@
       <style>
         .input-error { border-color: #c0392b; }
         .error-text { color: #c0392b; margin-top: 6px; font-size: 0.95rem; }
+        .resend-wrapper {
+            margin-top: 25px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .resend-btn {
+            background: var(--main-color);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s ease-in-out;
+            opacity: 0.5;        
+        }
+
+        .resend-btn:hover:not([disabled]) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .resend-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.4;
+        }
+
+        .resend-timer {
+            margin-top: 10px;
+            font-size: 0.95rem;
+            color: #666;
+            letter-spacing: 0.5px;
+            font-weight: 400;
+        }
+
       </style>
+      <div class="resend-wrapper">
+          <button id="resend-btn" disabled class="resend-btn">ارسال مجدد کد</button>
+          <div id="timer" class="resend-timer"></div>
+      </div>
 
       <script>
         // hide error message when the user starts typing
@@ -84,6 +123,71 @@
 
    </div>
   <!-- Code page end -->
-  
+  <script>
+    let timerElement = document.getElementById('timer');
+    let resendBtn = document.getElementById('resend-btn');
+
+    let phone = "{{ $phone }}"; // شماره کاربر
+    let countdown = 120; // دو دقیقه
+
+    startTimer();
+
+    function startTimer() {
+        resendBtn.disabled = true;
+        resendBtn.style.opacity = "0.5";
+
+        let interval = setInterval(() => {
+
+            let minutes = Math.floor(countdown / 60);
+            let seconds = countdown % 60;
+
+            timerElement.innerText = `ارسال مجدد کد تا ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+            countdown--;
+
+            if (countdown < 0) {
+                clearInterval(interval);
+                timerElement.innerText = "";
+                resendBtn.disabled = false;
+                resendBtn.style.opacity = "1";
+            }
+
+        }, 1000);
+    }
+
+    // درخواست ارسال مجدد
+    resendBtn.addEventListener('click', function () {
+
+        resendBtn.disabled = true;
+        resendBtn.style.opacity = "0.5";
+        timerElement.innerText = "در حال ارسال...";
+
+        fetch("{{ route('resend.code') }}", {
+            method: "POST",
+            headers: {
+                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ phone: phone })
+        })
+        .then(response => response.json())
+        .then(data => {
+
+            if (data.message) {
+                timerElement.innerText = "کد دوباره ارسال شد";
+            }
+
+            countdown = 120; 
+            startTimer(); 
+
+        })
+        .catch(() => {
+            timerElement.innerText = "خطا در ارسال کد";
+            resendBtn.disabled = false;
+            resendBtn.style.opacity = "1";
+        });
+    });
+</script>
+
 </body>
 </html>

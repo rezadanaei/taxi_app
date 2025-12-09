@@ -38,10 +38,10 @@ class NotifyTripAdmins implements ShouldQueue
         $adminPhones = Admin::pluck('phone')->toArray();
 
        foreach ($adminPhones as $adminPhone) {
-            SMS::send(
-                $adminPhone,
-                "هشدار: سفر بدون راننده\nیک سفر ثبت شده ولی هیچ راننده‌ای ندارد. لطفاً بررسی کنید."
-            );
+            // SMS::send(
+            //     $adminPhone,
+            //     "هشدار: سفر بدون راننده\nیک سفر ثبت شده ولی هیچ راننده‌ای ندارد. لطفاً بررسی کنید."
+            // );
             
         }
 

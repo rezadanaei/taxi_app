@@ -454,7 +454,7 @@ function drawSpecialAreas() {
     let circle = L.circle([area.center.lat, area.center.lng], {
       radius: area.radius,
       color: '#ff000000',
-      fillColor: '#f03', // Color of special locations
+      fillColor: 'rgba(255, 0, 51, 0)', // Color of special locations
       fillOpacity: 0.2
     }).addTo(map);
     areaLayers.push(circle);

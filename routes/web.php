@@ -45,6 +45,7 @@ Route::get('/', [UserController::class, 'home'])->name('home');
 Route::get('/login', [UserController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [UserController::class, 'loginVerification'])->name('login.verify');
 Route::post('/login/verify-code', [UserController::class, 'checkVerification'])->name('login.code.verify');
+Route::post('/resend-code', [UserController::class, 'resendVerificationCode'])->name('resend.code');
 
 // Logout route (POST)
 Route::post('/logout', [UserController::class, 'logout'])->name('logout');

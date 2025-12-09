@@ -45,7 +45,22 @@
       <h1>تکمیل اطلاعات</h1>
       <p>راننده گرامی جهت دسترسی به سفر ها باید ابتدا اطلاعات خود را ثبت کنید.</p>
     </div>
+    @if ($errors->any())
+        <div class="admin-errors">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
+
+    @if (session('success'))
+        <div class="admin-success">
+            {{ session('success') }}
+        </div>
+    @endif
     @php
         $user = auth()->user();
         $driver = $user->userable;
@@ -91,18 +106,129 @@
         <h2>اطلاعات رانندگی</h2>
         <div class="u-driver-grid-2">
           <input type="text" name="car_type" placeholder="نوع ماشین" value="{{ $driver->car_type ?? '' }}">
-          <input type="text" name="car_plate" placeholder="پلاک ماشین" value="{{ $driver->car_plate ?? '' }}">
+          {{-- <input type="text" name="car_plate" placeholder="پلاک ماشین" value="{{ $driver->car_plate ?? '' }}"> --}}
+          
+        <style>
+          .plate-container {
+            direction: rtl;
+            display: flex;
+            justify-content: center;
+          }
+
+          .plate-box {
+            background: #fff;
+            border: 3px solid var(--Third-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            justify-content: space-around;
+            box-shadow: 0 0 8px #0002;
+            position: relative;
+          }
+          .plate-input,
+          .plate-select {
+            width: 55px;
+            height: 45px;
+            font-size: 20px;
+            text-align: center;
+            border: 0px solid #333;
+            border-radius: 6px;
+            outline: none;
+            font-family: 'Vazir-FD', sans-serif;
+          }
+
+          .plate-select {
+            width: 70px;
+            cursor: pointer;
+          }
+          .spliter {
+            width: 2px;
+            height: 100%;
+            background: var(--Third-color);
+          }
+          .plate-container input {
+            width: 40px !important;
+            padding: 16px 10px !important;
+            border-radius: 0px !important;
+            text-align: center !important;
+            background-color: transparent !important;
+            font-size: 18px !important;
+          }
+        </style>
+
+        <div class="plate-container">
+            <div class="plate-box">
+                <input type="tel" maxlength="2" class="plate-input" placeholder="20" id="part1">
+
+                <div class="spliter"></div>
+                
+                <input type="tel" maxlength="3" class="plate-input" placeholder="345" id="part2">
+
+                <select class="plate-select" id="letter">
+                    <option value="">حرف</option>
+                    <option>الف</option><option>ب</option><option>پ</option><option>ت</option>
+                    <option>ث</option><option>ج</option><option>چ</option><option>ح</option>
+                    <option>خ</option><option>د</option><option>ذ</option><option>ر</option>
+                    <option>ز</option><option>س</option><option>ش</option><option>ص</option>
+                    <option>ط</option><option>ق</option><option>ک</option><option>گ</option>
+                    <option>ل</option><option>م</option><option>ن</option><option>و</option>
+                    <option>ه</option><option>ی</option>
+                </select>
+                
+
+                <input type="tel" maxlength="2" class="plate-input" placeholder="67" id="part3">
+            </div>
+        </div>
+
+        <input type="hidden" name="car_plate" id="full_plate" value="">
+
+        <script>
+        function updateFullPlate() {
+          let p1 = document.getElementById('part1').value.trim();
+          let p2 = document.getElementById('part2').value.trim();
+          let letter = document.getElementById('letter').value;
+          let p3 = document.getElementById('part3').value.trim();
+
+          // اگر هرکدام خالی بود، hidden باید خالی شود
+          if (p1 === '' || p2 === '' || letter === '' || p3 === '') {
+              document.getElementById('full_plate').value = '';
+              return;
+          }
+
+          // اگر همه پر بودند → حالا padStart کنیم
+          p1 = p1.padStart(2, '0');
+          p2 = p2;
+          p3 = p3.padStart(2, '0');
+
+          const full = `${p1} ${p2} ${letter} ${p3}`;
+
+          document.getElementById('full_plate').value = full;
+        }
+
+
+
+        document.querySelectorAll('.plate-input, .plate-select').forEach(element => {
+            element.addEventListener('input', updateFullPlate);
+            element.addEventListener('change', updateFullPlate);
+        });
+
+        updateFullPlate();
+        </script>
           <input type="text" name="license_number" placeholder="شماره گواهینامه" value="{{ $driver->license_number ?? '' }}">
           <input type="text" name="car_model" placeholder="مدل ماشین" value="{{ $driver->car_model ?? '' }}">
         </div>
 
+       
+        <p>لطفاً توجه کنید: بیمه‌نامه خودرو باید دارای کاربری برون‌شهری باشد.</p>
+        
         <div class="u-driver-grid-4">
           <div class="file-upload">@if($driver->license_front)<img src="{{ asset('storage/'.$driver->license_front) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif<span class="file-button camera-opener" data-field="license_front">عکس روی گواهینامه</span></div>
           <div class="file-upload">@if($driver->license_back)<img src="{{ asset('storage/'.$driver->license_back) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif<span class="file-button camera-opener" data-field="license_back">عکس پشت گواهینامه</span></div>
           <div class="file-upload">@if($driver->car_card_front)<img src="{{ asset('storage/'.$driver->car_card_front) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif<span class="file-button camera-opener" data-field="car_card_front">عکس روی کارت خودرو</span></div>
           <div class="file-upload">@if($driver->car_card_back)<img src="{{ asset('storage/'.$driver->car_card_back) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif<span class="file-button camera-opener" data-field="car_card_back">عکس پشت کارت خودرو</span></div>
-          <div class="file-upload">@if($driver->car_insurance)<img src="{{ asset('storage/'.$driver->car_insurance) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif<span class="file-button camera-opener" data-field="car_insurance">تصویر بیمه ماشین</span></div>
           <div class="file-upload">@if($driver->car_front_image)<img src="{{ asset('storage/'.$driver->car_front_image) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif<span class="file-button camera-opener" data-field="car_front_image">عکس نمای جلوی خودرو</span></div>
+          <div class="file-upload">@if($driver->car_insurance)<img src="{{ asset('storage/'.$driver->car_insurance) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif<span class="file-button camera-opener" data-field="car_insurance">تصویر بیمه ماشین</span></div>
           <div class="file-upload">@if($driver->car_back_image)<img src="{{ asset('storage/'.$driver->car_back_image) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif<span class="file-button camera-opener" data-field="car_back_image">عکس نمای عقب خودرو</span></div>
           <div class="file-upload">@if($driver->car_left_image)<img src="{{ asset('storage/'.$driver->car_left_image) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif<span class="file-button camera-opener" data-field="car_left_image">عکس نمای چپ خودرو</span></div>
           <div class="file-upload">@if($driver->car_right_image)<img src="{{ asset('storage/'.$driver->car_right_image) }}" width="120" style="margin-bottom:10px; border-radius:8px;">@endif<span class="file-button camera-opener" data-field="car_right_image">عکس نمای راست خودرو</span></div>

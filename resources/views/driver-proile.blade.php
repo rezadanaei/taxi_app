@@ -668,6 +668,21 @@
     }
   </script>
 
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.addEventListener("message", function (event) {
+        const msg = event.data;
+
+        console.log("📩 Message From Service Worker:", msg);
+
+        // اگر نوتیفیکیشن مربوط به سفر بود
+        if (msg.type === "PUSH_MESSAGE" && msg.payload.type === "trip") {
+            console.log("🚗 Trip Notification Received:", msg.payload);
+        }
+    });
+}
+
+</script>
 
 
 </body>

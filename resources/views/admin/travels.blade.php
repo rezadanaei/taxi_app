@@ -89,6 +89,9 @@
                     <div class="passenger-item-title">
                         <div class="trip-id">کد سفر: {{ $trip->id }}</div>
                         <div class="trip-state">{{ $statusText }}</div>
+                        @php $d = tripDate($trip->created_at ?? $trip->updated_at); @endphp
+                        <div>{{ $d['date'] }} {{ $d['time'] }}</div>
+
                     </div>
 
                     <section>
