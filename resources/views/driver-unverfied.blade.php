@@ -183,37 +183,42 @@
 
         <input type="hidden" name="car_plate" id="full_plate" value="{{ old('car_plate', $driver->car_plate) ?? '' }}">
 
-        <script>
-        function updateFullPlate() {
-          let p1 = document.getElementById('part1').value.trim();
-          let p2 = document.getElementById('part2').value.trim();
-          let letter = document.getElementById('letter').value;
-          let p3 = document.getElementById('part3').value.trim();
+          <script>
+            function updateFullPlate() {
+              let p1 = document.getElementById('part1').value.trim();
+              let p2 = document.getElementById('part2').value.trim();
+              let letter = document.getElementById('letter').value;
+              let p3 = document.getElementById('part3').value.trim();
 
-          // اگر هرکدام خالی بود، hidden باید خالی شود
-          if (p1 === '' || p2 === '' || letter === '' || p3 === '') {
-              document.getElementById('full_plate').value = '';
-              return;
+              const hiddenInput = document.getElementById('full_plate');
+
+              // اگر هرکدام خالی بود، hidden باید مقدار قبلی خود را نگه دارد (اگر داشت) و فقط زمانی خالی شود که هیچ مقداری نداشته باشد
+              if (p1 === '' || p2 === '' || letter === '' || p3 === '') {
+                  if (!hiddenInput.value) {
+                      hiddenInput.value = ''; // اگر hidden خالی است، خالی بماند
+                  }
+                  return;
+              }
+
+              // اگر همه پر بودند → حالا padStart کنیم
+              p1 = p1.padStart(2, '0');
+              p2 = p2;
+              p3 = p3.padStart(2, '0');
+
+              const full = `${p1} ${p2} ${letter} ${p3}`;
+              hiddenInput.value = full;
           }
 
-          // اگر همه پر بودند → حالا padStart کنیم
-          p1 = p1.padStart(2, '0');
-          p2 = p2;
-          p3 = p3.padStart(2, '0');
+          document.querySelectorAll('.plate-input, .plate-select').forEach(element => {
+              element.addEventListener('input', updateFullPlate);
+              element.addEventListener('change', updateFullPlate);
+          });
 
-          const full = `${p1} ${p2} ${letter} ${p3}`;
+          // فقط وقتی hidden input مقدار ندارد، update کنیم
+          if (!document.getElementById('full_plate').value) {
+              updateFullPlate();
+          }
 
-          document.getElementById('full_plate').value = full;
-        }
-
-
-
-        document.querySelectorAll('.plate-input, .plate-select').forEach(element => {
-            element.addEventListener('input', updateFullPlate);
-            element.addEventListener('change', updateFullPlate);
-        });
-
-        updateFullPlate();
         </script>
           <input type="text" name="license_number" placeholder="شماره گواهینامه" value="{{ old('license_number',$driver->license_number ) ?? '' }}">
           <input type="text" name="car_model" placeholder="مدل ماشین" value="{{ old('car_model',$driver->car_model) ?? '' }}">
