@@ -72,13 +72,13 @@
       <section class="u-driver-personal-info">
         <h2>اطلاعات هویتی</h2>
         <div class="u-driver-grid-2">
-          <input type="text" name="first_name" placeholder="نام" value="{{ $driver->first_name ?? '' }}">
-          <input type="text" name="last_name" placeholder="نام خانوادگی" value="{{ $driver->last_name ?? '' }}">
-          <input type="text" name="father_name" placeholder="نام پدر" value="{{ $driver->father_name ?? '' }}">
-          <input type="text" name="birth_date" data-jdp value="{{ $driver->birth_date ?? '' }}" placeholder="تاریخ تولد">
-          <input type="text" name="national_code" placeholder="شماره ملی" value="{{ $driver->national_code ?? '' }}">
-          <input type="tel" name="phone" placeholder="شماره موبایل" value="{{ $user->phone ?? '' }}">
-          <input class="full-width" type="text" name="address" placeholder="آدرس محل سکونت" value="{{ $driver->address ?? '' }}">
+          <input type="text" name="first_name" placeholder="نام" value="{{ old('first_name',$driver->first_name) ?? '' }}">
+          <input type="text" name="last_name" placeholder="نام خانوادگی" value="{{ old('last_name',$driver->last_name) ?? '' }}">
+          <input type="text" name="father_name" placeholder="نام پدر" value="{{ old('father_name',$driver->father_name) ?? '' }}">
+          <input type="text" name="birth_date" data-jdp value="{{ old('birth_date', $driver->birth_date) ?? '' }}" placeholder="تاریخ تولد">
+          <input type="text" name="national_code" placeholder="شماره ملی" value="{{old('national_code',$driver->national_code) ?? '' }}">
+          <input type="tel" name="phone" placeholder="شماره موبایل" value="{{ old('phone',$user->phone) ?? '' }}">
+          <input class="full-width" type="text" name="address" placeholder="آدرس محل سکونت" value="{{ old('address',$driver->address) ?? '' }}">
         </div>
 
         <div class="u-driver-grid-4">
@@ -105,7 +105,7 @@
       <section class="u-driver-car-info">
         <h2>اطلاعات رانندگی</h2>
         <div class="u-driver-grid-2">
-          <input type="text" name="car_type" placeholder="نوع ماشین" value="{{ $driver->car_type ?? '' }}">
+          <input type="text" name="car_type" placeholder="نوع ماشین" value="{{ old('car_type',$driver->car_type) ?? '' }}">
           {{-- <input type="text" name="car_plate" placeholder="پلاک ماشین" value="{{ $driver->car_plate ?? '' }}"> --}}
           
         <style>
@@ -181,7 +181,7 @@
             </div>
         </div>
 
-        <input type="hidden" name="car_plate" id="full_plate" value="">
+        <input type="hidden" name="car_plate" id="full_plate" value="{{ old('car_plate', $driver->car_plate) ?? '' }}">
 
         <script>
         function updateFullPlate() {
@@ -215,8 +215,8 @@
 
         updateFullPlate();
         </script>
-          <input type="text" name="license_number" placeholder="شماره گواهینامه" value="{{ $driver->license_number ?? '' }}">
-          <input type="text" name="car_model" placeholder="مدل ماشین" value="{{ $driver->car_model ?? '' }}">
+          <input type="text" name="license_number" placeholder="شماره گواهینامه" value="{{ old('license_number',$driver->license_number ) ?? '' }}">
+          <input type="text" name="car_model" placeholder="مدل ماشین" value="{{ old('car_model',$driver->car_model) ?? '' }}">
         </div>
 
        

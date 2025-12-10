@@ -54,155 +54,199 @@ tabs.forEach((tab, index) => {
 //     });
 // });
 
+function updatePreview(fieldName, file) {
+    let box = document.querySelector(`.camera-opener[data-field="${fieldName}"]`).parentElement;
+
+    let oldImg = box.querySelector("img");
+    if (oldImg) oldImg.remove();
+
+    let img = document.createElement("img");
+    img.src = URL.createObjectURL(file);
+    img.width = 120;
+    img.style.marginBottom = "10px";
+    img.style.borderRadius = "8px";
+    box.prepend(img);
+}
+
+
+document.addEventListener("DOMContentLoaded", async () => {
+    document.querySelectorAll(".u-driver-grid-4 .file-upload").forEach(async (box) => {
+
+        let img = box.querySelector("img");
+        let button = box.querySelector(".camera-opener");
+        let field = button.dataset.field;
+
+        if (img) {
+            let input = document.querySelector(`input[name="${field}"]`);
+
+            if (!input) {
+                input = document.createElement("input");
+                input.type = "file";
+                input.name = field;
+                input.style.display = "none";
+                document.querySelector(".u-driver-form").appendChild(input);
+            }
+
+            try {
+                const response = await fetch(img.src);
+                const blob = await response.blob();
+                const file = new File([blob], field + ".jpg", { type: blob.type });
+
+                let dt = new DataTransfer();
+                dt.items.add(file);
+                input.files = dt.files;
+
+                button.classList.add("file-selected");
+            } catch (e) {
+                console.log("خطای تبدیل عکس به فایل:", e);
+            }
+        }
+    });
+});
+
+
+
 let stream = null;
 let currentFacingMode = 'environment';
 
 document.querySelectorAll('.camera-opener').forEach(opener => {
-  const fieldName = opener.dataset.field;
-  const originalText = opener.textContent.trim();
 
-  opener.addEventListener('click', async e => {
-    e.preventDefault();
-    e.stopPropagation();
+    const fieldName = opener.dataset.field;
+    const originalText = opener.textContent.trim();
 
-    if (fieldName === 'car_insurance') {
+    opener.addEventListener('click', async e => {
+        e.preventDefault();
+        e.stopPropagation();
 
-        // اگر فایل قبلاً انتخاب شده بود، ریست کن
+        
+        if (fieldName === 'car_insurance') {
+
+            if (opener.classList.contains('file-selected')) {
+                if (!confirm('عکس قبلاً بارگذاری شده است. دوباره انتخاب شود؟')) return;
+
+                opener.classList.remove('file-selected');
+                const oldInput = document.querySelector(`input[name="${fieldName}"]`);
+                if (oldInput) oldInput.remove();
+            }
+
+            let input = document.createElement('input');
+            input.type = 'file';
+            input.name = fieldName;
+            input.accept = 'image/*';
+            input.style.display = 'none';
+
+            document.querySelector('.u-driver-form').appendChild(input);
+
+            input.click();
+
+            input.onchange = () => {
+                if (!input.files.length) return;
+                const file = input.files[0];
+
+                updatePreview(fieldName, file);
+
+                opener.textContent = 'فایل انتخاب شد';
+                opener.classList.add('file-selected');
+            };
+
+            return;
+        }
+
+       
         if (opener.classList.contains('file-selected')) {
-            if (!confirm('عکس قبلاً بارگذاری شده است. دوباره انتخاب شود؟')) return;
+            if (!confirm('عکس قبلاً گرفته شده. دوباره بگیرید؟')) return;
 
             opener.classList.remove('file-selected');
-            const prevImg = opener.parentElement.querySelector('img:not([src*="storage"])');
-            if (prevImg) prevImg.remove();
+            opener.textContent = originalText;
 
-            const oldInput = document.querySelector(`input[name="${fieldName}"][type="file"]`);
+            const img = opener.parentElement.querySelector('img:not([src*="storage"])');
+            if (img) img.remove();
+
+            const oldInput = document.querySelector(`input[name="${fieldName}"]`);
             if (oldInput) oldInput.remove();
         }
 
-        // ایجاد input فایل
-        let input = document.createElement('input');
-        input.type = 'file';
-        input.name = fieldName;
-        input.accept = 'image/*';
-        input.style.display = 'none';
+        
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position:fixed;top:0;left:0;width:100%;height:100%;
+            background:#000;z-index:9999;display:flex;
+            flex-direction:column;align-items:center;justify-content:center;color:#fff;
+        `;
+        modal.innerHTML = `
+            <video id="camVideo" autoplay playsinline style="width:90%;max-width:500px;border-radius:16px;"></video>
+            <div style="margin:20px 0;display:flex;gap:20px;align-items:center;">
+                <button id="takePhoto" style="padding:15px 35px;background:#28a745;color:#fff;border:none;border-radius:50px;font-size:18px;">عکس بگیر</button>
+                <button id="switchCam" style="padding:12px 18px;background:#444;color:#fff;border:none;border-radius:50%;font-size:20px;">Switch</button>
+                <button id="closeCam" style="padding:15px 35px;background:#dc3545;color:#fff;border:none;border-radius:50px;font-size:18px;">بستن</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
 
-        document.querySelector('.u-driver-form').appendChild(input);
+        const video = modal.querySelector('#camVideo');
+        const switchBtn = modal.querySelector('#switchCam');
 
-        input.click();
-
-        input.onchange = () => {
-            if (!input.files.length) return;
-
-            const file = input.files[0];
-
-            // ساخت پیش‌نمایش
-            let img = opener.parentElement.querySelector('img:not([src*="storage"])');
-            if (!img) {
-                img = document.createElement('img');
-                img.width = 120;
-                img.style.marginBottom = '10px';
-                img.style.borderRadius = '8px';
-                opener.parentElement.insertBefore(img, opener);
+        const startCamera = async mode => {
+            if (stream) stream.getTracks().forEach(t => t.stop());
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: mode },
+                    audio: false
+                });
+                video.srcObject = stream;
+                currentFacingMode = mode;
+                switchBtn.textContent = mode === 'environment' ? 'دوربین جلو' : 'دوربین عقب';
+            } catch (err) {
+                alert('دوربین در دسترس نیست');
+                modal.remove();
             }
-
-            img.src = URL.createObjectURL(file);
-
-            opener.textContent = 'فایل انتخاب شد';
-            opener.classList.add('file-selected');
         };
 
-        return; // ❗ از ادامه‌ی کد (باز شدن دوربین) جلوگیری می‌کنیم
-    }
-    // Check if already has photo
-    if (opener.classList.contains('file-selected')) {
-      if (!confirm('عکس قبلاً گرفته شده. دوباره بگیرید؟')) return;
-      opener.classList.remove('file-selected');
-      opener.textContent = originalText;
-      const prevImg = opener.parentElement.querySelector('img:not([src*="storage"])');
-      if (prevImg) prevImg.remove();
-      // Remove previous hidden input
-      const oldInput = document.querySelector(`input[name="${fieldName}"][type="file"]`);
-      if (oldInput) oldInput.remove();
-    }
+        await startCamera('environment');
 
-    const modal = document.createElement('div');
-    modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;';
-    modal.innerHTML = `
-      <video id="camVideo" autoplay playsinline style="width:90%;max-width:500px;border-radius:16px;"></video>
-      <div style="margin:20px 0;display:flex;gap:20px;align-items:center;">
-        <button id="takePhoto" style="padding:15px 35px;background:#28a745;color:#fff;border:none;border-radius:50px;font-size:18px;">عکس بگیر</button>
-        <button id="switchCam" style="padding:12px 18px;background:#444;color:#fff;border:none;border-radius:50%;font-size:20px;">Switch</button>
-        <button id="closeCam" style="padding:15px 35px;background:#dc3545;color:#fff;border:none;border-radius:50px;font-size:18px;">بستن</button>
-      </div>
-    `;
-    document.body.appendChild(modal);
+        switchBtn.onclick = () =>
+            startCamera(currentFacingMode === 'environment' ? 'user' : 'environment');
 
-    const video = modal.querySelector('#camVideo');
-    const switchBtn = modal.querySelector('#switchCam');
+        modal.querySelector('#closeCam').onclick = () => {
+            if (stream) stream.getTracks().forEach(t => t.stop());
+            modal.remove();
+        };
 
-    const startCamera = async (mode) => {
-      if (stream) stream.getTracks().forEach(t => t.stop());
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: mode }, audio: false });
-        video.srcObject = stream;
-        currentFacingMode = mode;
-        switchBtn.textContent = mode === 'environment' ? 'دوربین جلو' : 'دوربین عقب';
-      } catch (err) {
-        alert('دوربین در دسترس نیست');
-        modal.remove();
-      }
-    };
+    
+        modal.querySelector('#takePhoto').onclick = () => {
 
-    await startCamera('environment');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
 
-    switchBtn.onclick = () => startCamera(currentFacingMode === 'environment' ? 'user' : 'environment');
+            canvas.toBlob(blob => {
 
-    modal.querySelector('#closeCam').onclick = () => {
-      if (stream) stream.getTracks().forEach(t => t.stop());
-      modal.remove();
-    };
+                let input = document.querySelector(`input[name="${fieldName}"]`);
+                if (!input) {
+                    input = document.createElement('input');
+                    input.type = 'file';
+                    input.name = fieldName;
+                    input.style.display = 'none';
+                    document.querySelector('.u-driver-form').appendChild(input);
+                }
 
-    modal.querySelector('#takePhoto').onclick = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      canvas.getContext('2d').drawImage(video, 0, 0);
+                const file = new File([blob], `${fieldName}.jpg`, { type: 'image/jpeg' });
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                input.files = dt.files;
 
-      canvas.toBlob(blob => {
-        // Create hidden file input only now
-        let input = document.querySelector(`input[name="${fieldName}"]`);
-        if (!input) {
-          input = document.createElement('input');
-          input.type = 'file';
-          input.name = fieldName;
-          input.style.display = 'none';
-          document.querySelector('.u-driver-form').appendChild(input);
-        }
+                updatePreview(fieldName, file);
 
-        const file = new File([blob], `${fieldName}.jpg`, { type: 'image/jpeg' });
-        const dt = new DataTransfer();
-        dt.items.add(file);
-        input.files = dt.files;
+                opener.textContent = 'عکس گرفته شد';
+                opener.classList.add('file-selected');
 
-        // Preview
-        let img = opener.parentElement.querySelector('img:not([src*="storage"])');
-        if (!img) {
-          img = document.createElement('img');
-          img.width = 120;
-          img.style.marginBottom = '10px';
-          img.style.borderRadius = '8px';
-          opener.parentElement.insertBefore(img, opener);
-        }
-        img.src = URL.createObjectURL(blob);
+                if (stream) stream.getTracks().forEach(t => t.stop());
+                modal.remove();
 
-        opener.textContent = 'عکس گرفته شد';
-        opener.classList.add('file-selected');
-
-        if (stream) stream.getTracks().forEach(t => t.stop());
-        modal.remove();
-      }, 'image/jpeg', 0.95);
-    };
-  });
+            }, 'image/jpeg', 0.95);
+        };
+    });
 });
 
 // ==========================
