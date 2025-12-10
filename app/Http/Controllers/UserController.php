@@ -828,7 +828,7 @@ class UserController extends Controller
             if ($existing) {
                 $existing->seen_by_admin_id = null;
                 $existing->save();
-                return;
+                return redirect()->back()->with('success', 'اطلاعات با موفقیت ثبت شد.');
             }
         }
         
