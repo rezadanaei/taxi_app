@@ -822,26 +822,21 @@ class UserController extends Controller
         }
 
         $admins = Admin::all();
+        $existing = DriverNotification::where('driver_id', $user_db->id)->latest()->first();
         if ($user_db->status == 'awaiting') {
-            $notification = DriverNotification::where('driver_id', $user_db->id)
-                ->latest()
-                ->first();
-            if ($notification) {
-                $notification->seen_by_admin_id = null;
-                $notification->save();
-            } else {
-                $notification = new DriverSubmitted($user_db);
-                foreach ($admins as $admin) {
-                    $admin->notify($notification);
-                }
-            }
-        } else {
-            $notification = new DriverSubmitted($user_db);
-            foreach ($admins as $admin) {
-                $admin->notify($notification);
-            }
 
+            if ($existing) {
+                $existing->seen_by_admin_id = null;
+                $existing->save();
+                return;
+            }
         }
+        
+        $notification = new DriverSubmitted($user_db);
+        foreach ($admins as $admin) {
+            $admin->notify($notification);
+        }
+
         return redirect()->back()->with('success', 'اطلاعات با موفقیت ثبت شد.');
     }
 
