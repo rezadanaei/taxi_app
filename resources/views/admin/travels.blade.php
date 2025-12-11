@@ -207,117 +207,122 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
 
-    console.log("[INIT] اسکریپت لود شد");
+            console.log("[INIT] اسکریپت لود شد");
 
-    document.querySelectorAll('.ad-driver-trip').forEach(button => {
-        button.addEventListener('click', function() {
-            const tripId = this.dataset.tripid;
-            console.log("[LOG] سفر انتخاب شد:", tripId);
-
+            const searchInput = document.getElementById('driverSearchInput');
+            const searchResults = document.getElementById('driverSearchResults');
             const selectedTripInput = document.getElementById('selectedTripId');
-            if(!selectedTripInput) return console.error("[ERROR] selectedTripId پیدا نشد!");
 
-            selectedTripInput.value = tripId;
-            document.getElementById('AddDriverTripPopup').style.display = 'block';
-        });
-    });
+            // باز کردن popup و ذخیره tripId
+            document.querySelectorAll('.ad-driver-trip').forEach(button => {
+                button.addEventListener('click', function() {
+                    const tripId = this.dataset.tripid;
+                    console.log("[LOG] سفر انتخاب شد:", tripId);
 
-    const searchInput = document.getElementById('driverSearchInput');
-    const searchResults = document.getElementById('driverSearchResults');
-    const selectedTripInput = document.getElementById('selectedTripId');
-
-    // جستجو
-    searchInput.addEventListener('input', function() {
-        const query = this.value.trim();
-        console.log("[LOG] جستجوی راننده، query:", query);
-
-        searchResults.innerHTML = '';
-        if(query.length < 1) return;
-
-        fetch("{{ route('admin.drivers.search') }}?q=" + encodeURIComponent(query))
-            .then(res => {
-                console.log("[LOG] پاسخ جستجو:", res.status);
-                return res.json();
-            })
-            .then(drivers => {
-                console.log("[LOG] لیست رانندگان:", drivers);
-
-                drivers.forEach(driver => {
-                    const li = document.createElement('li');
-                    li.textContent = `${driver.first_name} ${driver.last_name}`;
-                    li.dataset.driverId = driver.user_id;
-                    searchResults.appendChild(li);
+                    if(!selectedTripInput) return console.error("[ERROR] selectedTripId پیدا نشد!");
+                    selectedTripInput.value = tripId;
+                    document.getElementById('AddDriverTripPopup').style.display = 'block';
                 });
-            })
-            .catch(err => console.error("[ERROR] جستجو:", err));
-    });
-
-    // تخصیص راننده
-    searchResults.addEventListener('click', function(e) {
-        const li = e.target.closest('li');
-        if(!li) return;
-
-        const driverId = li.dataset.driverId;
-        const tripId = selectedTripInput.value;
-
-        console.log("[LOG] انتخاب راننده:", driverId, "برای سفر:", tripId);
-
-        if(!driverId || !tripId) {
-            alert("اطلاعات معتبر نیست");
-            return;
-        }
-
-        const url = `{{ url('/trips/assign-driver') }}?trip_id=${tripId}&driver_id=${driverId}`;
-        console.log("[REQUEST] ارسال GET:", url);
-
-        fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json'
-                },
-                credentials: 'same-origin' // ← این مهمه: کوکی‌ها را همراه درخواست می‌فرسته
-            })
-            .then(res => {
-                console.log("[LOG] پاسخ سرور برای تخصیص:", res.status);
-
-                return res.text(); // چون ممکنه JSON یا HTML باشه
-            })
-            .then(text => {
-                console.log("[RAW RESPONSE]", text);
-
-                try {
-                    const data = JSON.parse(text);
-
-                    if(data.success) {
-                        alert(data.message);
-                        document.getElementById('AddDriverTripPopup').style.display = 'none';
-                        searchInput.value = '';
-                        searchResults.innerHTML = '';
-                        location.reload();
-                    } else {
-                        alert("خطا: " + data.message);
-                    }
-                } catch (e) {
-                    console.error("[ERROR] سرور JSON نداد، متن خام:", text);
-                    alert("پاسخ غیرمنتظره از سرور دریافت شد.");
-                }
-            })
-            .catch(err => {
-                console.error("[ERROR] ارسال درخواست:", err);
-                alert("خطا در ارسال درخواست");
             });
 
-    });
+            // تابع debounce برای جلوگیری از ارسال چندین درخواست همزمان
+            function debounce(fn, delay) {
+                let timeoutId;
+                return function(...args) {
+                    clearTimeout(timeoutId);
+                    timeoutId = setTimeout(() => fn.apply(this, args), delay);
+                }
+            }
 
-});
-</script>
+            // جستجوی راننده
+            const handleSearch = debounce(function() {
+                const query = this.value.trim();
+                console.log("[LOG] جستجوی راننده، query:", query);
 
+                searchResults.innerHTML = '';
+                if(query.length < 1) return;
 
+                fetch("{{ route('admin.drivers.search') }}?q=" + encodeURIComponent(query))
+                    .then(res => res.json())
+                    .then(drivers => {
+                        console.log("[LOG] لیست رانندگان:", drivers);
 
+                        // جلوگیری از رانندگان تکراری
+                        const uniqueDrivers = [];
+                        const seenDriverIds = new Set();
 
+                        drivers.forEach(driver => {
+                            if(driver.user_id && !seenDriverIds.has(driver.driver_id)) {
+                                seenDriverIds.add(driver.driver_id);
+                                uniqueDrivers.push(driver);
+
+                                const li = document.createElement('li');
+                                li.textContent = `${driver.first_name} ${driver.last_name}`;
+                                li.dataset.driverId = driver.user_id;
+                                searchResults.appendChild(li);
+                            }
+                        });
+                    })
+                    .catch(err => console.error("[ERROR] جستجو:", err));
+            }, 300); // 300 میلی‌ثانیه توقف قبل از ارسال درخواست
+
+            searchInput.addEventListener('input', handleSearch);
+
+            // تخصیص راننده به سفر
+            searchResults.addEventListener('click', function(e) {
+                const li = e.target.closest('li');
+                if(!li) return;
+
+                const driverId = li.dataset.driverId;
+                const tripId = selectedTripInput.value;
+
+                console.log("[LOG] انتخاب راننده:", driverId, "برای سفر:", tripId);
+
+                if(!driverId || !tripId) {
+                    alert("اطلاعات معتبر نیست");
+                    return;
+                }
+
+                const url = `{{ url('/trips/assign-driver') }}?trip_id=${tripId}&driver_id=${driverId}`;
+                console.log("[REQUEST] ارسال GET:", url);
+
+                fetch(url, {
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' },
+                    credentials: 'same-origin'
+                })
+                .then(res => res.text()) // ممکن است JSON یا HTML باشد
+                .then(text => {
+                    console.log("[RAW RESPONSE]", text);
+
+                    try {
+                        const data = JSON.parse(text);
+
+                        if(data.success) {
+                            alert(data.message);
+                            document.getElementById('AddDriverTripPopup').style.display = 'none';
+                            searchInput.value = '';
+                            searchResults.innerHTML = '';
+                            location.reload();
+                        } else {
+                            alert("خطا: " + data.message);
+                        }
+                    } catch (e) {
+                        console.error("[ERROR] سرور JSON نداد، متن خام:", text);
+                        alert("پاسخ غیرمنتظره از سرور دریافت شد.");
+                    }
+                })
+                .catch(err => {
+                    console.error("[ERROR] ارسال درخواست:", err);
+                    alert("خطا در ارسال درخواست");
+                });
+            });
+
+        });
+    </script>
 
 
 </body>
