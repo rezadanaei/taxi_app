@@ -770,7 +770,7 @@ class AdminController extends Controller
 
         }
 
-        $results = $results->unique('driver_id')->values();
+        $results = $results->unique('user_id')->values();
 
         return response()->json($results);
     }
