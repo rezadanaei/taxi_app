@@ -726,9 +726,9 @@ class AdminController extends Controller
 
         if (is_numeric($query)) {
             $users = User::where('userable_type', 'App\Models\Driver')
-                ->where('userable_id', $query)
+                ->where('id', $query) 
+                ->where('status', 'active')
                 ->with('userable') 
-                ->limit(10)
                 ->get();
 
             foreach ($users as $user) {
@@ -742,22 +742,32 @@ class AdminController extends Controller
                 }
             }
         } else {
-            $drivers = Driver::where(function($q) use ($query) {
-                    $q->where('first_name', 'like', "%{$query}%")
-                    ->orWhere('last_name', 'like', "%{$query}%");
+            $keywords = explode(' ', $query);
+
+            $drivers = Driver::where(function($q) use ($keywords) {
+                    foreach ($keywords as $word) {
+                        $q->orWhere('first_name', 'like', "%{$word}%")
+                        ->orWhere('last_name', 'like', "%{$word}%");
+                    }
                 })
-                ->with(['user']) 
-                ->limit(10)
+                ->with(['user' => function($q) {
+                    $q->where('status', 'active');  
+                }])
                 ->get();
+
+            $drivers = $drivers->filter(function($driver) {
+                return $driver->user !== null;  
+            });
 
             foreach ($drivers as $driver) {
                 $results->push([
-                    'driver_id' => $driver->id,                       
-                    'user_id' => $driver->user->id ?? null,           
+                    'driver_id'  => $driver->id,
+                    'user_id'    => $driver->user->id ?? null,
                     'first_name' => $driver->first_name,
-                    'last_name' => $driver->last_name,
+                    'last_name'  => $driver->last_name,
                 ]);
             }
+
         }
 
         return response()->json($results);
