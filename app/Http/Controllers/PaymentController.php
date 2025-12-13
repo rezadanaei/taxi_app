@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\ZarinpalService;
 use App\Models\Payment;
+use App\Facades\SMS;
 
 class PaymentController extends Controller
 {
@@ -31,7 +32,21 @@ class PaymentController extends Controller
             if ($payment->payable) {
                 $payment->payable->update(['status' => 'paid']);
             }
+            if ($payment->payable_type === 'App\Models\Trip' && $payment->payable) {
+               
+                $driver = $payment->payable->driver;
+                if ($driver) {
+                    $driverPhone = $driver->phone;
+                    $driverFirstName = $driver->userable->first_name ?? '';
+                    $driverLastName = $driver->userable->last_name ?? '';
 
+                    SMS::sendPattern($driverPhone, [
+                        $driverFirstName,
+                        $driverLastName,
+                        $payment->payable_id,
+                    ],401676);
+                } 
+            }
             return "پرداخت موفق بود. کد پیگیری: " . $result['ref_id'];
         }
 

@@ -112,13 +112,10 @@
                     <input type="file" name="car_insurance">
                     <button type="button" class="file-button">تصویر بیمه ماشین</button>
                   </div>
-                </div>
-              </section>
+                
 
-              <!-- --------------- NEW EXTRA CAR IMAGES ---------------- -->
-              <section class="u-driver-car-extra-images">
-                <h2>تصاویر اضافی خودرو</h2>
-                <div class="u-driver-grid-6">
+                  <!-- --------------- NEW EXTRA CAR IMAGES ---------------- -->
+              
                   <div class="file-upload">
                     <input type="file" name="car_front_image">
                     <button type="button" class="file-button">نمای جلو خودرو</button>
