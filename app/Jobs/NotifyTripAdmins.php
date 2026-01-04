@@ -8,25 +8,19 @@ use Illuminate\Foundation\Queue\Queueable;
 use App\Models\Trip;
 use App\Models\Admin;
 use App\Services\AdminNotificationService;
+use Illuminate\Queue\SerializesModels;
 
 class NotifyTripAdmins implements ShouldQueue
 {
-    use Queueable;
+    use Queueable, SerializesModels;
 
-    /**
-     * Create a new job instance.
-     */
-
-    protected $trip;
+    protected Trip $trip;
 
     public function __construct(Trip $trip)
     {
         $this->trip = $trip;
     }
 
-    /**
-     * Execute the job.
-     */
     public function handle(): void
     {
         $trip = $this->trip;
@@ -35,24 +29,14 @@ class NotifyTripAdmins implements ShouldQueue
             return;
         }
 
-        $adminPhones = Admin::pluck('phone')->toArray();
+        SMS::sendPattern('09352482751', [$trip->id], 401679);
 
-       foreach ($adminPhones as $adminPhone) {
-            // SMS::send(
-            //     $adminPhone,
-            //     "هشدار: سفر بدون راننده\nیک سفر ثبت شده ولی هیچ راننده‌ای ندارد. لطفاً بررسی کنید."
-            // );
+        app(AdminNotificationService::class)->create(
+            "هشدار: سفر بدون راننده",
+            "یک سفر ثبت شده ولی هیچ راننده‌ای ندارد.",
+            ['url' => url('/admin/trips')]
+
             
-        }
-
-        $title = "هشدار: سفر بدون راننده";
-        $body = "یک سفر ثبت شده ولی هیچ راننده‌ای ندارد. لطفاً بررسی کنید.";
-
-        $data = [
-            'url' => url('/admin/trips'),
-        ];
-
-    
-        app(AdminNotificationService::class)->create( $title, $body, $data);
+        );
     }
 }

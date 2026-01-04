@@ -132,6 +132,7 @@ class UserController extends Controller
                     return view('driver-unverfied', compact('user'));
                 }
                 if($user->status === 'active') {
+                    
                     return view('driver-proile', compact('user','driver','birth_display'));
                 }
                 
@@ -367,7 +368,7 @@ class UserController extends Controller
         $code  = $data['code'];
         $role  = $data['role'];
 
-        // get the stored code from cache (support both prefixed and raw keys)
+        // get the stored code from cache
         $stored = null;
         $foundKey = null;
         $keys = ["verification_code:{$phone}", $phone];
@@ -380,46 +381,51 @@ class UserController extends Controller
         }
 
         if (!$stored || (string)$stored !== (string)$code) {
-            // wrong code: render the verification view with an errors bag so the user
-            // remains on the verification page (instead of redirecting back to login)
             $bag = new MessageBag(['code' => 'کد وارد شده اشتباه است']);
             $errors = new ViewErrorBag();
             $errors->put('default', $bag);
 
             return view('verification-code', [
-                'phone' => $phone,
-                'role' => $role,
+                'phone'  => $phone,
+                'role'   => $role,
                 'errors' => $errors,
             ]);
         }
 
-        // code OK — first check if there's a pending profile change for this phone
+        /**
+         * =====================================
+         * Pending profile change
+         * =====================================
+         */
         $pendingKey = "pending_profile:{$phone}";
         if (Cache::has($pendingKey)) {
             $pending = Cache::get($pendingKey);
             $targetUser = User::find($pending['user_id'] ?? null);
+
             if (!$targetUser) {
                 $bag = new MessageBag(['code' => 'کاربر مربوطه پیدا نشد']);
                 $errors = new ViewErrorBag();
                 $errors->put('default', $bag);
 
                 return view('verification-code', [
-                    'phone' => $phone,
-                    'role' => $role,
+                    'phone'  => $phone,
+                    'role'   => $role,
                     'errors' => $errors,
                 ]);
             }
 
-            // ensure no other user already owns this phone
-            $other = User::where('phone', $phone)->where('id', '!=', $targetUser->id)->first();
+            $other = User::where('phone', $phone)
+                ->where('id', '!=', $targetUser->id)
+                ->first();
+
             if ($other) {
                 $bag = new MessageBag(['code' => 'این شماره قبلاً به حساب دیگری اختصاص داده شده است']);
                 $errors = new ViewErrorBag();
                 $errors->put('default', $bag);
 
                 return view('verification-code', [
-                    'phone' => $phone,
-                    'role' => $role,
+                    'phone'  => $phone,
+                    'role'   => $role,
                     'errors' => $errors,
                 ]);
             }
@@ -428,59 +434,52 @@ class UserController extends Controller
             $targetUser->phone = $phone;
             $targetUser->save();
 
-            $pendingData = $pending['data'] ?? [];
-            if (!empty($pendingData) && $targetUser->userable) {
-                $targetUser->userable->update($pendingData);
+            if (!empty($pending['data']) && $targetUser->userable) {
+                $targetUser->userable->update($pending['data']);
             }
 
-            // cleanup cache keys
             if ($foundKey) Cache::forget($foundKey);
             Cache::forget($pendingKey);
 
-            try { Auth::login($targetUser); } catch (\Throwable $e) {}
-            $existingToken = $targetUser->tokens()->where('name', 'web')->first();
+            try {
+                Auth::login($targetUser, true);
+            } catch (\Throwable $e) {}
 
-            if ($existingToken) {
-                $token = $existingToken->token;
-            } else {
-                $token = $targetUser->createToken('web')->plainTextToken;
+            if (session()->has('pending_trip')) {
+                return redirect()->route('trip.store.after.login');
             }
 
-
-            return redirect()->route('user.profile', ['token' => $token]);
+            return redirect()->route('user.profile');
         }
 
-        // No pending profile — proceed with normal login/register flow
+        /**
+         * =====================================
+         * Normal login / register
+         * =====================================
+         */
         $user = User::where('phone', $phone)->first();
+
         if (!$user) {
             if ($role === 'passenger') {
                 $userable = Passenger::create([]);
+                $status = 'active';
             } else {
                 $userable = Driver::create([]);
+                $status = 'panding';
             }
 
             $user = User::create([
-                'phone' => $phone,
-                'type' => $role,
-                'userable_id' => $userable->id,
-                'userable_type' => get_class($userable),
-                
+                'phone'          => $phone,
+                'type'           => $role,
+                'status'         => $status,
+                'userable_id'    => $userable->id,
+                'userable_type'  => get_class($userable),
             ]);
-            if ($role === 'driver') {
-                $user->status = 'panding';
-                $user->save();
-            } elseif ($role === 'passenger') {
-                $user->status = 'active';
-                $user->save();
-            }
         }
 
-        // log the user in for this session so profile route can use Auth::user()
         try {
             Auth::login($user, true);
-        } catch (\Throwable $e) {
-            // ignore login failures for now
-        }
+        } catch (\Throwable $e) {}
 
         if ($foundKey) {
             Cache::forget($foundKey);
@@ -488,8 +487,13 @@ class UserController extends Controller
             Cache::forget($phone);
         }
 
+        if (session()->has('pending_trip')) {
+            return redirect()->route('trip.store.after.login');
+        }
+
         return redirect()->route('user.profile');
     }
+
 
     public function debugCachedCode(Request $request)
     {

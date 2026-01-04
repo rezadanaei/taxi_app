@@ -159,11 +159,10 @@
                         <div class="driver-info">
                             <p>
                                 <span>مسافر: </span>
-                                @if (empty(optional($trip->passenger->userable)->first_name) && empty(optional($trip->passenger->userable)->last_name))
+                                @if (empty(optional($trip->passenger->userable)->name))
                                   نامشخص
                                 @else
-                                  {{ optional($trip->passenger->userable)->first_name ?? '' }}
-                                  {{ optional($trip->passenger->userable)->last_name ?? '' }}
+                                  {{ optional($trip->passenger->userable)->name ?? '' }}
                                 @endif
 
                             </p>

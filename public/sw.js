@@ -1,30 +1,40 @@
 self.addEventListener("push", function (event) {
-    let data = {};
+    if (!event.data) return;
 
+    let payload;
     try {
-        data = event.data.json();
-    } catch (e) {
-        console.error("Push JSON parse error:", e);
+        payload = event.data.json();
+    } catch {
         return;
     }
 
-    event.waitUntil(
-        self.registration.showNotification(data.title || "Notification", {
-            body: data.body,
-            icon: data.icon,
-            badge: data.badge,
-            data: data.data
-        })
-    );
+    const title = payload.title || "نوتیفیکیشن جدید";
+    const body  = payload.body || "";
+    const icon  = payload.icon || "/icons/icon-192.png";
+    const badge = payload.badge || "/icons/badge-72.png";
 
-    if (data.data) {
-        self.clients.matchAll({ includeUncontrolled: true }).then(clients => {
-            clients.forEach(client => {
-                client.postMessage({
-                    type: "PUSH_MESSAGE",
-                    payload: data.data
-                });
+    const customData = payload.data || {};
+
+    event.waitUntil(
+        (async () => {
+            await self.registration.showNotification(title, {
+                body,
+                icon,
+                badge,
+                data: customData,
+                vibrate: [100, 50, 100],
             });
-        });
-    }
+
+            const clients = await self.clients.matchAll({
+                includeUncontrolled: true,
+            });
+
+            for (const client of clients) {
+                client.postMessage({
+                    type: customData.type,
+                    payload: customData,
+                });
+            }
+        })()
+    );
 });

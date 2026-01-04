@@ -31,7 +31,7 @@
 
       <section class="state-buttons">
         <a href="#" class="user-state-white-cancel">لغو درخواست</a>
-        <a href="#" class="user-state-white-contact">تماس با پشتیبانی</a>
+        <a href="tel:{{ setting('support_phone') }}" class="user-state-white-contact">تماس با پشتیبانی</a>
       </section>
 
     </div>

@@ -23,6 +23,18 @@ Route::get('/send-test-notification', [UserPushTokenController::class, 'send']);
 
 Route::middleware('auth:sanctum')->post('/api/user-push-token', [UserPushTokenController::class, 'store'])->name('api.user-push-token.store');
 
+// Driver API Routes
+
+
+Route::get('/driver/trips/accept', [TripController::class, 'acceptTrip'])
+    ->name('driver.trips.accept');
+    
+Route::get('/trips/cancel', [TripController::class, 'cancelTrip'])->name('trips.cancel');
+Route::post('/driver/trips/{trip}/start', [TripController::class, 'start']);
+Route::post('/driver/trips/{trip}/arrived', [TripController::class, 'arrived']);
+Route::post('/driver/trips/{trip}/end', [TripController::class, 'end']);
+Route::get('/trips/{trip}/start-response/{rid}', [TripController::class, 'startResponse'])->name('trip.start.response');
+Route::get('/trips/{trip}/end-response/{rid}', [TripController::class, 'endResponse'])->name('trip.end.response');
 
 // ---------------------------
 // Setting Routes
@@ -70,11 +82,29 @@ Route::get('/test-helper', function () {
     return setting();
 });
 
-// Trips store route (middleware: isPassenger)
+// Trips store route 
 
 Route::post('/trips/store', [TripController::class, 'store'])
-    ->middleware(['isPassenger'])
     ->name('trips.store');
+// Route::post('/trip/store/after-login', [TripController::class, 'storeAfterLogin'])
+//     ->name('trip.store.after.login');
+Route::get('/trip/store-after-login', function () {
+
+    if (!session()->has('pending_trip')) {
+        return redirect()->route('user.profile');
+    }
+
+    $tripData = session()->get('pending_trip');
+    session()->forget('pending_trip');
+
+    $request = new \Illuminate\Http\Request();
+    $request->replace($tripData);
+
+    return app(\App\Http\Controllers\TripController::class)
+        ->store($request, app(\App\Services\FindDriversForTrip::class));
+
+})->name('trip.store.after.login')->middleware('auth');
+
 
 Route::get('/driver/trips', [TripController::class, 'index'])->name('driver.trips');
 Route::middleware(['auth:admin'])->get('/trips/assign-driver', [AdminController::class, 'assignDriver'])->name('trips.assign-driver');
@@ -83,7 +113,11 @@ Route::get('trip/payment', [TripController::class,'payment'])->name('trip.paymen
 // ---------------------------
 // Payment
 // ---------------------------
-Route::get('payment/verify',[PaymentController::class, 'verify'])->name('payment.verify');
+Route::get('/payment/verify', [PaymentController::class, 'verify'])->name('payment.verify');
+Route::get('/payment/retry/{payment}', [PaymentController::class, 'retry'])->name('payment.retry');
+Route::get('/trips/{trip}', [TripController::class, 'show'])->name('trips.show');
+Route::get('/payments/invoice/{id}', [PaymentController::class, 'invoice'])->name('payments.invoice');
+Route::get('/support', [SupportController::class, 'index'])->name('support');
 
 // ---------------------------
 // Admin Routes

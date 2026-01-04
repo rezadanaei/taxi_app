@@ -82,7 +82,7 @@
                 <!-- Total price -->
                 <div class="trip-total-price">
                   <div class="total-price"><span>هزینه سفر:</span> {{ number_format($trip->cost) }} تومان</div>
-                  <a href="#">گزارش مشکل</a>
+                  <a href="tel:{{ setting('support_phone') }}">گزارش مشکل</a>
                 </div>
                 <!-- Driver Info -->
                 @if ($trip->driver)

@@ -38,7 +38,8 @@
 
       <section class="state-buttons">
         <a href="{{ route('user.profile', ['slug' => 'retry']) }}" class="user-state-white-cancel">درخواست مجدد</a>
-        <a href="#" class="user-state-white-contact">تماس با پشتیبانی</a>
+        <a href="tel:{{ setting('support_phone') }}" class="user-state-white-contact">تماس با پشتیبانی</a>
+
       </section>
 
     </div>

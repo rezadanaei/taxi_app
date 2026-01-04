@@ -28,10 +28,102 @@
         --second-color: {{ setting('colers_secondary') }};
         --Third-color: {{ setting('colers_tertiary') }};
       }
+
+
+      .alarm {
+          position: fixed;
+          top: 0;
+          left: 50%;
+          transform: translate(-50%, -150%);
+          width: 92%;
+          max-width: 420px;
+          background: #fff;
+          border-radius: 0 0 14px 14px;
+          box-shadow: 0 12px 30px rgba(0,0,0,.12);
+          z-index: 9999;
+          transition: transform .4s ease;
+          font-family: sans-serif;
+      }
+
+      .alarm.show {
+          transform: translate(-50%, 0);
+      }
+
+      .alarm-content {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 14px 16px;
+      }
+
+      .alarm-text {
+          font-size: 14px;
+          color: #222;
+          line-height: 1.4;
+      }
+
+      .alarm-actions {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+      }
+
+      .alarm-btn {
+          font-size: 12px;
+          padding: 6px 10px;
+          border-radius: 8px;
+          border: none;
+          cursor: pointer;
+          background: #4f46e5;
+          color: #fff;
+      }
+
+      .alarm-btn:hover {
+          opacity: .9;
+      }
+
+      .alarm-close {
+          background: none;
+          border: none;
+          font-size: 18px;
+          cursor: pointer;
+          opacity: .6;
+      }
+
+      .alarm-close:hover {
+          opacity: 1;
+      }
+
+      .alarm-timeline {
+          height: 3px;
+          background: #eee;
+          overflow: hidden;
+      }
+
+      .alarm-progress {
+          height: 100%;
+          width: 0%;
+          background: #4f46e5;
+      }
+
   </style>
   <link rel="stylesheet" href="{{ asset('/css/style.css') }}">
 </head>
 <body>
+  <div id="trip-alarm" class="alarm">
+    <div class="alarm-content">
+        <div class="alarm-text"></div>
+
+        <div class="alarm-actions">
+            <button class="alarm-btn view">رد کردن</button>
+            <button class="alarm-close" aria-label="بستن">✕</button>
+        </div>
+    </div>
+
+    <div class="alarm-timeline">
+        <div class="alarm-progress"></div>
+    </div>
+  </div>
 
   <!-- User Profile page -->
    <div class="user-profile-container max-width">
@@ -99,13 +191,31 @@
               @if(count($trips ?? []) > 0)
                 @foreach ($trips as $trip)
                   <li>
-                      <div class="passenger-trip-item">
-                          @php
-                              $tripDT = tripDate($trip->start_date);
-                          @endphp
-                          <div class="passenger-item-title">
-                              <div class="trip-id">کد سفر: {{ $trip->id }}</div>
-                              <div class="trip-state">{{ ucfirst($trip->status) }}</div>
+                        <div class="passenger-trip-item">
+                            @php
+                                $tripDT = tripDate($trip->start_date);
+                            @endphp
+                            <div class="passenger-item-title">
+                                <div class="trip-id">کد سفر: {{ $trip->id }}</div>
+                                @php
+                                    $statuses = [
+                                        'pending' => 'در انتظار قبول راننده',
+                                        'ongoing' => 'در حال انجام',
+                                        'completed' => 'تکمیل شده',
+                                        'cancelled' => 'لغو شده',
+                                        'rejected' => 'رد شده',
+                                        'no-show' => 'عدم حضور',
+                                        'paid' => 'پرداخت شده',
+                                        'refunded' => 'بازپرداخت شده',
+                                        'pending-payment' => 'در انتظار پرداخت',
+                                    ];
+                                @endphp
+
+                                <div class="trip-state">
+                                    {{ $statuses[$trip->status] ?? $trip->status }}
+                                </div>
+
+                              
                           </div>
                           <img src="{{ asset('img/down.svg') }}" alt="فلش">
                       </div>
@@ -115,9 +225,16 @@
                               <div class="trip-date">تاریخ: {{ $tripDT['date'] }}</div>
                               <span>-</span>
                               <div class="trip-time">ساعت: {{ $tripDT['time'] }}</div>
-                              @if(isset($trip->payment_id))
+                              @php
+                                  $payment = \App\Models\Payment::where('payable_type', \App\Models\Trip::class)
+                                      ->where('payable_id', $trip->id)
+                                      ->where('status', 'success')
+                                      ->first();
+                              @endphp
+
+                              @if($payment)
                                   <span>-</span>
-                                  <div class="trip-pay-id">شناسه پرداخت: {{ $trip->payment_id }}</div>
+                                  <div class="trip-pay-id">شناسه پرداخت: {{ $payment->ref_id }}</div>
                               @endif
                           </div>
 
@@ -128,7 +245,13 @@
                           </div>
 
                           <!-- Driver Info -->
-                          @if ($trip->driver)
+                               @php
+                                  $hasPaid = \App\Models\Payment::where('payable_type', \App\Models\Trip::class)
+                                              ->where('payable_id', $trip->id)
+                                              ->where('status', 'success')
+                                              ->exists();
+                               @endphp
+                          @if ($trip->driver && $hasPaid)
                           <div class="trip-driver-info">
                               <img src="{{ optional($trip->driver->userable)->profile_photo ? asset('storage/' . $trip->driver->userable->profile_photo) : asset('img/no-photo.png') }}" alt="تصویر راننده">
                               <div class="driver-info">
@@ -143,19 +266,19 @@
                               <a href="tel:{{ optional($trip->driver)->phone ?? '' }}" class="call-to-driver">
                                   {{ optional($trip->driver)->phone ?? 'نامشخص' }}
                               </a>
-                              @php
-                                  $hasPaid = \App\Models\Payment::where('payable_type', \App\Models\Trip::class)
-                                              ->where('payable_id', $trip->id)
-                                              ->where('status', 'success')
-                                              ->exists();
-                              @endphp
-
-                              @if($trip->status == 'pending-payment' && !$hasPaid)
+                             
+                          </div>
+                          @elseif ($trip->driver && !$hasPaid)
+                           
+                              <div class="trip-driver-info no-info">
+                                  <p style="margin:0">برای مشاهده اطلاعات راننده لطفا ابتدا هزینه رزرو سفر را پرداخت کنید.</p>
                                   <a href="{{ route('trip.payment', ['trip_id' => $trip->id]) }}" class="call-to-driver">
                                       پرداخت
                                   </a>
-                              @endif
-                          </div>
+                              
+                              </div>
+                              
+                              
                           @endif
 
                           @php
@@ -195,7 +318,7 @@
                   <!-- Total price -->
                   <div class="trip-total-price">
                     <div class="total-price"><span>هزینه سفر:</span> 240.000 تومان</div>
-                    <a href="#">گزارش مشکل</a>
+                    <a href="tel:{{ setting('support_phone') }}">گزارش مشکل</a>
                   </div>
 
                   <!-- Driver Info -->
@@ -422,7 +545,96 @@
 
     });
   </script>
-</script>
+  <script>
+    let alarmTimeout = null;
+    let currentRoute = null;
+
+    function showTripAlarm(data) {
+        const alarm = document.getElementById('trip-alarm');
+        const text  = alarm.querySelector('.alarm-text');
+        const bar   = alarm.querySelector('.alarm-progress');
+
+        currentRoute = data.route || null;
+
+        text.innerText =
+            data.type === 'trip_start_requested'
+                ? 'راننده درخواست شروع سفر را ارسال کرده'
+                : 'راننده درخواست پایان سفر را ارسال کرده';
+
+        if (navigator.vibrate) {
+            navigator.vibrate(60);
+        }
+
+        alarm.classList.add('show');
+
+        bar.style.transition = 'none';
+        bar.style.width = '0%';
+
+        requestAnimationFrame(() => {
+            bar.style.transition = 'width 60s linear';
+            bar.style.width = '100%';
+        });
+
+        alarmTimeout = setTimeout(hideTripAlarm, 60000);
+    }
+
+    function hideTripAlarm() {
+        const alarm = document.getElementById('trip-alarm');
+        alarm.classList.remove('show');
+        clearTimeout(alarmTimeout);
+    }
+
+    document.querySelector('.alarm-close')
+        .addEventListener('click', hideTripAlarm);
+
+    document.querySelector('.alarm-btn.view')
+        .addEventListener('click', () => {
+            if (currentRoute) {
+                window.location.href = currentRoute;
+            }
+        });
+
+    function onNotificationReceived(data) {
+        if (
+            data.type === 'trip_start_requested' ||
+            data.type === 'trip_end_requested'
+        ) {
+            showTripAlarm(data);
+        }
+    }
+
+    navigator.serviceWorker.addEventListener('message', event => {
+        if (event.data && event.data.payload) {
+            onNotificationReceived(event.data.payload);
+        }
+    });
+
+    window.testTripAlarm = function () {
+        onNotificationReceived({
+            type: 'trip_start_requested',
+            route: '/trip/12/start/response?rid=test'
+        });
+    };
+
+   
+
+    
+    </script>
+
+    <script>
+        
+          
+        navigator.serviceWorker.addEventListener("message", function(event) {
+            const msg = event.data;
+            if (msg.type === "trip_accepted") {
+                console.log("🚕 Trip accepted by driver, updating page...");
+                window.location.reload();
+                return;
+            }
+        });
+
+    </script>
+
 
   
 

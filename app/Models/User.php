@@ -52,6 +52,10 @@ class User extends Authenticatable
         return $this->morphTo();
     }
 
+    public function tripLogs()
+    {
+        return $this->hasMany(TripLog::class, 'user_id');
+    }
     /**
      * Model booted event.
      */

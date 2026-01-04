@@ -2,6 +2,9 @@
 // User Current Trip (Width Event Delegation)
 // ==========================
 document.addEventListener('click', function(e) {
+
+    if (e.target.closest('.acceptTrip')) return;
+
     const item = e.target.closest('.passenger-trip-item');
     if (!item) return;
 

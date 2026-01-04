@@ -30,8 +30,8 @@
       <p>متاسفانه سفر شما توسط هیچ راننده ای قبول نشده!</p>
 
       <section class="state-buttons">
-        <a href="#" class="user-state-white-cancel">صفحه اصلی</a>
-        <a href="#" class="user-state-white-contact">تماس با پشتیبانی</a>
+        <a href="{{ route('home')}}" class="user-state-white-cancel">صفحه اصلی</a>
+        <a href="tel:{{ setting('support_phone') }}" class="user-state-white-contact">تماس با پشتیبانی</a>
       </section>
 
     </div>

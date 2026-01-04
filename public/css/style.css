@@ -1481,6 +1481,7 @@ header {
 }
 .driver-profile #acceptTrip, .driver-profile .acceptTrip {
   all: unset;
+  position: absolute;
   color: var(--white-color);
   background-color: var(--Third-color);
   padding: 6px 24px;
@@ -1489,7 +1490,7 @@ header {
   cursor: pointer;
   transition: all 0.2s ease;
 }
-.driver-profile #tripActionEnd {
+.driver-profile #tripActionEnd,.driver-profile #tripActionStart, .driver-profile .trip-arrived, .driver-profile .trip-start {
   all: unset;
   color: var(--white-color);
   background-color: var(--main-color);
@@ -1508,11 +1509,17 @@ header {
   font-weight: 700;
   cursor: pointer;
 }
+
+.driver-profile .trip-arrived{
+  background-color: var(--Third-color);
+}
 .driver-profile #acceptTrip:hover,
 .driver-profile #skipTrip:hover,
 .driver-profile .acceptTrip:hover,
 .driver-profile .skipTrip:hover,
-.driver-profile #tripActionEnd:hover {
+.driver-profile #tripActionEnd:hover,
+.driver-profile #tripActionStart:hover,
+.driver-profile .trip-arrived:hover, .driver-profile .trip-start:hover {
   scale: 0.95;
 }
 

@@ -20,6 +20,8 @@ use App\Models\Passenger;
 use App\Models\Driver;
 use App\Models\DriverReviewLog;
 use App\Models\Trip;
+use App\Models\TripLog;
+
 
 use function Pest\Laravel\json;
 
@@ -778,27 +780,54 @@ class AdminController extends Controller
     // Trips management
     public function assignDriver(Request $request)
     {
-        $tripId = request()->query('trip_id');
-        $driverId = request()->query('driver_id');
+        $tripId   = $request->query('trip_id');
+        $driverId = $request->query('driver_id');
 
-        $trip =Trip::find($tripId);
+        $trip = Trip::find($tripId);
         if (!$trip) {
-            return response()->json(['success' => false, 'message' => 'سفر پیدا نشد.'], 404); 
+            return response()->json(['success' => false, 'message' => 'سفر پیدا نشد.'], 404);
         }
 
         $driver = User::where('type', 'driver')
-                ->where('id', $driverId)
-                ->first();
+            ->where('id', $driverId)
+            ->first();
+
         if (!$driver) {
-            return response()->json(['success' => false, 'message' => 'راننده پیدا نشد.'], 404); 
+            return response()->json(['success' => false, 'message' => 'راننده پیدا نشد.'], 404);
         }
+
+        $oldStatus = $trip->status;
+        $oldDriver = $trip->driver_id;
+
         $trip->driver_id = $driver->id;
         $trip->status = 'pending-payment';
         $trip->save();
+
+        $admin = auth('admin')->user();
+
+        TripLog::create([
+            'trip_id'     => $trip->id,
+            'action'      => 'assign',
+            'description' => 'تخصیص سفر توسط ادمین',
+            'meta'        => [
+                'old_driver_id' => $oldDriver,
+                'new_driver_id' => $driver->id,
+                'status_before' => $oldStatus,
+                'status_after'  => $trip->status,
+            ],
+            'actor_id'    => $admin->id,
+            'actor_type'  => get_class($admin),
+        ]);
+
+
         $site_name = setting('site_name');
         $message = "راننده محترم، سفر {$tripId} به شما اختصاص داده شد. لطفا وارد سامانه {$site_name} شوید.";
-        SMS::sendPattern($driver->phone , $params = [$message , ''], '399329');
-        return response()->json(['success' => true, 'message' => 'راننده با موفقیت به سفر اختصاص داده شد.']);
+        SMS::sendPattern($driver->phone, [$message, ''], '399329');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'راننده با موفقیت به سفر اختصاص داده شد.'
+        ]);
     }
 
     function cancelTrip(Request $request)
@@ -812,10 +841,30 @@ class AdminController extends Controller
             return back()->with('error', 'سفر پیدا نشد.');
         }
 
+        $oldStatus = $trip->status;
+
         $trip->status = 'cancelled';
         $trip->save();
 
+        $admin = auth('admin')->user();
+        if ($admin) {
+            TripLog::create([
+                'trip_id'     => $trip->id,
+                'action'      => 'cancel',
+                'description' => 'لغو سفر توسط ادمین',
+                'meta'        => [
+                    'status_before' => $oldStatus,
+                    'status_after'  => $trip->status,
+                    'driver_id'     => $trip->driver_id,
+                ],
+                'actor_id'   => $admin->id,
+                'actor_type' => get_class($admin),
+            ]);
+
+        }
+
         return back()->with('success', 'سفر با موفقیت لغو شد.');
     }
+
 
 }
